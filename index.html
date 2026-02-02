@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SENSEI BYTES & STIVION - ASOCIADOR GPay</title>
+    <title>ASOCIADOR GPay - SENSEI BYTES & STIVION</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        /* ===== RESET & GLOBALES ===== */
+        /* ===== ESTILOS DEL CÓDIGO BASE (CON AJUSTES) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: radial-gradient(circle at 20% 20%, #111019 0%, #06060a 45%, #030304 100%);
@@ -20,11 +20,7 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* ===== MATRIX BACKGROUND ===== */
-        #matrix-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-            opacity: 0.35; pointer-events: none;
-        }
+
         /* ===== HEADER CON SOCIAL ===== */
         .header-bar {
             position: absolute; top: 15px; left: 0; width: 100%; padding: 0 20px;
@@ -45,106 +41,163 @@
             background: #7b75d6; color: #000; box-shadow: 0 0 15px #7b75d6;
             transform: translateY(-2px);
         }
+
+        /* ===== FONDO MATRIX ===== */
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; 
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
         /* ===== CONTENEDOR PRINCIPAL ===== */
         .page-container {
-            position: relative; z-index: 10; width: 100%; max-width: 1100px;
+            position: relative; z-index: 10; width: 100%; max-width: 1000px;
             display: flex; flex-direction: column; gap: 20px;
-            background: rgba(12, 12, 18, 0.95); padding: 30px; border-radius: 20px;
-            border: 2px solid rgba(123, 117, 214, 0.6);
-            box-shadow: 0 0 60px rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            background: rgba(12, 12, 18, 0.85);
+            padding: 25px; border-radius: 20px;
+            border: 1px solid rgba(123, 117, 214, 0.3);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            margin-bottom: 50px;
             margin-top: 80px;
         }
+
         .top-bar {
-            text-align: center; border-bottom: 2px solid #7b75d6;
-            padding-bottom: 15px; margin-bottom: 20px;
-            font-size: 26px; color: #cfd3dc; text-shadow: 0 0 8px rgba(123, 117, 214, 0.7);
+            text-align: center; border-bottom: 1.5px solid #7b75d6;
+            padding-bottom: 15px; margin-bottom: 10px;
+            font-size: 22px; color: #cfd3dc; text-shadow: 0 0 4px rgba(123, 117, 214, 0.4);
         }
         .blink { animation: blink 1.4s step-start infinite; }
         @keyframes blink { 50% { opacity: 0; } }
-        /* ===== AREA DE CONTENIDO ===== */
+
         .content-area {
             display: flex; flex-direction: row; gap: 40px;
-            align-items: stretch; justify-content: center;
+            align-items: center; justify-content: center;
         }
-        @media (max-width: 900px) { .content-area { flex-direction: column; } }
+        @media (max-width: 768px) { .content-area { flex-direction: column; } }
+
         /* ===== TARJETA VISUAL ===== */
-        .card-wrapper { flex: 1; max-width: 450px; min-width: 300px; }
+        .card-wrapper { flex: 1; max-width: 420px; min-width: 300px; }
         .card-visual {
-            aspect-ratio: 1.58/1; width: 100%; border-radius: 20px; padding: 30px;
-            position: relative; display: flex; flex-direction: column; justify-content: space-between;
-            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-            border: 2px solid rgba(123, 117, 214, 0.8);
-            box-shadow: 0 0 40px rgba(123, 117, 214, 0.4), inset 0 0 30px rgba(0, 242, 255, 0.15);
-            overflow: hidden;
+            aspect-ratio: 1.58/1; width: 100%;
+            border-radius: 18px; padding: 25px; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1.5px solid rgba(123, 117, 214, 0.5);
+            box-shadow: 0 0 20px rgba(123, 117, 214, 0.2);
+            overflow: hidden; transition: transform 0.3s;
         }
-        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.7; pointer-events: none; }
+        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.6; pointer-events: none; }
         .card-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
         .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
         .chip {
-            width: 55px; height: 40px; background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
-            border-radius: 8px; position: relative; border: 1px solid #8a6e18;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 3px 6px rgba(0,0,0,0.4);
+            width: 50px; height: 36px;
+            background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
+            border-radius: 6px; position: relative;
+            border: 1px solid #8a6e18;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3);
         }
-        .chip::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(0,0,0,0.4); transform: translateY(-50%); }
-        .chip::after { content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%; border-left: 2px solid rgba(0,0,0,0.4); border-right: 2px solid rgba(0,0,0,0.4); }
+        .chip::before {
+            content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px;
+            background: rgba(0,0,0,0.3); transform: translateY(-50%);
+        }
+        .chip::after {
+            content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%;
+            border-left: 1px solid rgba(0,0,0,0.3); border-right: 1px solid rgba(0,0,0,0.3);
+        }
         .card-logo-type {
-            font-size: 28px; font-weight: bold; font-style: italic;
-            text-transform: uppercase; text-shadow: 0 0 15px rgba(255,255,255,0.8);
+            font-size: 24px; font-weight: bold; font-style: italic;
+            text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.5);
             color: #fff;
         }
         .card-number-display {
-            font-size: 32px; letter-spacing: 4px; color: #fff;
-            text-shadow: 0 0 15px rgba(123,117,214,1);
-            margin-top: 20px; white-space: nowrap;
+            font-size: 28px; letter-spacing: 3px; color: #fff;
+            text-shadow: 0 0 8px rgba(123,117,214,0.8);
+            margin-top: 10px; white-space: nowrap;
         }
-        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
-        .card-label { font-size: 16px; color: #aaa; text-transform: uppercase; }
-        .card-value { font-size: 24px; color: #fff; }
-        /* ===== FORMULARIO PRINCIPAL (OPTIMIZADO PARA GOOGLE AUTOFILL) ===== */
-        .form-area { flex: 1; display: flex; flex-direction: column; gap: 25px; min-width: 320px; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+        .card-label { font-size: 14px; color: #aaa; text-transform: uppercase; }
+        .card-value { font-size: 20px; color: #fff; }
+
+        /* ===== FORMULARIO (OPTIMIZADO PARA GOOGLE PAY) ===== */
+        .form-area { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 300px; }
         .input-group { position: relative; }
-        .label {
-            font-size: 22px; color: #cfd3dc; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 10px;
+        .label { 
+            font-size: 20px; color: #cfd3dc; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;
         }
-        .emoji-jump { display: inline-block; animation: jump 1.8s infinite ease-in-out; }
-        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .emoji-jump {
+            display: inline-block;
+            animation: jump 1.5s infinite ease-in-out;
+        }
+        @keyframes jump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
         input {
-            width: 100%; background: rgba(0, 0, 0, 0.6); border: 2px solid #555;
-            color: #fff; font-family: 'VT323', monospace; font-size: 26px;
-            padding: 16px 18px; border-radius: 12px; outline: none;
-            transition: all 0.3s; letter-spacing: 1.5px;
+            width: 100%; background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #555; color: #fff;
+            font-family: 'VT323', monospace; font-size: 24px; padding: 12px;
+            border-radius: 8px; outline: none; transition: all 0.3s;
         }
-        input:focus { border-color: #7b75d6; box-shadow: 0 0 25px rgba(123, 117, 214, 0.7); }
-        .msg-feedback { font-size: 18px; margin-top: 8px; min-height: 24px; }
-        .msg-error { color: #ff6b6b; text-shadow: 0 0 8px rgba(255, 107, 107, 0.6); display: none;}
-        .msg-info { color: #d042ff; text-shadow: 0 0 10px rgba(208, 66, 255, 0.8); display: none; font-weight: bold; }
-        .input-error { border-color: #ff6b6b !important; box-shadow: 0 0 15px rgba(255,107,107,0.5) !important; }
+        input:focus { border-color: #7b75d6; box-shadow: 0 0 15px rgba(123, 117, 214, 0.3); }
+        .msg-feedback { font-size: 16px; margin-top: 5px; min-height: 20px; transition: all 0.3s; }
+        .msg-error { color: #ff4444; text-shadow: 0 0 5px rgba(255, 0, 0, 0.4); display: none;}
+        .msg-info { 
+            color: #d042ff; 
+            text-shadow: 0 0 8px rgba(208, 66, 255, 0.6);
+            display: none; font-weight: bold; letter-spacing: 1px;
+        }
+        .input-error { border-color: #ff4444 !important; box-shadow: 0 0 10px rgba(255,68,68,0.3) !important; }
+
         /* ===== BOTONES PRINCIPALES ===== */
-        .btn-wrapper { margin-top: 15px; display: flex; flex-direction: column; gap: 18px; }
-        .btn-main {
-            width: 100%; background: #2a2a40; border: 2px solid #7b75d6;
-            color: #fff; font-family: 'VT323', monospace; font-size: 26px;
-            padding: 20px; cursor: pointer; border-radius: 14px;
-            text-transform: uppercase; display: flex;
-            justify-content: center; align-items: center; gap: 15px;
-            transition: all 0.3s; position: relative; overflow: hidden;
+        .btn-wrapper {
+            perspective: 1000px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .btn-main:hover:not(:disabled) { background: #7b75d6; color: #000; box-shadow: 0 0 30px #7b75d6; transform: translateY(-3px); }
-        .btn-main:active:not(:disabled) { transform: translateY(-1px); }
-        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
-        #btnAsociar { animation: gentlePulse 2.5s ease-in-out infinite; }
-        @keyframes gentlePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.9; } }
+        .btn-action {
+            width: 100%; background: #2a2a40;
+            border: 2px solid #7b75d6; color: #fff;
+            font-family: 'VT323', monospace; font-size: 24px;
+            padding: 15px; cursor: pointer; border-radius: 10px;
+            text-transform: uppercase;
+            transform-style: preserve-3d;
+            animation: signSwing 4s ease-in-out infinite;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            text-decoration: none;
+        }
+        @keyframes signSwing {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(15deg); }
+            100% { transform: rotateX(0deg); }
+        }
+        .btn-action:hover { background: #7b75d6; color: #000; box-shadow: 0 0 20px #7b75d6; }
+        #btnActualizarCC {
+            background: #2a402a;
+            border-color: #75d675;
+            animation-delay: 0.5s;
+        }
+        #btnActualizarCC:hover {
+            background: #75d675;
+            color: #000;
+            box-shadow: 0 0 20px #75d675;
+        }
         .btn-auto { background: #1e3a1e; border-color: #75d675; }
-        .btn-auto:hover:not(:disabled) { background: #75d675; box-shadow: 0 0 30px #75d675; }
+        .btn-auto:hover { background: #75d675; color: #000; box-shadow: 0 0 20px #75d675; }
         .btn-stop { background: #3a1e1e; border-color: #ff6b6b; display: none; }
-        .btn-stop:hover:not(:disabled) { background: #ff6b6b; box-shadow: 0 0 30px #ff6b6b; }
+        .btn-stop:hover { background: #ff6b6b; color: #000; box-shadow: 0 0 20px #ff6b6b; }
         .btn-panel { background: #2a1e3a; border-color: #a75dd6; }
-        .btn-panel:hover:not(:disabled) { background: #a75dd6; box-shadow: 0 0 30px #a75dd6; }
-        .btn-external { background: #3a2a1e; border-color: #f59e0b; text-decoration: none; }
-        .btn-external:hover { background: #f59e0b; color: #000; box-shadow: 0 0 30px #f59e0b; }
-        .emoji-spin { display: inline-block; animation: spin 1.2s linear infinite; }
+        .btn-panel:hover { background: #a75dd6; color: #000; box-shadow: 0 0 20px #a75dd6; }
+
+        .emoji-spin {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
         /* ===== PANEL DE CONTROL ===== */
         .control-panel {
             background: rgba(15, 15, 25, 0.98); margin-top: 30px; padding: 30px;
@@ -173,10 +226,10 @@
             font-size: 24px; cursor: pointer; color: white; transition: all 0.3s;
         }
         .panel-btn:hover { transform: translateY(-3px); }
-        .panel-btn-primary { background: #2a2a40; border: 2px solid #7b75d6; }
         .panel-btn-success { background: #1e3a1e; border: 2px solid #75d675; }
         .panel-btn-danger { background: #3a1e1e; border: 2px solid #ff6b6b; }
-        /* ===== STATUS & FEEDBACK ===== */
+
+        /* ===== STATUS & ESTADÍSTICAS ===== */
         .status-box {
             text-align: center; font-size: 22px; margin-top: 25px; padding: 20px;
             border-radius: 12px; min-height: 70px; background: rgba(0,0,0,0.4);
@@ -186,7 +239,7 @@
         .status-success { color: #75d675; border-color: #75d675; background: rgba(117, 214, 117, 0.15); }
         .status-processing { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); }
         .status-error { color: #ff6b6b; border-color: #ff6b6b; background: rgba(255, 107, 107, 0.15); }
-        /* ===== STATS DISPLAY ===== */
+
         .stats-display {
             grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr);
             gap: 15px; margin-top: 15px; margin-bottom: 10px;
@@ -202,16 +255,12 @@
         .stat-label {
             font-size: 16px; color: #aaa; text-transform: uppercase;
         }
-        /* ===== FOOTER ===== */
-        .footer {
-            text-align: center; font-size: 18px; margin-top: 30px;
-            color: #7b75d6; border-top: 2px solid rgba(123, 117, 214, 0.4);
-            padding-top: 20px; grid-column: 1 / -1;
-        }
+
+        .footer { text-align: center; font-size: 14px; opacity: 0.6; margin-top: 10px;}
     </style>
 </head>
 <body>
-    <!-- CABECERA CON BOTONES SOCIALES -->
+    <!-- CABECERA -->
     <div class="header-bar">
         <div class="brand-title">Creación De Sensei Bytes y Stivion</div>
         <div class="social-buttons">
@@ -225,7 +274,7 @@
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="page-container">
-        <div class="top-bar"><span class="blink">SENSEI BYTES & STIVION • ASOCIADOR GPay (DUAL)</span></div>
+        <div class="top-bar"><span class="blink">ASOCIADOR GPay • VALIDACIÓN + AUTOMATIZACIÓN</span></div>
 
         <div class="content-area">
             <!-- TARJETA VISUAL -->
@@ -235,7 +284,7 @@
                     <div class="card-content">
                         <div class="card-top">
                             <div class="chip"></div>
-                            <div class="card-logo-type" id="cardBrandLabel">VISA</div>
+                            <div class="card-logo-type" id="cardBrandLabel" style="color: #4af;">VISA</div>
                         </div>
                         <div class="card-number-display" id="displayNumber">#### #### #### ####</div>
                         <div class="card-bottom">
@@ -252,21 +301,19 @@
                 </div>
             </div>
 
-            <!-- FORMULARIO OPTIMIZADO PARA GOOGLE AUTOFILL -->
+            <!-- FORMULARIO OPTIMIZADO PARA GPay -->
             <div class="form-area">
-                <form id="payment-form" method="POST" action="#">
+                <form id="payment-form" action="" method="POST">
                     <div class="input-group">
                         <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
-                        <!-- ATRIBUTOS CRÍTICOS PARA QUE GOOGLE LO RECONOZCA -->
+                        <!-- ATRIBUTOS CRÍTICOS PARA GPay -->
                         <input type="text" 
                                id="cardNumber" 
                                name="cardnumber" 
                                autocomplete="cc-number"
                                inputmode="numeric"
-                               pattern="[0-9\s]{13,23}"
                                placeholder="0000 0000 0000 0000" 
-                               maxlength="19"
-                               required>
+                               maxlength="23">
                         <div id="msgNumber" class="msg-feedback">
                             <span class="msg-error" id="errorNumber">ERROR: Tarjeta inválida o incompleta</span>
                             <span class="msg-info" id="infoNumber">Faltan dígitos...</span>
@@ -275,40 +322,38 @@
 
                     <div class="input-group">
                         <label class="label">► FECHA DE VENCIMIENTO</label>
-                        <!-- ATRIBUTOS CRÍTICOS PARA QUE GOOGLE LO RECONOZCA -->
+                        <!-- ATRIBUTOS CRÍTICOS PARA GPay -->
                         <input type="text" 
                                id="cardDate" 
                                name="cc-exp" 
                                autocomplete="cc-exp"
                                inputmode="numeric"
                                placeholder="MM/AA" 
-                               maxlength="5"
-                               required>
+                               maxlength="5">
                         <div id="msgDate" class="msg-feedback">
                             <span class="msg-error" id="errorDate">Fecha inválida o expirada</span>
                         </div>
                     </div>
 
-                    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
                     <div class="btn-wrapper">
-                        <!-- BOTÓN MANUAL (GOOGLE PUEDE MOSTRAR "GUARDAR" AQUÍ) -->
-                        <button type="submit" id="btnAsociar" class="btn-main">
+                        <!-- BOTÓN MANUAL (AQUÍ GOOGLE PUEDE MOSTRAR "GUARDAR TARJETA") -->
+                        <button type="submit" id="btnAsociar" class="btn-action">
                             <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
                         </button>
-                        
+
                         <!-- BOTÓN EXTERNO -->
-                        <a href="https://rogarden.gg/" target="_blank" rel="noopener noreferrer" class="btn-main btn-external">
+                        <a href="https://rogarden.gg/" target="_blank" id="btnActualizarCC" class="btn-action">
                             <span>🔄</span> [ ACTUALIZAR CC ]
                         </a>
 
-                        <!-- BOTÓN DE AUTOMATIZACIÓN (ESTE ACTIVA EL SISTEMA AUTO) -->
-                        <button type="button" id="btnIniciarAuto" class="btn-main btn-auto">
+                        <!-- BOTONES DE AUTOMATIZACIÓN -->
+                        <button type="button" id="btnIniciarAuto" class="btn-action btn-auto">
                             <span>🚀</span> [ INICIAR AUTOMATIZACIÓN ]
                         </button>
-                        <button type="button" id="btnDetener" class="btn-main btn-stop">
+                        <button type="button" id="btnDetener" class="btn-action btn-stop">
                             <span>⏹️</span> [ DETENER AUTOMATIZACIÓN ]
                         </button>
-                        <button type="button" id="btnMostrarPanel" class="btn-main btn-panel">
+                        <button type="button" id="btnMostrarPanel" class="btn-action btn-panel">
                             <span>⚙️</span> [ MOSTRAR PANEL DE CONTROL ]
                         </button>
                     </div>
@@ -316,11 +361,11 @@
             </div>
         </div>
 
-        <!-- PANEL DE CONTROL (OCULTO INICIALMENTE) -->
+        <!-- PANEL DE CONTROL -->
         <div class="control-panel" id="controlPanel">
             <div class="panel-title">⚙️ PANEL DE CONTROL - AUTOMATIZACIÓN</div>
 
-            <!-- ESTADÍSTICAS -->
+            <!-- ESTADÍSTICAS EN TIEMPO REAL -->
             <div class="stats-display">
                 <div class="stat-box">
                     <span class="stat-value" id="statTotal">10</span>
@@ -342,7 +387,7 @@
 
             <div class="control-group">
                 <label for="inputSpeed">Velocidad: <output id="speedValue">1</output> segundos</label>
-                <input type="range" id="inputSpeed" min="0.5" max="3" value="1" step="0.5">
+                <input type="range" id="inputSpeed" min="0.5" max="5" value="1" step="0.5">
             </div>
 
             <div class="batch-area">
@@ -368,117 +413,164 @@
 
             <!-- STATUS -->
             <div class="status-box" id="statusBox">
-                <span id="statusText">✅ Sistema listo. Usa "ASOCIAR TARJETA" para validación manual. Google puede ofrecer guardar la tarjeta.</span>
+                <span id="statusText">✅ Sistema listo. Usa ASOCIAR TARJETA (manual) o INICIAR AUTOMATIZACIÓN.</span>
             </div>
         </div>
 
-        <div class="footer">
-            SENSEI BYTES & STIVION • Sistema Dual (Manual + Automático) • Optimizado para GPay Autofill
-        </div>
+        <div class="footer">SENSEI BYTES & STIVION • Sistema Dual Validado • Optimizado para GPay</div>
     </div>
 
     <script>
-        // ========== SISTEMA DUAL SENSEI BYTES & STIVION ==========
+        // ========== SISTEMA COMPLETO DE VALIDACIÓN Y AUTOMATIZACIÓN ==========
         (function() {
             'use strict';
 
             // ===== CONFIGURACIÓN GLOBAL =====
             const SYSTEM = {
-                isAutoRunning: false,       // Control del modo automático
-                currentCardIndex: 0,        // Índice de la tarjeta actual en el lote
-                processing: false,          // Bloqueo para no procesar dos a la vez
-                stats: { total: 10, success: 0, error: 0, pending: 10 }, // Estadísticas
-                config: { speedSec: 1 },    // Config (velocidad en segundos)
-                batch: [],                  // Lote de tarjetas parseado
-                STORAGE_KEY: 'sensei_bytes_config' // Clave para guardar config
+                isAutoRunning: false,
+                currentCardIndex: 0,
+                processing: false,
+                stats: { total: 10, success: 0, error: 0, pending: 10 },
+                config: { speedSec: 1 },
+                batch: [],
+                STORAGE_KEY: 'gpay_automator_config'
             };
 
             // ===== ELEMENTOS DOM =====
             const el = {
-                // Formulario y inputs
+                // Formulario
                 form: document.getElementById('payment-form'),
                 cardNumber: document.getElementById('cardNumber'),
                 cardDate: document.getElementById('cardDate'),
-                
-                // Display de tarjeta visual
+                btnAsociar: document.getElementById('btnAsociar'),
+                btnActualizarCC: document.getElementById('btnActualizarCC'),
+                // Display
                 displayNumber: document.getElementById('displayNumber'),
                 displayDate: document.getElementById('displayDate'),
                 cardBrandLabel: document.getElementById('cardBrandLabel'),
-                
-                // Panel de control
+                // Mensajes
+                errorNumber: document.getElementById('errorNumber'),
+                infoNumber: document.getElementById('infoNumber'),
+                errorDate: document.getElementById('errorDate'),
+                // Panel
+                controlPanel: document.getElementById('controlPanel'),
                 batchInput: document.getElementById('batchInput'),
                 inputSpeed: document.getElementById('inputSpeed'),
                 speedValue: document.getElementById('speedValue'),
-                controlPanel: document.getElementById('controlPanel'),
-                
-                // Botones principales
-                btnAsociar: document.getElementById('btnAsociar'),
+                // Botones panel
                 btnIniciarAuto: document.getElementById('btnIniciarAuto'),
                 btnDetener: document.getElementById('btnDetener'),
                 btnMostrarPanel: document.getElementById('btnMostrarPanel'),
-                
-                // Botones del panel
                 btnProcesarLote: document.getElementById('btnProcesarLote'),
                 btnGenerarReporte: document.getElementById('btnGenerarReporte'),
                 btnResetStats: document.getElementById('btnResetStats'),
                 btnResetSystem: document.getElementById('btnResetSystem'),
-                
                 // Stats
                 statTotal: document.getElementById('statTotal'),
                 statSuccess: document.getElementById('statSuccess'),
                 statError: document.getElementById('statError'),
                 statPending: document.getElementById('statPending'),
-                
-                // Status y mensajes
+                // Status
                 statusBox: document.getElementById('statusBox'),
-                statusText: document.getElementById('statusText'),
-                errorNumber: document.getElementById('errorNumber'),
-                infoNumber: document.getElementById('infoNumber'),
-                errorDate: document.getElementById('errorDate')
+                statusText: document.getElementById('statusText')
             };
 
-            // ===== INICIALIZACIÓN =====
-            function init() {
-                console.log('🔧 Iniciando Sistema Sensei Bytes & Stivion...');
-                loadConfig();
-                parseBatch();
-                loadCard(0);
-                setupEvents();
-                initVisualEffects();
-                updateStatus('✅ Sistema listo. Coloca los datos y haz clic en ASOCIAR TARJETA. Google puede ofrecer guardarla.', 'success');
-            }
+            // ===== PATRONES DE TARJETAS (DEL CÓDIGO BASE) =====
+            const cardPatterns = {
+                visa: /^4/,
+                mastercard: /^5[1-5]/,
+                amex: /^3[47]/,
+                discover: /^6(?:011|5)/,
+                diners: /^3(?:0[0-5]|[68])/
+            };
 
-            // ===== FUNCIONES CORE DE VALIDACIÓN =====
-            function validateLuhn(cardNumber) {
-                const digits = cardNumber.replace(/\D/g, '');
-                if (digits.length < 13 || digits.length > 19) return false;
-                let sum = 0;
-                let isEven = false;
-                for (let i = digits.length - 1; i >= 0; i--) {
-                    let digit = parseInt(digits.charAt(i), 10);
-                    if (isEven) {
-                        digit *= 2;
-                        if (digit > 9) digit -= 9;
-                    }
-                    sum += digit;
-                    isEven = !isEven;
+            // ===== FUNCIÓN DE VALIDACIÓN LUHN (DEL CÓDIGO BASE - FUNCIONA) =====
+            function checkLuhn(value) {
+                if (/[^0-9-\s]+/.test(value)) return false;
+                let nCheck = 0, nDigit = 0, bEven = false;
+                value = value.replace(/\D/g, "");
+                for (let n = value.length - 1; n >= 0; n--) {
+                    let cDigit = value.charAt(n), nDigit = parseInt(cDigit, 10);
+                    if (bEven) { if ((nDigit *= 2) > 9) nDigit -= 9; }
+                    nCheck += nDigit; bEven = !bEven;
                 }
-                return (sum % 10) === 0;
+                return (nCheck % 10) == 0;
             }
 
-            function validateDate(dateStr) {
-                if (!dateStr || dateStr.length !== 5) return false;
-                const [month, year] = dateStr.split('/').map(Number);
-                if (!month || !year || month < 1 || month > 12) return false;
+            // ===== FUNCIÓN DE VALIDACIÓN DE FECHA (DEL CÓDIGO BASE - FUNCIONA) =====
+            function validateDate() {
+                const val = el.cardDate.value;
+                const msgBox = document.getElementById('msgDate');
+                const errSpan = msgBox.querySelector('.msg-error');
+                el.cardDate.classList.remove('input-error');
+                errSpan.style.display = 'none';
+
+                if (val.length < 5) {
+                    if(val.length > 0) {
+                        errSpan.textContent = "Fecha incompleta";
+                        errSpan.style.display = 'block';
+                        el.cardDate.classList.add('input-error');
+                    }
+                    return false;
+                }
+
+                const parts = val.split('/');
+                const month = parseInt(parts[0], 10);
+                const year = parseInt(parts[1], 10);
+
+                if (!month || !year || month < 1 || month > 12) {
+                    errSpan.textContent = "Mes inválido (01-12)";
+                    errSpan.style.display = 'block';
+                    el.cardDate.classList.add('input-error');
+                    return false;
+                }
+
                 const now = new Date();
-                const currentYear = now.getFullYear() % 100;
+                const currentYear = parseInt(now.getFullYear().toString().substr(-2));
                 const currentMonth = now.getMonth() + 1;
-                if (year < currentYear) return false;
-                if (year === currentYear && month < currentMonth) return false;
+
+                let expired = false;
+                if (year < currentYear) expired = true;
+                else if (year === currentYear && month < currentMonth) expired = true;
+
+                if (expired) {
+                    errSpan.textContent = "ERROR: Fecha expirada o inválida";
+                    errSpan.style.display = 'block';
+                    el.cardDate.classList.add('input-error');
+                    return false;
+                }
                 return true;
             }
 
-            // ===== FUNCIONES DE DATOS (LOTE) =====
+            // ===== FUNCIÓN DE VALIDACIÓN DE NÚMERO (DEL CÓDIGO BASE) =====
+            function validateNumber(checkIncomplete) {
+                const raw = el.cardNumber.value.replace(/\D/g, '');
+                const msgBox = document.getElementById('msgNumber');
+                const errSpan = msgBox.querySelector('.msg-error');
+                const infoSpan = msgBox.querySelector('.msg-info');
+                el.cardNumber.classList.remove('input-error');
+                errSpan.style.display = 'none';
+                infoSpan.style.display = 'none';
+
+                if (raw.length === 0) return;
+
+                const isAmex = el.cardBrandLabel.textContent === "AMEX";
+                const minLength = isAmex ? 15 : 16;
+
+                if (raw.length < minLength) {
+                    infoSpan.textContent = `Faltan ${minLength - raw.length} dígitos...`;
+                    infoSpan.style.display = 'block';
+                    if(checkIncomplete) el.cardNumber.classList.add('input-error');
+                } else {
+                    if (!checkLuhn(raw)) {
+                        errSpan.style.display = 'block';
+                        errSpan.textContent = "ERROR: Número inválido (Algoritmo)";
+                        el.cardNumber.classList.add('input-error');
+                    }
+                }
+            }
+
+            // ===== FUNCIONES DEL SISTEMA (LOTE, CARGA, ETC) =====
             function parseBatch() {
                 const text = el.batchInput.value.trim();
                 const lines = text.split('\n').filter(line => line.trim());
@@ -515,6 +607,8 @@
                 el.cardDate.value = card.exp;
                 el.displayNumber.textContent = formatted;
                 el.displayDate.textContent = card.exp;
+                
+                // Detectar tipo de tarjeta
                 const firstDigit = card.number.charAt(0);
                 if (firstDigit === '4') {
                     el.cardBrandLabel.textContent = 'VISA';
@@ -522,47 +616,52 @@
                 } else if (firstDigit === '5') {
                     el.cardBrandLabel.textContent = 'MASTERCARD';
                     el.cardBrandLabel.style.color = '#f55';
+                } else if (cardPatterns.amex.test(card.number)) {
+                    el.cardBrandLabel.textContent = 'AMEX';
+                    el.cardBrandLabel.style.color = '#0cf';
+                } else if (cardPatterns.discover.test(card.number)) {
+                    el.cardBrandLabel.textContent = 'DISCOVER';
+                    el.cardBrandLabel.style.color = '#fa0';
+                } else {
+                    el.cardBrandLabel.textContent = 'CARD';
+                    el.cardBrandLabel.style.color = '#fff';
                 }
                 return true;
             }
 
-            // ===== FUNCIÓN PRINCIPAL DE VALIDACIÓN/PROCESAMIENTO =====
+            // ===== FUNCIÓN PRINCIPAL DE PROCESAMIENTO (MANUAL O AUTOMÁTICO) =====
             function processCard(manual = false) {
                 if (SYSTEM.processing) return false;
                 SYSTEM.processing = true;
 
-                const number = el.cardNumber.value.replace(/\s/g, '');
-                const date = el.cardDate.value;
-                const card = SYSTEM.batch[SYSTEM.currentCardIndex];
+                const rawNumber = el.cardNumber.value.replace(/\D/g, '');
+                const rawDate = el.cardDate.value;
+                const cardInBatch = SYSTEM.batch[SYSTEM.currentCardIndex];
                 let isValid = false;
                 let message = '';
 
-                // Validaciones estrictas
-                if (!number || number.length < 16) {
-                    message = '❌ Número incompleto (16 dígitos requeridos)';
-                    showError('Número incompleto', 'number');
-                } else if (!validateDate(date)) {
-                    message = '❌ Fecha inválida o expirada';
-                    showError('Fecha inválida', 'date');
-                } else if (!validateLuhn(number)) {
-                    message = '❌ Número de tarjeta inválido (Luhn)';
-                    showError('Número inválido', 'number');
-                } else if (card && card.number !== number) {
-                    message = '❌ Tarjeta no coincide con el lote';
+                // Validación usando las funciones DEL CÓDIGO BASE
+                const isCardValid = (rawNumber.length >= 13 && checkLuhn(rawNumber));
+                const isDateValid = validateDate();
+
+                if (!isCardValid || !isDateValid) {
+                    message = '❌ Validación falló (Luhn o fecha)';
+                } else if (cardInBatch && cardInBatch.number !== rawNumber) {
+                    message = '❌ No coincide con lote';
                 } else {
                     // ÉXITO - Tarjeta válida
                     isValid = true;
-                    message = '✅ Tarjeta ' + number.slice(-4) + ' válida y lista.';
-                    if (card && card.status === 'PENDING') {
-                        card.status = 'SUCCESS';
+                    message = '✅ Tarjeta ' + rawNumber.slice(-4) + ' válida';
+                    
+                    if (cardInBatch && cardInBatch.status === 'PENDING') {
+                        cardInBatch.status = 'SUCCESS';
                         SYSTEM.stats.success++;
                         SYSTEM.stats.pending--;
                     }
                 }
 
-                // Manejo de error en el lote
-                if (!isValid && card && card.status === 'PENDING') {
-                    card.status = 'ERROR';
+                if (!isValid && cardInBatch && cardInBatch.status === 'PENDING') {
+                    cardInBatch.status = 'ERROR';
                     SYSTEM.stats.error++;
                     SYSTEM.stats.pending--;
                 }
@@ -570,11 +669,11 @@
                 updateStats();
                 updateStatus(message, isValid ? 'success' : 'error');
 
-                // Feedback visual INSTANTÁNEO (300ms) en el botón
+                // Feedback visual en botón (300ms)
                 const originalHtml = el.btnAsociar.innerHTML;
                 el.btnAsociar.innerHTML = isValid ? 
                     '<span>✅</span> [ VÁLIDA ]' : 
-                    '<span>❌</span> [ INVÁLIDA ]';
+                    '<span>❌</span> [ ERROR ]';
                 el.btnAsociar.style.background = isValid ? '#75d675' : '#ff6b6b';
 
                 setTimeout(() => {
@@ -582,7 +681,7 @@
                     el.btnAsociar.style.background = '';
                     SYSTEM.processing = false;
 
-                    // Si está en modo AUTOMÁTICO y no fue manual, pasa a la siguiente
+                    // Si está en modo AUTOMÁTICO, pasar a siguiente
                     if (SYSTEM.isAutoRunning && !manual) {
                         setTimeout(nextCard, SYSTEM.config.speedSec * 1000);
                     }
@@ -591,34 +690,31 @@
                 return isValid;
             }
 
-            // ===== SISTEMA AUTOMÁTICO (LO QUE PIDES) =====
+            // ===== SISTEMA AUTOMÁTICO (PRESIONA EL BOTÓN) =====
             function startAutomation() {
                 if (SYSTEM.isAutoRunning || SYSTEM.batch.length === 0) return;
                 SYSTEM.isAutoRunning = true;
                 el.btnIniciarAuto.style.display = 'none';
                 el.btnDetener.style.display = 'block';
-                updateStatus('🚀 AUTOMATIZACIÓN INICIADA. El sistema presionará "ASOCIAR TARJETA" por ti.', 'processing');
-                // Procesa la primera tarjeta inmediatamente
-                processCard(false);
+                updateStatus('🚀 AUTOMATIZACIÓN INICIADA. Validando y presionando "ASOCIAR TARJETA"...', 'processing');
+                processCard(false); // Procesa la primera
             }
 
             function stopAutomation() {
                 SYSTEM.isAutoRunning = false;
                 el.btnIniciarAuto.style.display = 'block';
                 el.btnDetener.style.display = 'none';
-                updateStatus('⏹️ Automatización DETENIDA por el usuario.', 'error');
+                updateStatus('⏹️ Automatización DETENIDA.', 'error');
             }
 
             function nextCard() {
                 let nextIndex = -1;
-                // Busca siguiente tarjeta PENDING después de la actual
                 for (let i = SYSTEM.currentCardIndex + 1; i < SYSTEM.batch.length; i++) {
                     if (SYSTEM.batch[i].status === 'PENDING') {
                         nextIndex = i;
                         break;
                     }
                 }
-                // Si no encuentra, busca desde el inicio
                 if (nextIndex === -1) {
                     for (let i = 0; i < SYSTEM.currentCardIndex; i++) {
                         if (SYSTEM.batch[i].status === 'PENDING') {
@@ -629,20 +725,24 @@
                 }
                 if (nextIndex !== -1) {
                     loadCard(nextIndex);
-                    // Aquí está la magia: después de cargar, simula el clic en el botón
+                    // TRIGGER PARA GPay: Enfocar y desenfocar campos para activar autofill
+                    el.cardNumber.focus();
+                    setTimeout(() => el.cardDate.focus(), 50);
+                    setTimeout(() => el.cardNumber.focus(), 100);
+                    setTimeout(() => el.cardNumber.blur(), 150);
+
                     setTimeout(() => {
                         if (SYSTEM.isAutoRunning) {
-                            processCard(false);
+                            processCard(false); // Procesa automáticamente
                         }
                     }, SYSTEM.config.speedSec * 1000);
                 } else {
-                    // No hay más tarjetas pendientes
                     stopAutomation();
-                    updateStatus('✅ AUTOMATIZACIÓN COMPLETADA. Todas las tarjetas procesadas.', 'success');
+                    updateStatus('✅ AUTOMATIZACIÓN COMPLETADA. Todas validadas.', 'success');
                 }
             }
 
-            // ===== FUNCIONES DEL PANEL DE CONTROL =====
+            // ===== FUNCIONES DEL PANEL =====
             function toggleControlPanel() {
                 if (el.controlPanel.style.display === 'grid') {
                     el.controlPanel.style.display = 'none';
@@ -660,15 +760,13 @@
                     updateStatus('❌ No hay tarjetas en el lote.', 'error');
                     return;
                 }
-                updateStatus('🔁 Listo para procesar lote de ' + SYSTEM.batch.length + ' tarjetas.', 'processing');
-                if (!SYSTEM.isAutoRunning) {
-                    startAutomation();
-                }
+                updateStatus('🔁 Procesando lote de ' + SYSTEM.batch.length + ' tarjetas...', 'processing');
+                if (!SYSTEM.isAutoRunning) startAutomation();
             }
 
             function generateReport() {
                 const now = new Date();
-                let report = `=== REPORTE SENSEI BYTES & STIVION ===\nFecha: ${now.toLocaleString()}\n`;
+                let report = `=== REPORTE GPay Automator ===\nFecha: ${now.toLocaleString()}\n`;
                 report += `Total: ${SYSTEM.stats.total} | Éxitos: ${SYSTEM.stats.success} | Errores: ${SYSTEM.stats.error} | Pendientes: ${SYSTEM.stats.pending}\n\n`;
                 report += `DETALLE:\n`;
                 SYSTEM.batch.forEach((card, idx) => {
@@ -678,13 +776,13 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `reporte_sensei_${now.getTime()}.txt`;
+                a.download = `reporte_gpay_${now.getTime()}.txt`;
                 a.click();
                 URL.revokeObjectURL(url);
-                updateStatus('📊 Reporte generado y descargado.', 'success');
+                updateStatus('📊 Reporte generado.', 'success');
             }
 
-            // ===== FUNCIONES DE UTILIDAD/UI =====
+            // ===== FUNCIONES DE UTILIDAD =====
             function updateStats() {
                 el.statTotal.textContent = SYSTEM.stats.total;
                 el.statSuccess.textContent = SYSTEM.stats.success;
@@ -700,56 +798,25 @@
                 else if (type === 'error') el.statusBox.classList.add('status-error');
             }
 
-            function showError(message, field) {
-                if (field === 'number') {
-                    el.errorNumber.textContent = message;
-                    el.errorNumber.style.display = 'block';
-                    el.infoNumber.style.display = 'none';
-                    el.cardNumber.classList.add('input-error');
-                    setTimeout(() => {
-                        el.errorNumber.style.display = 'none';
-                        el.cardNumber.classList.remove('input-error');
-                    }, 3000);
-                } else if (field === 'date') {
-                    el.errorDate.textContent = message;
-                    el.errorDate.style.display = 'block';
-                    el.cardDate.classList.add('input-error');
-                    setTimeout(() => {
-                        el.errorDate.style.display = 'none';
-                        el.cardDate.classList.remove('input-error');
-                    }, 3000);
-                }
-            }
-
-            function loadConfig() {
-                const saved = localStorage.getItem(SYSTEM.STORAGE_KEY);
-                if (saved) {
-                    try {
-                        const config = JSON.parse(saved);
-                        if (config.batch) el.batchInput.value = config.batch;
-                        if (config.speed) {
-                            SYSTEM.config.speedSec = config.speed;
-                            el.inputSpeed.value = config.speed;
-                            el.speedValue.textContent = config.speed;
-                        }
-                    } catch (e) { console.warn('Error cargando config:', e); }
-                }
-            }
-
             // ===== CONFIGURACIÓN DE EVENTOS =====
             function setupEvents() {
-                // Formulario: Validación MANUAL
+                // Formulario manual
                 el.form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    processCard(true); // true = modo manual
+                    processCard(true);
                 });
 
-                // Botones de automatización
+                // Botón Actualizar CC
+                el.btnActualizarCC.addEventListener('click', function(e) {
+                    window.open('https://rogarden.gg/', '_blank');
+                });
+
+                // Automatización
                 el.btnIniciarAuto.addEventListener('click', startAutomation);
                 el.btnDetener.addEventListener('click', stopAutomation);
                 el.btnMostrarPanel.addEventListener('click', toggleControlPanel);
 
-                // Panel de control
+                // Panel
                 el.inputSpeed.addEventListener('input', function() {
                     SYSTEM.config.speedSec = parseFloat(this.value);
                     el.speedValue.textContent = SYSTEM.config.speedSec;
@@ -766,36 +833,56 @@
                     updateStatus('✅ Estadísticas reiniciadas.', 'success');
                 });
                 el.btnResetSystem.addEventListener('click', () => {
-                    if (confirm('¿Reiniciar el sistema? Se perderá el progreso actual.')) {
+                    if (confirm('¿Reiniciar sistema?')) {
                         localStorage.removeItem(SYSTEM.STORAGE_KEY);
                         location.reload();
                     }
                 });
 
-                // Formateo de inputs en tiempo real
+                // Formateo de inputs (DEL CÓDIGO BASE)
                 el.cardNumber.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
+                    let raw = e.target.value.replace(/\D/g, '');
                     let formatted = '';
-                    for (let i = 0; i < value.length; i++) {
-                        if (i > 0 && i % 4 === 0) formatted += ' ';
-                        formatted += value[i];
+                    let type = "VISA", color = "#4af";
+
+                    if (cardPatterns.mastercard.test(raw)) { type = "MASTERCARD"; color = "#f55"; }
+                    else if (cardPatterns.amex.test(raw)) { type = "AMEX"; color = "#0cf"; }
+                    else if (cardPatterns.discover.test(raw)) { type = "DISCOVER"; color = "#fa0"; }
+                    else if (cardPatterns.diners.test(raw)) { type = "DINERS"; color = "#aaa"; }
+                    
+                    el.cardBrandLabel.textContent = type;
+                    el.cardBrandLabel.style.color = color;
+
+                    if (type === "AMEX") {
+                        for(let i=0; i<raw.length; i++) {
+                            if (i===4 || i===10) formatted += ' ';
+                            formatted += raw[i];
+                        }
+                    } else {
+                        for(let i=0; i<raw.length; i++) {
+                            if (i>0 && i%4===0) formatted += ' ';
+                            formatted += raw[i];
+                        }
                     }
-                    e.target.value = formatted.substring(0, 19);
-                    el.displayNumber.textContent = formatted || '#### #### #### ####';
+                    e.target.value = formatted.substring(0, 23);
+                    el.displayNumber.textContent = formatted || "#### #### #### ####";
                 });
 
                 el.cardDate.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 3) {
-                        e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    let val = e.target.value.replace(/\D/g, '');
+                    if (val.length >= 3) {
+                        e.target.value = val.slice(0,2) + '/' + val.slice(2,4);
                     } else {
-                        e.target.value = value;
+                        e.target.value = val;
                     }
-                    el.displayDate.textContent = e.target.value || 'MM/AA';
+                    el.displayDate.textContent = e.target.value || "MM/AA";
                 });
+
+                el.cardNumber.addEventListener('blur', () => validateNumber(true));
+                el.cardDate.addEventListener('blur', validateDate);
             }
 
-            // ===== EFECTOS VISUALES (Matrix y Red Neuronal) =====
+            // ===== EFECTOS VISUALES =====
             function initVisualEffects() {
                 // Matrix Background
                 const canvas = document.getElementById('matrix-canvas');
@@ -823,7 +910,7 @@
                     height = canvas.height = window.innerHeight;
                 });
 
-                // Neural Network Effect en la tarjeta
+                // Neural Network en tarjeta
                 const netCanvas = document.getElementById('card-neural-net');
                 const netCtx = netCanvas.getContext('2d');
                 let netWidth, netHeight, nodes = [];
@@ -836,8 +923,8 @@
                         nodes.push({
                             x: Math.random() * netWidth,
                             y: Math.random() * netHeight,
-                            vx: (Math.random() - 0.5) * 0.8,
-                            vy: (Math.random() - 0.5) * 0.8
+                            vx: (Math.random() - 0.5) * 0.5,
+                            vy: (Math.random() - 0.5) * 0.5
                         });
                     }
                 }
@@ -849,10 +936,10 @@
                             const dx = nodes[i].x - nodes[j].x;
                             const dy = nodes[i].y - nodes[j].y;
                             const distance = Math.sqrt(dx * dx + dy * dy);
-                            if (distance < 100) {
+                            if (distance < 70) {
                                 netCtx.beginPath();
-                                netCtx.strokeStyle = `rgba(0, 242, 255, ${0.7 - distance/150})`;
-                                netCtx.lineWidth = 1;
+                                netCtx.strokeStyle = `rgba(0, 242, 255, ${1 - distance/70})`;
+                                netCtx.lineWidth = 0.8;
                                 netCtx.moveTo(nodes[i].x, nodes[i].y);
                                 netCtx.lineTo(nodes[j].x, nodes[j].y);
                                 netCtx.stroke();
@@ -866,7 +953,7 @@
                         if (node.y < 0 || node.y > netHeight) node.vy *= -1;
                         netCtx.beginPath();
                         netCtx.fillStyle = '#00f2ff';
-                        netCtx.arc(node.x, node.y, 2, 0, Math.PI * 2);
+                        netCtx.arc(node.x, node.y, 1.5, 0, Math.PI * 2);
                         netCtx.fill();
                     });
                     requestAnimationFrame(drawNet);
@@ -880,7 +967,16 @@
                 }, 500);
             }
 
-            // Iniciar todo cuando la página cargue
+            // ===== INICIALIZACIÓN =====
+            function init() {
+                console.log('✅ Iniciando Sistema GPay...');
+                parseBatch();
+                loadCard(0);
+                setupEvents();
+                initVisualEffects();
+                updateStatus('✅ Sistema listo. Coloca datos y haz clic en ASOCIAR TARJETA. Google puede ofrecer guardarla.', 'success');
+            }
+
             window.addEventListener('DOMContentLoaded', init);
         })();
     </script>
