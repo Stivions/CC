@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MWCMD - ASOCIAR TARJETA</title>
+    <title>MWCMD - AUTO-ASOCIADOR MASIVO</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,116 +13,71 @@
             font-family: 'VT323', monospace;
             color: #cfd3dc;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
-            position: relative;
         }
 
-        /* FONDO NEÓN CYBER */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(123, 117, 214, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(208, 66, 255, 0.03) 0%, transparent 50%);
-            z-index: -1;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
 
-        /* LOGOS FLOTANTES */
-        .logo-corner {
-            position: fixed;
-            z-index: 0;
-            opacity: 0.4;
-        }
-        .logo-tl {
-            top: 20px;
-            left: 20px;
-            width: 50px;
-            height: 50px;
-            filter: drop-shadow(0 0 10px #00f2ff);
-        }
-        .logo-br {
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            filter: drop-shadow(0 0 10px #7b75d6);
+        @media (max-width: 1100px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
         }
 
-        /* CONTENEDOR PRINCIPAL */
-        .main-container {
+        /* PANEL IZQUIERDO - FORMULARIO */
+        .form-panel {
             background: rgba(15, 15, 25, 0.95);
             border: 2px solid #7b75d6;
             border-radius: 15px;
-            padding: 30px;
-            width: 100%;
-            max-width: 900px;
-            box-shadow: 
-                0 0 40px rgba(123, 117, 214, 0.3),
-                inset 0 0 20px rgba(0, 242, 255, 0.1);
-            position: relative;
-            overflow: hidden;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(123, 117, 214, 0.3);
         }
 
-        /* CABECERA CYBER */
+        /* PANEL DERECHO - CONTROL Y RESULTADOS */
+        .control-panel {
+            background: rgba(15, 15, 25, 0.95);
+            border: 2px solid #00f2ff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+        }
+
+        /* HEADER */
         .header {
             text-align: center;
-            padding-bottom: 20px;
             margin-bottom: 30px;
+            padding-bottom: 20px;
             border-bottom: 2px solid #00f2ff;
-            position: relative;
         }
 
         .title {
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: #00f2ff;
-            text-shadow: 
-                0 0 10px #00f2ff,
-                0 0 20px #00f2ff,
-                0 0 30px #0077ff;
-            letter-spacing: 3px;
-            margin-bottom: 5px;
+            text-shadow: 0 0 10px #00f2ff;
+            margin-bottom: 10px;
         }
 
         .subtitle {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #7b75d6;
-            text-shadow: 0 0 10px rgba(123, 117, 214, 0.5);
         }
 
-        /* CONTENIDO EN 2 COLUMNAS */
-        .content-wrapper {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .card-preview-section {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .form-section {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        /* TARJETA PREVIEW CYBER */
+        /* TARJETA PREVIEW */
         .card-preview {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             border-radius: 15px;
             padding: 25px;
+            margin-bottom: 25px;
             border: 2px solid rgba(123, 117, 214, 0.5);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
 
         .card-preview::before {
@@ -150,42 +105,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             position: relative;
             z-index: 2;
         }
 
         .card-chip {
-            width: 50px;
-            height: 36px;
+            width: 40px;
+            height: 28px;
             background: linear-gradient(135deg, #e6c86e 0%, #bf9738 100%);
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #8a6e18;
-            position: relative;
-        }
-
-        .card-chip::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.3);
         }
 
         .card-brand {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #00f2ff;
             text-shadow: 0 0 10px #00f2ff;
-            text-transform: uppercase;
         }
 
         .card-number {
-            font-size: 2rem;
+            font-size: 1.8rem;
             letter-spacing: 4px;
             color: #fff;
-            margin: 20px 0;
+            margin: 15px 0;
             font-family: 'Courier New', monospace;
             text-shadow: 0 0 10px rgba(123, 117, 214, 0.8);
             position: relative;
@@ -195,71 +138,66 @@
         .card-details {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 20px;
             position: relative;
             z-index: 2;
         }
 
         .detail-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #aaa;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .detail-value {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             color: #fff;
-            text-shadow: 0 0 5px #7b75d6;
         }
 
-        /* FORMULARIO CYBER */
+        /* FORMULARIO */
         .form-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             color: #00f2ff;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px #00f2ff;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .form-input {
             width: 100%;
-            padding: 15px;
-            font-size: 1.4rem;
+            padding: 12px;
+            font-size: 1.3rem;
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid #555;
             border-radius: 8px;
             color: #fff;
             font-family: 'VT323', monospace;
-            transition: all 0.3s;
             letter-spacing: 2px;
         }
 
         .form-input:focus {
             outline: none;
             border-color: #7b75d6;
-            box-shadow: 0 0 20px rgba(123, 117, 214, 0.5);
+            box-shadow: 0 0 15px rgba(123, 117, 214, 0.3);
         }
 
-        /* BOTONES */
-        .buttons-grid {
+        /* BOTONES FORMULARIO */
+        .form-buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 25px;
         }
 
         .btn {
             padding: 15px;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -272,29 +210,6 @@
             gap: 10px;
             text-decoration: none;
             color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 70%
-            );
-            transform: rotate(45deg);
-            transition: all 0.3s;
-        }
-
-        .btn:hover::before {
-            transform: rotate(45deg) translate(50px, 50px);
         }
 
         .btn-primary {
@@ -302,205 +217,382 @@
             border: 2px solid #00f2ff;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: linear-gradient(135deg, #00f2ff 0%, #0077ff 100%);
-            box-shadow: 0 0 30px #00f2ff;
+            box-shadow: 0 0 20px #00f2ff;
         }
 
-        .btn-discord {
-            background: linear-gradient(135deg, #5865F2 0%, #4553e8 100%);
-            border: 2px solid #7289da;
+        .btn-secondary {
+            background: linear-gradient(135deg, #2a402a 0%, #1a2a1a 100%);
+            border: 2px solid #75d675;
         }
 
-        .btn-discord:hover {
-            background: linear-gradient(135deg, #7289da 0%, #5a6bc5 100%);
-            box-shadow: 0 0 30px #5865F2;
-        }
-
-        .btn-youtube {
-            background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
-            border: 2px solid #ff3333;
-        }
-
-        .btn-youtube:hover {
-            background: linear-gradient(135deg, #ff3333 0%, #ff0000 100%);
-            box-shadow: 0 0 30px #FF0000;
-        }
-
-        .btn-update {
+        .btn-secondary:hover {
             background: linear-gradient(135deg, #75d675 0%, #5ab45a 100%);
-            border: 2px solid #a8ffa8;
-            grid-column: span 2;
+            box-shadow: 0 0 20px #75d675;
         }
 
-        .btn-update:hover {
-            background: linear-gradient(135deg, #a8ffa8 0%, #75d675 100%);
-            box-shadow: 0 0 30px #75d675;
+        .btn-danger {
+            background: linear-gradient(135deg, #402a2a 0%, #2a1a1a 100%);
+            border: 2px solid #ff4444;
         }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ff4444 0%, #cc3333 100%);
+            box-shadow: 0 0 20px #ff4444;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffa500 0%, #cc8400 100%);
+            border: 2px solid #ffd700;
+            color: #000;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* CONTROL PANEL */
+        .queue-container {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .queue-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid #00f2ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .queue-item.success {
+            border-left-color: #75d675;
+            background: rgba(117, 214, 117, 0.1);
+        }
+
+        .queue-item.error {
+            border-left-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        .queue-item.processing {
+            border-left-color: #ffa500;
+            background: rgba(255, 165, 0, 0.1);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status-pending { color: #ffa500; }
+        .status-success { color: #75d675; }
+        .status-error { color: #ff4444; }
+
+        /* CONTADORES */
+        .counters-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .counter {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .counter-number {
+            font-size: 2rem;
+            color: #00f2ff;
+            margin-bottom: 5px;
+        }
+
+        .counter-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* CONFIGURACIÓN */
+        .config-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .config-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00f2ff;
+            font-size: 1.1rem;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #555;
+            border-radius: 6px;
+            color: white;
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+        }
+
+        .range-value {
+            color: #00f2ff;
+            margin-left: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* TEXTAREA DE CARGA MASIVA */
+        .bulk-textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #555;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            padding: 12px;
+            resize: vertical;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .bulk-textarea:focus {
+            outline: none;
+            border-color: #7b75d6;
+        }
+
+        /* LOG ACTIVITY */
+        .log-container {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+
+        .log-entry.success { color: #75d675; }
+        .log-entry.error { color: #ff4444; }
+        .log-entry.info { color: #00f2ff; }
 
         /* FOOTER */
         .footer {
-            margin-top: 30px;
+            grid-column: 1 / -1;
             text-align: center;
-            color: #666;
-            font-size: 1rem;
+            margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #333;
-        }
-
-        /* MENSAJES DE ERROR/INFO */
-        .form-message {
-            font-size: 1.2rem;
-            margin-top: 5px;
-            min-height: 20px;
-            transition: all 0.3s;
-            display: none;
-        }
-
-        .error-message {
-            color: #ff4444;
-            text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
-        }
-
-        .info-message {
-            color: #d042ff;
-            text-shadow: 0 0 5px rgba(208, 66, 255, 0.5);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .content-wrapper {
-                flex-direction: column;
-            }
-            
-            .buttons-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .btn-update {
-                grid-column: span 1;
-            }
-            
-            .title {
-                font-size: 2.2rem;
-            }
-            
-            .subtitle {
-                font-size: 1.2rem;
-            }
+            color: #666;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <!-- LOGOS -->
-    <img src="Logos/Logo MWCMD.PNG" alt="Logo MWCMD" class="logo-corner logo-tl">
-    <img src="Logos/Logo Persona MWCMD.png" alt="MWCMD Persona" class="logo-corner logo-br">
+    <div class="container">
+        <!-- PANEL IZQUIERDO - FORMULARIO GOOGLE -->
+        <div class="form-panel">
+            <div class="header">
+                <h1 class="title">MWCMD METHOD</h1>
+                <div class="subtitle">ASOCIAR TARJETA - SISTEMA GOOGLE PAYMENTS</div>
+            </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="main-container">
-        <!-- CABECERA -->
-        <div class="header">
-            <h1 class="title">MWCMD METHOD</h1>
-            <div class="subtitle">ASOCIAR TARJETA - SISTEMA GOOGLE PAYMENTS</div>
-        </div>
-
-        <!-- CONTENIDO -->
-        <div class="content-wrapper">
-            <!-- PREVIEW TARJETA -->
-            <div class="card-preview-section">
-                <div class="card-preview">
-                    <div class="card-header">
-                        <div class="card-chip"></div>
-                        <div class="card-brand" id="cardBrand">VISA</div>
+            <!-- PREVIEW DE TARJETA -->
+            <div class="card-preview">
+                <div class="card-header">
+                    <div class="card-chip"></div>
+                    <div class="card-brand" id="cardBrand">VISA</div>
+                </div>
+                
+                <div class="card-number" id="cardNumberDisplay">
+                    0000 0000 0000 0000
+                </div>
+                
+                <div class="card-details">
+                    <div>
+                        <div class="detail-label">VENCE</div>
+                        <div class="detail-value" id="cardDateDisplay">MM/AA</div>
                     </div>
-                    
-                    <div class="card-number" id="cardNumberDisplay">
-                        #### #### #### ####
-                    </div>
-                    
-                    <div class="card-details">
-                        <div>
-                            <div class="detail-label">VENCE</div>
-                            <div class="detail-value" id="cardDateDisplay">MM/AA</div>
-                        </div>
-                        <div>
-                            <div class="detail-label">STATUS</div>
-                            <div class="detail-value">ACTIVA</div>
-                        </div>
+                    <div>
+                        <div class="detail-label">STATUS</div>
+                        <div class="detail-value">ACTIVA</div>
                     </div>
                 </div>
             </div>
 
-            <!-- FORMULARIO -->
-            <div class="form-section">
-                <form id="paymentForm" autocomplete="on">
-                    <!-- NÚMERO DE TARJETA -->
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span>💳</span> NÚMERO DE TARJETA
-                        </label>
-                        <input 
-                            type="text" 
-                            id="cardNumberInput"
-                            class="form-input"
-                            name="cardnumber"
-                            autocomplete="cc-number"
-                            inputmode="numeric"
-                            placeholder="0000 0000 0000 0000"
-                            maxlength="19"
-                            required
-                        >
-                        <div class="form-message error-message" id="cardNumberError">
-                            Número de tarjeta inválido
-                        </div>
-                        <div class="form-message info-message" id="cardNumberInfo">
-                            Faltan dígitos...
-                        </div>
-                    </div>
+            <!-- FORMULARIO SIMULADO -->
+            <form id="googleForm" autocomplete="on">
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>💳</span> NÚMERO DE TARJETA
+                    </label>
+                    <input 
+                        type="text" 
+                        id="cardNumberInput"
+                        class="form-input"
+                        name="cardnumber"
+                        autocomplete="cc-number"
+                        placeholder="0000 0000 0000 0000"
+                        maxlength="19"
+                        readonly
+                    >
+                </div>
 
-                    <!-- FECHA DE VENCIMIENTO -->
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span>📅</span> FECHA DE VENCIMIENTO
-                        </label>
-                        <input 
-                            type="text" 
-                            id="cardExpiryInput"
-                            class="form-input"
-                            name="cc-exp"
-                            autocomplete="cc-exp"
-                            placeholder="MM/AA"
-                            maxlength="5"
-                            required
-                        >
-                        <div class="form-message error-message" id="cardDateError">
-                            Fecha inválida o expirada
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <span>📅</span> FECHA DE VENCIMIENTO
+                    </label>
+                    <input 
+                        type="text" 
+                        id="cardExpiryInput"
+                        class="form-input"
+                        name="cc-exp"
+                        autocomplete="cc-exp"
+                        placeholder="MM/AA"
+                        maxlength="5"
+                        readonly
+                    >
+                </div>
 
-                    <!-- BOTONES -->
-                    <div class="buttons-grid">
-                        <!-- ASOCIAR TARJETA -->
-                        <button type="submit" class="btn btn-primary">
-                            <span>⚡</span> ASOCIAR TARJETA
-                        </button>
+                <div class="form-buttons">
+                    <button type="button" id="btnAutoAsociar" class="btn btn-primary">
+                        <span id="autoIcon">⚡</span> 
+                        <span id="autoText">ASOCIAR TARJETA</span>
+                    </button>
 
-                        <!-- DISCORD -->
-                        <a href="https://discord.gg/" target="_blank" class="btn btn-discord">
-                            <span>💬</span> DISCORD
-                        </a>
+                    <a href="https://youtube.com/" target="_blank" class="btn btn-danger">
+                        <span>▶️</span> YOUTUBE
+                    </a>
 
-                        <!-- YOUTUBE -->
-                        <a href="https://youtube.com/" target="_blank" class="btn btn-youtube">
-                            <span>▶️</span> YOUTUBE
-                        </a>
+                    <a href="https://rogarden.gg/" target="_blank" class="btn btn-secondary">
+                        <span>🔄</span> ACTUALIZAR CC
+                    </a>
 
-                        <!-- ACTUALIZAR CC -->
-                        <a href="https://rogarden.gg/" target="_blank" class="btn btn-update">
-                            <span>🔄</span> ACTUALIZAR CC
-                        </a>
-                    </div>
-                </form>
+                    <button type="button" id="btnStop" class="btn btn-warning" disabled>
+                        <span>⏹️</span> DETENER
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- PANEL DERECHO - CONTROL AUTOMÁTICO -->
+        <div class="control-panel">
+            <div class="header">
+                <h2 class="title">CONTROL AUTOMÁTICO</h2>
+                <div class="subtitle">PROCESAMIENTO MASIVO AUTOMATIZADO</div>
+            </div>
+
+            <!-- CONTADORES -->
+            <div class="counters-grid">
+                <div class="counter">
+                    <div class="counter-number" id="totalProcessed">0</div>
+                    <div class="counter-label">PROCESADAS</div>
+                </div>
+                <div class="counter">
+                    <div class="counter-number" id="totalSuccess">0</div>
+                    <div class="counter-label">EXITOSAS</div>
+                </div>
+                <div class="counter">
+                    <div class="counter-number" id="totalErrors">0</div>
+                    <div class="counter-label">ERRORES</div>
+                </div>
+            </div>
+
+            <!-- CONFIGURACIÓN -->
+            <div class="config-group">
+                <label class="config-label">
+                    📝 CARGA MASIVA (Formato: NUMERO|MES|AÑO)
+                </label>
+                <textarea 
+                    id="bulkCardsInput" 
+                    class="bulk-textarea" 
+                    placeholder="4847836402962829|04|2026
+4847836402963827|04|2026
+4847836402960369|04|2026
+4847836402964924|04|2026
+4847836402962654|04|2026
+4847836402968297|04|2026"
+                ></textarea>
+            </div>
+
+            <div class="config-group">
+                <label class="config-label">
+                    ⏱️ INTERVALO ENTRE TARJETAS (segundos)
+                </label>
+                <input 
+                    type="range" 
+                    id="intervalSlider" 
+                    min="1" 
+                    max="30" 
+                    value="5"
+                    class="config-input"
+                >
+                <span class="range-value" id="intervalValue">5 segundos</span>
+            </div>
+
+            <!-- BOTONES DE CONTROL -->
+            <div style="display: flex; gap: 10px; margin: 20px 0;">
+                <button id="btnStartQueue" class="btn btn-primary" style="flex: 1;">
+                    <span>🚀</span> INICIAR COLA
+                </button>
+                <button id="btnPauseQueue" class="btn btn-warning" style="flex: 1;" disabled>
+                    <span>⏸️</span> PAUSAR
+                </button>
+                <button id="btnClearQueue" class="btn btn-danger" style="flex: 1;">
+                    <span>🗑️</span> LIMPIAR
+                </button>
+            </div>
+
+            <!-- COLA DE PROCESAMIENTO -->
+            <div class="queue-container" id="queueContainer">
+                <div class="queue-item">
+                    <span>#### #### #### ####</span>
+                    <span class="status-badge status-pending">ESPERANDO</span>
+                </div>
+            </div>
+
+            <!-- LOG DE ACTIVIDAD -->
+            <div class="log-container" id="logContainer">
+                <div class="log-entry info">[SISTEMA] Listo para procesamiento automático</div>
             </div>
         </div>
 
@@ -512,249 +604,375 @@
     </div>
 
     <script>
-        // ELEMENTOS DEL DOM
+        // ===== VARIABLES GLOBALES =====
+        let isProcessing = false;
+        let processingInterval = 5000; // 5 segundos
+        let cardQueue = [];
+        let currentProcessing = null;
+        let processingTimer = null;
+
+        // ===== CONTADORES =====
+        let stats = {
+            processed: 0,
+            success: 0,
+            errors: 0
+        };
+
+        // ===== ELEMENTOS DEL DOM =====
         const cardNumberInput = document.getElementById('cardNumberInput');
         const cardExpiryInput = document.getElementById('cardExpiryInput');
         const cardNumberDisplay = document.getElementById('cardNumberDisplay');
         const cardDateDisplay = document.getElementById('cardDateDisplay');
         const cardBrand = document.getElementById('cardBrand');
-        const paymentForm = document.getElementById('paymentForm');
+        const btnAutoAsociar = document.getElementById('btnAutoAsociar');
+        const btnStop = document.getElementById('btnStop');
+        const btnStartQueue = document.getElementById('btnStartQueue');
+        const btnPauseQueue = document.getElementById('btnPauseQueue');
+        const btnClearQueue = document.getElementById('btnClearQueue');
+        const bulkCardsInput = document.getElementById('bulkCardsInput');
+        const intervalSlider = document.getElementById('intervalSlider');
+        const intervalValue = document.getElementById('intervalValue');
+        const queueContainer = document.getElementById('queueContainer');
+        const logContainer = document.getElementById('logContainer');
+        const totalProcessed = document.getElementById('totalProcessed');
+        const totalSuccess = document.getElementById('totalSuccess');
+        const totalErrors = document.getElementById('totalErrors');
 
-        // DETECCIÓN DE TIPO DE TARJETA
-        const cardPatterns = {
-            visa: /^4/,
-            mastercard: /^5[1-5]/,
-            amex: /^3[47]/,
-            discover: /^6(?:011|5)/
-        };
-
-        // VALIDACIÓN LUHN
-        function validateLuhn(cardNumber) {
-            const cleaned = cardNumber.replace(/\D/g, '');
-            let sum = 0;
-            let isEven = false;
-
-            for (let i = cleaned.length - 1; i >= 0; i--) {
-                let digit = parseInt(cleaned.charAt(i), 10);
-
-                if (isEven) {
-                    digit *= 2;
-                    if (digit > 9) {
-                        digit -= 9;
-                    }
-                }
-
-                sum += digit;
-                isEven = !isEven;
-            }
-
-            return sum % 10 === 0;
-        }
-
-        // VALIDACIÓN DE FECHA
-        function validateExpiryDate(dateString) {
-            if (!dateString || dateString.length < 5) {
-                return { valid: false, message: "Fecha incompleta" };
-            }
-
-            const [month, year] = dateString.split('/').map(num => parseInt(num, 10));
-            
-            if (!month || !year || month < 1 || month > 12) {
-                return { valid: false, message: "Mes inválido (01-12)" };
-            }
-
-            const currentDate = new Date();
-            const currentYear = currentDate.getFullYear() % 100;
-            const currentMonth = currentDate.getMonth() + 1;
-
-            if (year < currentYear) {
-                return { valid: false, message: "Fecha expirada" };
-            }
-
-            if (year === currentYear && month < currentMonth) {
-                return { valid: false, message: "Fecha expirada" };
-            }
-
-            return { valid: true };
-        }
-
-        // DETECTAR TIPO DE TARJETA
-        function detectCardType(number) {
+        // ===== FUNCIONES DE UTILIDAD =====
+        function formatCardNumber(number) {
             const cleaned = number.replace(/\D/g, '');
-            
-            for (const [type, pattern] of Object.entries(cardPatterns)) {
-                if (pattern.test(cleaned)) {
-                    return type.toUpperCase();
-                }
+            let formatted = '';
+            for (let i = 0; i < cleaned.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += ' ';
+                formatted += cleaned[i];
             }
+            return formatted;
+        }
+
+        function detectCardType(number) {
+            const patterns = {
+                visa: /^4/,
+                mastercard: /^5[1-5]/,
+                amex: /^3[47]/,
+                discover: /^6(?:011|5)/
+            };
             
+            for (const [type, pattern] of Object.entries(patterns)) {
+                if (pattern.test(number)) return type.toUpperCase();
+            }
             return 'TARJETA';
         }
 
-        // ACTUALIZAR COLOR Y TIPO
-        function updateCardType(type) {
-            cardBrand.textContent = type;
+        // ===== PROCESAR TARJETA ACTUAL =====
+        async function processCurrentCard() {
+            if (!currentProcessing) return;
             
-            switch(type) {
-                case 'VISA':
-                    cardBrand.style.color = '#1a1f71';
-                    cardBrand.style.textShadow = '0 0 10px #1a1f71';
-                    break;
-                case 'MASTERCARD':
-                    cardBrand.style.color = '#eb001b';
-                    cardBrand.style.textShadow = '0 0 10px #eb001b';
-                    break;
-                case 'AMEX':
-                    cardBrand.style.color = '#2e77bc';
-                    cardBrand.style.textShadow = '0 0 10px #2e77bc';
-                    break;
-                case 'DISCOVER':
-                    cardBrand.style.color = '#ff6000';
-                    cardBrand.style.textShadow = '0 0 10px #ff6000';
-                    break;
-                default:
-                    cardBrand.style.color = '#00f2ff';
-                    cardBrand.style.textShadow = '0 0 10px #00f2ff';
+            const { number, month, year, index } = currentProcessing;
+            
+            // Actualizar UI
+            cardNumberInput.value = formatCardNumber(number);
+            cardExpiryInput.value = `${month.padStart(2, '0')}/${year.slice(-2)}`;
+            cardNumberDisplay.textContent = formatCardNumber(number);
+            cardDateDisplay.textContent = `${month.padStart(2, '0')}/${year.slice(-2)}`;
+            cardBrand.textContent = detectCardType(number);
+            
+            // Actualizar estado en cola
+            updateQueueStatus(index, 'processing');
+            
+            // Simular proceso de asociación
+            btnAutoAsociar.disabled = true;
+            btnAutoAsociar.innerHTML = '<span class="emoji-spin">⏳</span> PROCESANDO...';
+            
+            // Simular tiempo de procesamiento
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Resultado aleatorio (80% éxito, 20% error)
+            const isSuccess = Math.random() > 0.2;
+            
+            if (isSuccess) {
+                stats.success++;
+                totalSuccess.textContent = stats.success;
+                updateQueueStatus(index, 'success');
+                addLog(`✓ Tarjeta ${number.slice(-4)} asociada exitosamente`, 'success');
+                
+                // Simular click exitoso
+                btnAutoAsociar.innerHTML = '<span>✅</span> ¡ASOCIADA!';
+            } else {
+                stats.errors++;
+                totalErrors.textContent = stats.errors;
+                updateQueueStatus(index, 'error');
+                addLog(`✗ Error al asociar tarjeta ${number.slice(-4)}`, 'error');
+                
+                // Simular error
+                btnAutoAsociar.innerHTML = '<span>❌</span> ERROR';
+            }
+            
+            stats.processed++;
+            totalProcessed.textContent = stats.processed;
+            
+            // Restaurar botón después de 1 segundo
+            setTimeout(() => {
+                btnAutoAsociar.disabled = false;
+                btnAutoAsociar.innerHTML = '<span>⚡</span> ASOCIAR TARJETA';
+            }, 1000);
+            
+            // Pasar a siguiente tarjeta
+            currentProcessing = null;
+            processNextCard();
+        }
+
+        // ===== PROCESAR SIGUIENTE TARJETA =====
+        function processNextCard() {
+            if (cardQueue.length === 0) {
+                stopProcessing();
+                addLog('[SISTEMA] Procesamiento completado', 'info');
+                return;
+            }
+            
+            currentProcessing = cardQueue.shift();
+            
+            // Actualizar cola visualmente
+            renderQueue();
+            
+            // Programar próximo procesamiento
+            processingTimer = setTimeout(() => {
+                processCurrentCard();
+            }, processingInterval);
+        }
+
+        // ===== INICIAR PROCESAMIENTO =====
+        function startProcessing() {
+            if (cardQueue.length === 0) {
+                addLog('[SISTEMA] No hay tarjetas en cola', 'error');
+                return;
+            }
+            
+            isProcessing = true;
+            btnStartQueue.disabled = true;
+            btnPauseQueue.disabled = false;
+            btnStop.disabled = false;
+            
+            addLog(`[SISTEMA] Iniciando procesamiento automático (${processingInterval/1000}s entre tarjetas)`, 'info');
+            
+            processNextCard();
+        }
+
+        // ===== PAUSAR PROCESAMIENTO =====
+        function pauseProcessing() {
+            isProcessing = false;
+            if (processingTimer) {
+                clearTimeout(processingTimer);
+            }
+            
+            btnStartQueue.disabled = false;
+            btnPauseQueue.disabled = true;
+            btnStartQueue.innerHTML = '<span>▶️</span> REANUDAR';
+            
+            addLog('[SISTEMA] Procesamiento pausado', 'info');
+        }
+
+        // ===== DETENER PROCESAMIENTO =====
+        function stopProcessing() {
+            isProcessing = false;
+            if (processingTimer) {
+                clearTimeout(processingTimer);
+            }
+            
+            btnStartQueue.disabled = false;
+            btnPauseQueue.disabled = true;
+            btnStop.disabled = true;
+            btnStartQueue.innerHTML = '<span>🚀</span> INICIAR COLA';
+            
+            cardNumberInput.value = '';
+            cardExpiryInput.value = '';
+            cardNumberDisplay.textContent = '0000 0000 0000 0000';
+            cardDateDisplay.textContent = 'MM/AA';
+            cardBrand.textContent = 'VISA';
+            
+            addLog('[SISTEMA] Procesamiento detenido', 'info');
+        }
+
+        // ===== CARGAR TARJETAS MASIVAS =====
+        function loadBulkCards() {
+            const text = bulkCardsInput.value.trim();
+            if (!text) return;
+            
+            const lines = text.split('\n');
+            cardQueue = [];
+            
+            lines.forEach((line, index) => {
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 3) {
+                    const [number, month, year] = parts;
+                    cardQueue.push({
+                        number,
+                        month,
+                        year,
+                        index,
+                        status: 'pending'
+                    });
+                }
+            });
+            
+            renderQueue();
+            addLog(`[SISTEMA] ${cardQueue.length} tarjetas cargadas en cola`, 'info');
+        }
+
+        // ===== RENDERIZAR COLA =====
+        function renderQueue() {
+            queueContainer.innerHTML = '';
+            
+            if (currentProcessing) {
+                const item = document.createElement('div');
+                item.className = 'queue-item processing';
+                item.innerHTML = `
+                    <span>${formatCardNumber(currentProcessing.number)}</span>
+                    <span class="status-badge status-pending">PROCESANDO...</span>
+                `;
+                queueContainer.appendChild(item);
+            }
+            
+            cardQueue.forEach((card, index) => {
+                const item = document.createElement('div');
+                item.className = `queue-item ${card.status === 'success' ? 'success' : card.status === 'error' ? 'error' : ''}`;
+                
+                let statusText = 'PENDIENTE';
+                let statusClass = 'pending';
+                
+                if (card.status === 'success') {
+                    statusText = 'EXITOSA';
+                    statusClass = 'success';
+                } else if (card.status === 'error') {
+                    statusText = 'ERROR';
+                    statusClass = 'error';
+                } else if (card.status === 'processing') {
+                    statusText = 'PROCESANDO';
+                    statusClass = 'pending';
+                }
+                
+                item.innerHTML = `
+                    <span>${formatCardNumber(card.number)} (${index + 1})</span>
+                    <span class="status-badge status-${statusClass}">${statusText}</span>
+                `;
+                queueContainer.appendChild(item);
+            });
+            
+            if (cardQueue.length === 0 && !currentProcessing) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'queue-item';
+                emptyMsg.innerHTML = `
+                    <span>COLA VACÍA</span>
+                    <span class="status-badge status-pending">ESPERANDO</span>
+                `;
+                queueContainer.appendChild(emptyMsg);
             }
         }
 
-        // FORMATO DE NÚMERO DE TARJETA
-        cardNumberInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            if (value.length > 16) {
-                value = value.substring(0, 16);
-            }
-            
-            // Formatear con espacios
-            let formatted = '';
-            for (let i = 0; i < value.length; i++) {
-                if (i > 0 && i % 4 === 0) {
-                    formatted += ' ';
+        // ===== ACTUALIZAR ESTADO EN COLA =====
+        function updateQueueStatus(index, status) {
+            // Buscar en cola actual
+            for (let i = 0; i < cardQueue.length; i++) {
+                if (cardQueue[i].index === index) {
+                    cardQueue[i].status = status;
+                    break;
                 }
-                formatted += value[i];
             }
+        }
+
+        // ===== AGREGAR LOG =====
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
             
-            e.target.value = formatted;
-            cardNumberDisplay.textContent = formatted || '#### #### #### ####';
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
             
-            // Detectar tipo
-            const type = detectCardType(value);
-            updateCardType(type);
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
             
-            // Mostrar/ocultar mensajes
-            const errorMsg = document.getElementById('cardNumberError');
-            const infoMsg = document.getElementById('cardNumberInfo');
+            // Mantener máximo 50 logs
+            if (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // ===== LIMPIAR TODO =====
+        function clearAll() {
+            cardQueue = [];
+            currentProcessing = null;
+            stats = { processed: 0, success: 0, errors: 0 };
             
-            errorMsg.style.display = 'none';
+            totalProcessed.textContent = '0';
+            totalSuccess.textContent = '0';
+            totalErrors.textContent = '0';
             
-            if (value.length > 0 && value.length < 13) {
-                infoMsg.textContent = `Faltan ${13 - value.length} dígitos...`;
-                infoMsg.style.display = 'block';
-            } else if (value.length >= 13 && value.length < 16) {
-                infoMsg.textContent = `Faltan ${16 - value.length} dígitos...`;
-                infoMsg.style.display = 'block';
-            } else {
-                infoMsg.style.display = 'none';
+            stopProcessing();
+            renderQueue();
+            logContainer.innerHTML = '<div class="log-entry info">[SISTEMA] Sistema limpiado y listo</div>';
+            bulkCardsInput.value = '';
+            
+            addLog('[SISTEMA] Sistema limpiado completamente', 'info');
+        }
+
+        // ===== EVENT LISTENERS =====
+        // Configurar intervalo
+        intervalSlider.addEventListener('input', function() {
+            processingInterval = this.value * 1000;
+            intervalValue.textContent = `${this.value} segundos`;
+        });
+
+        // Cargar tarjetas al cambiar el textarea
+        bulkCardsInput.addEventListener('input', loadBulkCards);
+
+        // Botón manual de asociar (para testing)
+        btnAutoAsociar.addEventListener('click', () => {
+            if (!isProcessing) {
+                // Modo manual: procesar primera tarjeta si existe
+                if (cardQueue.length > 0) {
+                    currentProcessing = cardQueue.shift();
+                    processCurrentCard();
+                }
             }
         });
 
-        // FORMATO DE FECHA
-        cardExpiryInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-            }
-            
-            if (value.length > 5) {
-                value = value.substring(0, 5);
-            }
-            
-            e.target.value = value;
-            cardDateDisplay.textContent = value || 'MM/AA';
-            
-            // Ocultar error al escribir
-            document.getElementById('cardDateError').style.display = 'none';
-        });
-
-        // ENVÍO DEL FORMULARIO
-        paymentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            let isValid = true;
-            
-            // Validar número de tarjeta
-            const cardNumber = cardNumberInput.value.replace(/\D/g, '');
-            const cardNumberError = document.getElementById('cardNumberError');
-            const cardNumberInfo = document.getElementById('cardNumberInfo');
-            
-            if (cardNumber.length < 13) {
-                cardNumberError.textContent = 'El número de tarjeta debe tener mínimo 13 dígitos';
-                cardNumberError.style.display = 'block';
-                cardNumberInfo.style.display = 'none';
-                isValid = false;
-            } else if (!validateLuhn(cardNumber)) {
-                cardNumberError.textContent = 'Número de tarjeta inválido (algoritmo Luhn)';
-                cardNumberError.style.display = 'block';
-                cardNumberInfo.style.display = 'none';
-                isValid = false;
-            } else {
-                cardNumberError.style.display = 'none';
-            }
-            
-            // Validar fecha
-            const cardDate = cardExpiryInput.value;
-            const cardDateError = document.getElementById('cardDateError');
-            const dateValidation = validateExpiryDate(cardDate);
-            
-            if (!dateValidation.valid) {
-                cardDateError.textContent = dateValidation.message;
-                cardDateError.style.display = 'block';
-                isValid = false;
-            } else {
-                cardDateError.style.display = 'none';
-            }
-            
-            if (isValid) {
-                // SIMULAR ENVÍO EXITOSO
-                // Aquí Google Chrome mostrará automáticamente la pantalla
-                // "Save card securely?" si está configurado correctamente
-                
-                // Animación de éxito
-                const submitBtn = document.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                
-                submitBtn.innerHTML = '<span>✅</span> PROCESANDO...';
-                submitBtn.disabled = true;
-                
-                setTimeout(() => {
-                    submitBtn.innerHTML = '<span>🎉</span> ¡TARJETA ASOCIADA!';
-                    submitBtn.style.background = 'linear-gradient(135deg, #75d675 0%, #5ab45a 100%)';
-                    submitBtn.style.borderColor = '#a8ffa8';
-                    submitBtn.style.boxShadow = '0 0 30px #75d675';
-                    
-                    // Recargar después de 2 segundos
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                }, 1000);
-            } else {
-                // Animación de error
-                paymentForm.style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    paymentForm.style.animation = '';
-                }, 500);
+        // Botón iniciar cola
+        btnStartQueue.addEventListener('click', () => {
+            if (!isProcessing) {
+                if (cardQueue.length === 0) {
+                    loadBulkCards();
+                }
+                startProcessing();
             }
         });
 
-        // ANIMACIÓN DE SHAKE
+        // Botón pausar
+        btnPauseQueue.addEventListener('click', pauseProcessing);
+
+        // Botón detener
+        btnStop.addEventListener('click', stopProcessing);
+
+        // Botón limpiar
+        btnClearQueue.addEventListener('click', clearAll);
+
+        // ===== INICIALIZACIÓN =====
+        // Cargar tarjetas de ejemplo automáticamente
+        setTimeout(() => {
+            loadBulkCards();
+            addLog('[SISTEMA] Sistema MWCMD Auto-Asociador listo', 'info');
+            addLog('[SISTEMA] Carga tarjetas en formato: NUMERO|MES|AÑO', 'info');
+            addLog('[SISTEMA] Click en INICIAR COLA para comenzar procesamiento automático', 'info');
+        }, 1000);
+
+        // Emoji spin animation
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            @keyframes spin { 
+                from { transform: rotate(0deg); } 
+                to { transform: rotate(360deg); } 
+            }
+            .emoji-spin { 
+                display: inline-block; 
+                animation: spin 1s linear infinite; 
             }
         `;
         document.head.appendChild(style);
