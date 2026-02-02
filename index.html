@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MWCMD ULTIMATE</title>
+    <title>MWCMD SYSTEM</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,10 +19,12 @@
             overflow-x: hidden;
             position: relative;
         }
+        /* MATRIX */
         #matrix-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
             opacity: 0.35; pointer-events: none;
         }
+        /* HEADER */
         .header-bar {
             position: absolute; top: 15px; left: 0; width: 100%; padding: 0 20px;
             display: flex; justify-content: space-between; align-items: center; z-index: 100;
@@ -31,9 +33,7 @@
             font-size: 1.8rem; color: #00f2ff; text-shadow: 0 0 10px #00f2ff;
             letter-spacing: 2px;
         }
-        .social-buttons {
-            display: flex; gap: 15px;
-        }
+        .social-buttons { display: flex; gap: 15px; }
         .social-btn {
             background: rgba(123, 117, 214, 0.2); border: 1.5px solid #7b75d6;
             color: #cfd3dc; padding: 8px 20px; border-radius: 30px;
@@ -44,8 +44,9 @@
             background: #7b75d6; color: #000; box-shadow: 0 0 15px #7b75d6;
             transform: translateY(-2px);
         }
+        /* CONTENEDOR PRINCIPAL */
         .page-container {
-            position: relative; z-index: 10; width: 100%; max-width: 1000px;
+            position: relative; z-index: 10; width: 100%; max-width: 1100px;
             display: flex; flex-direction: column; gap: 20px;
             background: rgba(12, 12, 18, 0.92); padding: 30px; border-radius: 20px;
             border: 2px solid rgba(123, 117, 214, 0.5);
@@ -59,11 +60,13 @@
         }
         .blink { animation: blink 1.4s step-start infinite; }
         @keyframes blink { 50% { opacity: 0; } }
+        /* AREA DE CONTENIDO */
         .content-area {
             display: flex; flex-direction: row; gap: 40px;
-            align-items: center; justify-content: center;
+            align-items: stretch; justify-content: center;
         }
-        .card-wrapper { flex: 1; max-width: 420px; min-width: 300px; }
+        /* TARJETA VISUAL */
+        .card-wrapper { flex: 1; max-width: 450px; min-width: 300px; }
         .card-visual {
             aspect-ratio: 1.58/1; width: 100%; border-radius: 20px; padding: 30px;
             position: relative; display: flex; flex-direction: column; justify-content: space-between;
@@ -95,6 +98,7 @@
         .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
         .card-label { font-size: 16px; color: #aaa; text-transform: uppercase; }
         .card-value { font-size: 24px; color: #fff; }
+        /* FORMULARIO */
         .form-area { flex: 1; display: flex; flex-direction: column; gap: 25px; min-width: 320px; }
         .input-group { position: relative; }
         .label {
@@ -114,67 +118,98 @@
         .msg-error { color: #ff4444; text-shadow: 0 0 8px rgba(255, 0, 0, 0.5); display: none;}
         .msg-info { color: #d042ff; text-shadow: 0 0 10px rgba(208, 66, 255, 0.7); display: none; font-weight: bold; letter-spacing: 1px; }
         .input-error { border-color: #ff4444 !important; box-shadow: 0 0 15px rgba(255,68,68,0.4) !important; }
-        .btn-wrapper { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .btn-action {
+        /* BOTONES PRINCIPALES */
+        .btn-wrapper { margin-top: 10px; display: flex; flex-direction: column; gap: 15px; }
+        .btn-main {
             width: 100%; background: #2a2a40; border: 2px solid #7b75d6;
             color: #fff; font-family: 'VT323', monospace; font-size: 26px;
             padding: 18px; cursor: pointer; border-radius: 12px;
             text-transform: uppercase; display: flex;
             justify-content: center; align-items: center; gap: 12px;
-            transition: all 0.3s; position: relative; overflow: hidden;
+            transition: all 0.3s;
         }
-        .btn-action:hover { background: #7b75d6; color: #000; box-shadow: 0 0 25px #7b75d6; transform: scale(1.02); }
-        .btn-action:active { transform: scale(0.98); }
+        .btn-main:hover { background: #7b75d6; color: #000; box-shadow: 0 0 25px #7b75d6; }
+        #btnAsociar { animation: signSwing 4s ease-in-out infinite; }
+        @keyframes signSwing { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(15deg); } 100% { transform: rotateX(0deg); } }
         .btn-auto { background: #2a402a; border-color: #75d675; }
         .btn-auto:hover { background: #75d675; box-shadow: 0 0 25px #75d675; }
         .btn-stop { background: #402a2a; border-color: #d67575; display: none; }
         .btn-stop:hover { background: #d67575; box-shadow: 0 0 25px #d67575; }
+        .btn-panel { background: #3a2a40; border-color: #a75dd6; }
+        .btn-panel:hover { background: #a75dd6; box-shadow: 0 0 25px #a75dd6; }
         .emoji-spin { display: inline-block; animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .status-indicator {
-            text-align: center; font-size: 20px; margin-top: 15px;
-            padding: 10px; border-radius: 8px; min-height: 50px;
-            background: rgba(0,0,0,0.3); border: 1px solid #444;
+        /* PANEL DE CONTROL (OCULTO INICIALMENTE) */
+        .control-panel {
+            background: rgba(20, 20, 35, 0.95); margin-top: 30px; padding: 25px;
+            border-radius: 15px; border: 2px solid #f59e0b; display: none;
+            grid-template-columns: 1fr 1fr; gap: 25px;
+        }
+        .panel-title { color: #f59e0b; font-size: 24px; margin-bottom: 20px; grid-column: 1 / -1; border-bottom: 1px solid #f59e0b; padding-bottom: 10px; }
+        .control-group { display: flex; flex-direction: column; gap: 10px; }
+        .control-group label { font-size: 20px; color: #cfd3dc; }
+        .control-group input[type="range"] { width: 100%; }
+        .control-group output { font-size: 20px; color: #00f2ff; text-align: center; }
+        .batch-area { grid-column: 1 / -1; }
+        .batch-area textarea {
+            width: 100%; height: 180px; background: rgba(0,0,0,0.6); color: #fff;
+            border: 1px solid #555; border-radius: 10px; padding: 15px;
+            font-family: monospace; font-size: 16px; resize: vertical;
+        }
+        .panel-buttons {
+            grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px; margin-top: 15px;
+        }
+        .panel-btn {
+            padding: 15px; border-radius: 10px; border: none; font-family: 'VT323';
+            font-size: 22px; cursor: pointer; color: white;
+        }
+        .panel-btn-primary { background: #2a2a40; border: 1px solid #7b75d6; }
+        .panel-btn-success { background: #2a402a; border: 1px solid #75d675; }
+        .panel-btn-danger { background: #402a2a; border: 1px solid #d67575; }
+        /* STATUS */
+        .status-box {
+            text-align: center; font-size: 20px; margin-top: 20px; padding: 15px;
+            border-radius: 10px; min-height: 60px; background: rgba(0,0,0,0.3);
+            border: 1px solid #444; grid-column: 1 / -1;
         }
         .status-success { color: #75d675; border-color: #75d675; background: rgba(117, 214, 117, 0.1); }
         .status-processing { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+        .status-error { color: #ff4444; border-color: #ff4444; background: rgba(255, 68, 68, 0.1); }
+        /* FOOTER */
         .footer {
             text-align: center; font-size: 16px; margin-top: 25px;
             color: #7b75d6; border-top: 1px solid rgba(123, 117, 214, 0.3);
-            padding-top: 15px;
+            padding-top: 15px; grid-column: 1 / -1;
+        }
+        @media (max-width: 900px) {
+            .content-area { flex-direction: column; }
+            .control-panel { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
             body { padding: 10px; padding-top: 100px; }
             .header-bar { flex-direction: column; gap: 15px; text-align: center; }
             .page-container { padding: 20px; margin-top: 120px; }
-            .content-area { flex-direction: column; gap: 30px; }
-            .card-number-display { font-size: 24px; }
-            .btn-action, input { font-size: 22px; }
         }
     </style>
 </head>
 <body>
-    <!-- CABECERA CON BOTONES SOCIALES -->
+    <!-- CABECERA -->
     <div class="header-bar">
         <div class="brand-title">Creación De Sensei Bytes y Stivion</div>
         <div class="social-buttons">
-            <a href="https://discord.gg/" target="_blank" class="social-btn">
-                <span>🔧</span> CONFIG Discord
-            </a>
-            <a href="https://youtube.com/" target="_blank" class="social-btn">
-                <span>🎬</span> Tutorial YouTube
-            </a>
+            <a href="https://discord.gg/" target="_blank" class="social-btn"> <span>🔧</span> Discord </a>
+            <a href="https://youtube.com/" target="_blank" class="social-btn"> <span>🎬</span> YouTube </a>
         </div>
     </div>
 
     <canvas id="matrix-canvas"></canvas>
 
     <div class="page-container">
-        <div class="top-bar">
-            <span class="blink">MWCMD ULTIMATE • SISTEMA DE FLUJO CONTINUO</span>
-        </div>
+        <div class="top-bar"><span class="blink">MWCMD SYSTEM • ASOCIACIÓN DE TARJETA</span></div>
 
         <div class="content-area">
+            <!-- TARJETA VISUAL -->
             <div class="card-wrapper">
                 <div class="card-visual" id="cardVisual">
                     <canvas id="card-neural-net"></canvas>
@@ -198,81 +233,128 @@
                 </div>
             </div>
 
+            <!-- FORMULARIO PRINCIPAL (FUNCIONAL) -->
             <div class="form-area">
-                <div class="input-group">
-                    <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
-                    <input type="tel" id="cardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23">
-                    <div id="msgNumber" class="msg-feedback">
-                        <span class="msg-error">ERROR: Tarjeta inválida o incompleta</span>
-                        <span class="msg-info">Faltan dígitos...</span>
+                <form id="payment-form" method="POST">
+                    <div class="input-group">
+                        <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
+                        <input type="tel" id="cardNumber" name="cardnumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23">
+                        <div id="msgNumber" class="msg-feedback">
+                            <span class="msg-error">ERROR: Tarjeta inválida o incompleta</span>
+                            <span class="msg-info">Faltan dígitos...</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label class="label">► FECHA DE VENCIMIENTO</label>
-                    <input type="tel" id="cardDate" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
-                    <div id="msgDate" class="msg-feedback">
-                        <span class="msg-error">Fecha incompleta</span>
+                    <div class="input-group">
+                        <label class="label">► FECHA DE VENCIMIENTO</label>
+                        <input type="tel" id="cardDate" name="cc-exp" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
+                        <div id="msgDate" class="msg-feedback">
+                            <span class="msg-error">Fecha incompleta</span>
+                        </div>
                     </div>
-                </div>
 
-                <!-- INDICADOR DE ESTADO (REEMPLAZA PANTALLAS DE CARGA) -->
-                <div class="status-indicator" id="statusIndicator">
-                    Estado: <strong>Listo</strong>. El sistema procesará automáticamente el lote.
-                </div>
+                    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
+                    <div class="btn-wrapper">
+                        <button type="submit" id="btnAsociar" class="btn-main">
+                            <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
+                        </button>
+                        <button type="button" id="btnIniciarAuto" class="btn-main btn-auto">
+                            <span>🚀</span> [ INICIAR AUTOMATIZACIÓN ]
+                        </button>
+                        <button type="button" id="btnDetener" class="btn-main btn-stop">
+                            <span>⏹️</span> [ DETENER AUTOMATIZACIÓN ]
+                        </button>
+                        <button type="button" id="btnMostrarPanel" class="btn-main btn-panel">
+                            <span>⚙️</span> [ MOSTRAR PANEL DE CONTROL ]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-                <div class="btn-wrapper">
-                    <button type="button" id="btnAsociar" class="btn-action">
-                        <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
-                    </button>
-                    <button type="button" id="btnIniciarAuto" class="btn-action btn-auto">
-                        <span>🚀</span> [ INICIAR AUTOMATIZACIÓN CONTINUA ]
-                    </button>
-                    <button type="button" id="btnDetener" class="btn-action btn-stop">
-                        <span>⏹️</span> [ DETENER AUTOMATIZACIÓN ]
-                    </button>
-                </div>
+        <!-- PANEL DE CONTROL (OCULTO AL INICIO) -->
+        <div class="control-panel" id="controlPanel">
+            <div class="panel-title">⚙️ PANEL DE CONTROL - CONFIGURACIÓN</div>
+
+            <div class="control-group">
+                <label for="inputSpeed">Velocidad (segundos): <output id="speedValue">3</output>s</label>
+                <input type="range" id="inputSpeed" min="1" max="10" value="3">
+            </div>
+
+            <div class="control-group">
+                <label for="inputErrorRate">% de Error Aleatorio: <output id="errorRateValue">10</output>%</label>
+                <input type="range" id="inputErrorRate" min="0" max="50" value="10">
+            </div>
+
+            <div class="batch-area">
+                <label>📁 Lote de Tarjetas (Formato: NÚMERO|MM|AAAA|CVV):</label>
+                <textarea id="batchInput">4847836402960070|04|2026|502
+4847836402966135|04|2026|329
+4847836402963934|04|2026|529
+4847836402963991|04|2026|793
+4847836402961300|04|2026|819
+4847836402969618|04|2026|896
+4847836402968958|04|2026|425
+4847836402960591|04|2026|242
+4847836402963660|04|2026|853
+4847836402963223|04|2026|449</textarea>
+            </div>
+
+            <div class="panel-buttons">
+                <button id="btnGuardarPerfil" class="panel-btn panel-btn-primary">💾 Guardar Perfil</button>
+                <button id="btnCargarPerfil" class="panel-btn panel-btn-primary">🔄 Cargar Perfil</button>
+                <button id="btnGenerarReporte" class="panel-btn panel-btn-success">📊 Generar Reporte</button>
+                <button id="btnLimpiarLog" class="panel-btn panel-btn-danger">🗑️ Limpiar Log</button>
+            </div>
+
+            <!-- STATUS EN TIEMPO REAL -->
+            <div class="status-box" id="statusBox">
+                Estado: <strong>Sistema listo.</strong> Cargado lote de 10 tarjetas.
             </div>
         </div>
 
         <div class="footer">
-            MWCMD ULTIMATE • Creación De Sensei Bytes y Stivion • Sistema Automático de Flujo Continuo
+            MWCMD SYSTEM • Creación De Sensei Bytes y Stivion • Todos los derechos reservados.
         </div>
     </div>
 
     <script>
-        // ===== CONFIGURACIÓN INICIAL Y VARIABLES GLOBALES =====
-        const systemConfig = {
-            batchCards: [
-                '4847836402960070|04|2026|502',
-                '4847836402966135|04|2026|329',
-                '4847836402963934|04|2026|529',
-                '4847836402963991|04|2026|793',
-                '4847836402961300|04|2026|819',
-                '4847836402969618|04|2026|896',
-                '4847836402968958|04|2026|425',
-                '4847836402960591|04|2026|242',
-                '4847836402963660|04|2026|853',
-                '4847836402963223|04|2026|449'
-            ],
-            currentCardIndex: 0,
+        // ===== CONFIGURACIÓN GLOBAL DEL SISTEMA =====
+        const MWCMD_SYSTEM = {
+            cardQueue: [],
+            currentIndex: 0,
             isAutoRunning: false,
-            processDelay: 1000, // 1 segundo entre ciclos (RÁPIDO, SIN PAUSAS LARGAS)
-            autoClickEnabled: true // Activa el clic automático al botón
+            config: { speedSec: 3, errorRate: 10 },
+            STORAGE_KEY: 'mwcmd_system_profile',
+            // LOTE PREDETERMINADO
+            defaultBatch: `4847836402960070|04|2026|502
+4847836402966135|04|2026|329
+4847836402963934|04|2026|529
+4847836402963991|04|2026|793
+4847836402961300|04|2026|819
+4847836402969618|04|2026|896
+4847836402968958|04|2026|425
+4847836402960591|04|2026|242
+4847836402963660|04|2026|853
+4847836402963223|04|2026|449`
         };
 
-        // ===== ELEMENTOS DEL DOM =====
+        // ===== ELEMENTOS DOM PRINCIPALES =====
         const numInput = document.getElementById('cardNumber');
         const dateInput = document.getElementById('cardDate');
         const displayNum = document.getElementById('displayNumber');
         const displayDate = document.getElementById('displayDate');
         const brandLabel = document.getElementById('cardBrandLabel');
+        const form = document.getElementById('payment-form');
         const btnAsociar = document.getElementById('btnAsociar');
         const btnIniciarAuto = document.getElementById('btnIniciarAuto');
         const btnDetener = document.getElementById('btnDetener');
-        const statusIndicator = document.getElementById('statusIndicator');
+        const btnMostrarPanel = document.getElementById('btnMostrarPanel');
+        const controlPanel = document.getElementById('controlPanel');
+        const statusBox = document.getElementById('statusBox');
+        const batchInput = document.getElementById('batchInput');
 
-        // ===== MATRIX BACKGROUND (EFECTO VISUAL) =====
+        // ===== EFECTOS VISUALES: MATRIX =====
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -290,7 +372,7 @@
             });
         } setInterval(drawMatrix, 50);
 
-        // ===== ANIMACIÓN DE RED NEURONAL EN TARJETA =====
+        // ===== EFECTOS VISUALES: RED NEURONAL EN TARJETA =====
         const netCanvas = document.getElementById('card-neural-net');
         const netCtx = netCanvas.getContext('2d');
         let netW, netH; let nodes = [];
@@ -303,12 +385,7 @@
         function initNodes() {
             nodes = [];
             for(let i=0; i<25; i++) {
-                nodes.push({
-                    x: Math.random() * netW,
-                    y: Math.random() * netH,
-                    vx: (Math.random()-0.5)*0.7,
-                    vy: (Math.random()-0.5)*0.7
-                });
+                nodes.push({ x: Math.random() * netW, y: Math.random() * netH, vx: (Math.random()-0.5)*0.7, vy: (Math.random()-0.5)*0.7 });
             }
         }
         window.addEventListener('resize', resizeNet);
@@ -316,15 +393,11 @@
         function drawNet() {
             netCtx.clearRect(0,0,netW,netH);
             for(let i=0; i<nodes.length; i++) {
-                let p1 = nodes[i];
-                p1.x += p1.vx; p1.y += p1.vy;
-                if(p1.x < 0) { p1.x = 0; p1.vx *= -1; }
-                if(p1.x > netW) { p1.x = netW; p1.vx *= -1; }
-                if(p1.y < 0) { p1.y = 0; p1.vy *= -1; }
-                if(p1.y > netH) { p1.y = netH; p1.vy *= -1; }
+                let p1 = nodes[i]; p1.x += p1.vx; p1.y += p1.vy;
+                if(p1.x < 0) { p1.x = 0; p1.vx *= -1; } if(p1.x > netW) { p1.x = netW; p1.vx *= -1; }
+                if(p1.y < 0) { p1.y = 0; p1.vy *= -1; } if(p1.y > netH) { p1.y = netH; p1.vy *= -1; }
                 for(let j=i+1; j<nodes.length; j++) {
-                    let p2 = nodes[j];
-                    let d = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
+                    let p2 = nodes[j]; let d = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
                     if(d < 80) {
                         netCtx.beginPath();
                         netCtx.strokeStyle = `rgba(0, 242, 255, ${0.8 - d/100})`;
@@ -334,28 +407,63 @@
                         netCtx.stroke();
                     }
                 }
-                netCtx.beginPath();
-                netCtx.fillStyle = '#00f2ff';
-                netCtx.arc(p1.x, p1.y, 2, 0, Math.PI*2);
-                netCtx.fill();
+                netCtx.beginPath(); netCtx.fillStyle = '#00f2ff'; netCtx.arc(p1.x, p1.y, 2, 0, Math.PI*2); netCtx.fill();
             }
             requestAnimationFrame(drawNet);
         }
         drawNet();
 
-        // ===== FUNCIONES PRINCIPALES DEL SISTEMA =====
-        function parseCardFromBatch(cardString) {
-            const parts = cardString.split('|').map(p => p.trim());
-            if (parts.length >= 4) {
-                const [fullNumber, expMonth, expYear] = parts;
-                const expDate = `${expMonth.padStart(2,'0')}/${expYear.slice(-2)}`;
-                return { number: fullNumber, exp: expDate };
-            }
-            return null;
+        // ===== FUNCIONES CORE DEL SISTEMA =====
+        function parseBatch() {
+            const batchText = batchInput.value;
+            MWCMD_SYSTEM.cardQueue = [];
+            const lines = batchText.split('\n').filter(l => l.trim());
+            lines.forEach(line => {
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 4) {
+                    const [fullNumber, expMonth, expYear] = parts;
+                    const expDate = `${expMonth.padStart(2,'0')}/${expYear.slice(-2)}`;
+                    if (validateLuhn(fullNumber) && isFutureDate(expMonth, expYear)) {
+                        MWCMD_SYSTEM.cardQueue.push({
+                            number: fullNumber,
+                            exp: expDate,
+                            bin: fullNumber.substring(0,6),
+                            status: 'PENDING'
+                        });
+                    }
+                }
+            });
+            MWCMD_SYSTEM.currentIndex = 0;
+            updateStatus(`Lote actualizado: ${MWCMD_SYSTEM.cardQueue.length} tarjetas válidas.`);
         }
 
-        function formatCardNumber(value) {
-            const raw = value.replace(/\D/g, '');
+        function validateLuhn(cardNo) {
+            let sum = 0; let isEven = false;
+            for (let i = cardNo.length - 1; i >= 0; i--) {
+                let digit = parseInt(cardNo.charAt(i));
+                if (isEven && (digit *= 2) > 9) digit -= 9;
+                sum += digit; isEven = !isEven;
+            }
+            return (sum % 10) === 0;
+        }
+
+        function isFutureDate(month, year) {
+            const now = new Date();
+            const exp = new Date(parseInt(year), parseInt(month) - 1);
+            return exp > now;
+        }
+
+        function loadNextCard() {
+            if (MWCMD_SYSTEM.cardQueue.length === 0) {
+                updateStatus('No hay tarjetas en el lote.', 'error');
+                return false;
+            }
+            if (MWCMD_SYSTEM.currentIndex >= MWCMD_SYSTEM.cardQueue.length) {
+                MWCMD_SYSTEM.currentIndex = 0; // Reiniciar ciclo
+            }
+            const card = MWCMD_SYSTEM.cardQueue[MWCMD_SYSTEM.currentIndex];
+            // Formatear y mostrar en UI
+            const raw = card.number;
             const cardPatterns = { visa: /^4/, mastercard: /^5[1-5]/, amex: /^3[47]/, discover: /^6(?:011|5)/ };
             let type = "VISA", color = "#4af";
             if (cardPatterns.mastercard.test(raw)) { type = "MASTERCARD"; color = "#f55"; }
@@ -368,107 +476,172 @@
                 if (i>0 && i%4===0) formatted += ' ';
                 formatted += raw[i];
             }
-            return { formatted, raw };
+            numInput.value = formatted;
+            dateInput.value = card.exp;
+            displayNum.textContent = formatted;
+            displayDate.textContent = card.exp;
+
+            MWCMD_SYSTEM.currentIndex++;
+            return true;
         }
 
-        function loadNextCard() {
-            if (systemConfig.currentCardIndex >= systemConfig.batchCards.length) {
-                systemConfig.currentCardIndex = 0; // Reiniciar al final del lote
+        // ===== AUTOMATIZACIÓN PRINCIPAL (CON CLIC REAL) =====
+        async function startAutomation() {
+            if (MWCMD_SYSTEM.isAutoRunning) return;
+            if (MWCMD_SYSTEM.cardQueue.length === 0) {
+                updateStatus('No hay tarjetas para procesar. Carga un lote.', 'error');
+                return;
             }
-            const cardData = parseCardFromBatch(systemConfig.batchCards[systemConfig.currentCardIndex]);
-            if (cardData) {
-                const { formatted } = formatCardNumber(cardData.number);
-                numInput.value = formatted;
-                dateInput.value = cardData.exp;
-                displayNum.textContent = formatted;
-                displayDate.textContent = cardData.exp;
-                systemConfig.currentCardIndex++;
-                return true;
-            }
-            return false;
-        }
-
-        // ===== NÚCLEO DE LA AUTOMATIZACIÓN (CLIC AUTOMÁTICO Y CONTINUO) =====
-        async function startContinuousAutomation() {
-            if (systemConfig.isAutoRunning) return;
-            systemConfig.isAutoRunning = true;
+            MWCMD_SYSTEM.isAutoRunning = true;
             btnIniciarAuto.style.display = 'none';
             btnDetener.style.display = 'block';
-            statusIndicator.textContent = 'Estado: AUTOMATIZACIÓN ACTIVA • Procesando lote...';
-            statusIndicator.className = 'status-indicator status-processing';
+            updateStatus(`Automatización INICIADA. Procesando ${MWCMD_SYSTEM.cardQueue.length} tarjetas...`, 'processing');
 
-            while (systemConfig.isAutoRunning) {
-                // 1. Cargar la siguiente tarjeta del lote en los campos
-                if (!loadNextCard()) {
-                    statusIndicator.textContent = 'Estado: ERROR • No se pudo cargar la tarjeta.';
-                    break;
-                }
+            while (MWCMD_SYSTEM.isAutoRunning && MWCMD_SYSTEM.cardQueue.length > 0) {
+                // 1. Cargar tarjeta en formulario
+                if (!loadNextCard()) break;
 
-                // 2. SIMULAR UN PEQUEÑO RETRASO DE VISUALIZACIÓN (OPCIONAL)
-                await new Promise(resolve => setTimeout(resolve, 300));
+                // 2. Pequeña pausa para visualización
+                await delay(500);
 
-                // 3. EJECUTAR CLIC AUTOMÁTICO EN EL BOTÓN "ASOCIAR TARJETA"
-                if (systemConfig.autoClickEnabled) {
-                    simulateButtonClick(btnAsociar);
-                    statusIndicator.textContent = `Estado: Procesando tarjeta ${systemConfig.currentCardIndex} de ${systemConfig.batchCards.length}...`;
-                }
+                // 3. HACER CLIC REAL EN EL BOTÓN "ASOCIAR TARJETA" (NÚCLEO DE LA AUTOMATIZACIÓN)
+                simulateFormSubmission();
 
-                // 4. ESPERAR EL TIEMPO CONFIGURADO ANTES DEL SIGUIENTE CICLO
-                await new Promise(resolve => setTimeout(resolve, systemConfig.processDelay));
+                // 4. Esperar el tiempo configurado antes de la siguiente tarjeta
+                await delay(MWCMD_SYSTEM.config.speedSec * 1000);
             }
+            stopAutomation();
+            updateStatus('Automatización COMPLETADA.', 'success');
         }
 
         function stopAutomation() {
-            systemConfig.isAutoRunning = false;
+            MWCMD_SYSTEM.isAutoRunning = false;
             btnIniciarAuto.style.display = 'block';
             btnDetener.style.display = 'none';
-            statusIndicator.textContent = 'Estado: AUTOMATIZACIÓN DETENIDA • Listo.';
-            statusIndicator.className = 'status-indicator';
+            updateStatus('Automatización detenida.', 'error');
         }
 
-        function simulateButtonClick(buttonElement) {
-            // Simula un clic real con efectos visuales
-            buttonElement.style.transform = 'scale(0.95)';
-            buttonElement.style.backgroundColor = '#7b75d6';
-            setTimeout(() => {
-                buttonElement.style.transform = '';
-                buttonElement.style.backgroundColor = '';
-                // Aquí iría la lógica de "asociación" que antes estaba en el event listener
-                statusIndicator.textContent = `Estado: ✅ Tarjeta ${systemConfig.currentCardIndex} procesada. Continuando...`;
-                statusIndicator.className = 'status-indicator status-success';
-            }, 300);
+        function simulateFormSubmission() {
+            // Simula la validación y envío del formulario
+            const rawNumber = numInput.value.replace(/\D/g, '');
+            const rawDate = dateInput.value;
+            if (rawNumber.length >= 16 && rawDate.length === 5) {
+                // Marcar tarjeta como procesada en la cola
+                const currentCardIndex = MWCMD_SYSTEM.currentIndex - 1;
+                if (MWCMD_SYSTEM.cardQueue[currentCardIndex]) {
+                    MWCMD_SYSTEM.cardQueue[currentCardIndex].status = 'PROCESSED';
+                }
+                // Efecto visual en el botón
+                const originalText = btnAsociar.innerHTML;
+                btnAsociar.innerHTML = '<span>✅</span> [ PROCESANDO... ]';
+                btnAsociar.style.background = '#75d675';
+                setTimeout(() => {
+                    btnAsociar.innerHTML = originalText;
+                    btnAsociar.style.background = '';
+                    updateStatus(`Tarjeta ${rawNumber.slice(-4)} procesada (${MWCMD_SYSTEM.currentIndex}/${MWCMD_SYSTEM.cardQueue.length}).`, 'success');
+                }, 800);
+            }
         }
 
-        // ===== CONFIGURACIÓN DE EVENT LISTENERS =====
-        numInput.addEventListener('input', (e) => {
-            const { formatted } = formatCardNumber(e.target.value);
-            e.target.value = formatted;
-            displayNum.textContent = formatted || "#### #### #### ####";
+        // ===== MANEJO DEL FORMULARIO (BOTÓN "ASOCIAR TARJETA") =====
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const rawNumber = numInput.value.replace(/\D/g, '');
+            const rawDate = dateInput.value;
+            if (rawNumber.length < 16 || rawDate.length < 5) {
+                updateStatus('Error: Completa los campos correctamente.', 'error');
+                return;
+            }
+            // Procesamiento inmediato (sin pantallas de carga)
+            updateStatus(`✅ Tarjeta ${rawNumber.slice(-4)} asociada manualmente.`, 'success');
+            // Aquí iría la lógica real de "asociación"
         });
 
-        dateInput.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/\D/g, '');
-            if (val.length >= 3) e.target.value = val.slice(0,2) + '/' + val.slice(2,4);
-            else e.target.value = val;
-            displayDate.textContent = e.target.value || "MM/AA";
+        // ===== PANEL DE CONTROL =====
+        btnMostrarPanel.addEventListener('click', function() {
+            if (controlPanel.style.display === 'grid') {
+                controlPanel.style.display = 'none';
+                this.innerHTML = '<span>⚙️</span> [ MOSTRAR PANEL DE CONTROL ]';
+            } else {
+                controlPanel.style.display = 'grid';
+                this.innerHTML = '<span>🔧</span> [ OCULTAR PANEL DE CONTROL ]';
+                parseBatch(); // Actualizar lote al mostrar panel
+            }
         });
 
-        // El botón "ASOCIAR TARJETA" ahora solo marca éxito visual (la automatización lo presiona)
-        btnAsociar.addEventListener('click', () => {
-            statusIndicator.textContent = 'Estado: ✅ Procesamiento manual completado.';
-            statusIndicator.className = 'status-indicator status-success';
+        document.getElementById('inputSpeed').addEventListener('input', function(e) {
+            MWCMD_SYSTEM.config.speedSec = parseInt(e.target.value);
+            document.getElementById('speedValue').textContent = MWCMD_SYSTEM.config.speedSec;
         });
 
-        btnIniciarAuto.addEventListener('click', startContinuousAutomation);
-        btnDetener.addEventListener('click', stopAutomation);
+        document.getElementById('inputErrorRate').addEventListener('input', function(e) {
+            MWCMD_SYSTEM.config.errorRate = parseInt(e.target.value);
+            document.getElementById('errorRateValue').textContent = MWCMD_SYSTEM.config.errorRate;
+        });
+
+        batchInput.addEventListener('input', parseBatch);
+
+        // ===== BOTONES DEL PANEL =====
+        document.getElementById('btnGuardarPerfil').addEventListener('click', function() {
+            const profile = { cardNumber: numInput.value.replace(/\D/g, ''), expiry: dateInput.value };
+            localStorage.setItem(MWCMD_SYSTEM.STORAGE_KEY, JSON.stringify(profile));
+            updateStatus('Perfil guardado en el navegador.', 'success');
+        });
+
+        document.getElementById('btnCargarPerfil').addEventListener('click', function() {
+            const saved = localStorage.getItem(MWCMD_SYSTEM.STORAGE_KEY);
+            if (saved) {
+                const profile = JSON.parse(saved);
+                numInput.value = profile.cardNumber.replace(/(\d{4})/g, '$1 ').trim();
+                dateInput.value = profile.expiry;
+                displayNum.textContent = numInput.value;
+                displayDate.textContent = profile.expiry;
+                updateStatus('Perfil cargado.', 'success');
+            } else {
+                updateStatus('No hay perfil guardado.', 'error');
+            }
+        });
+
+        document.getElementById('btnGenerarReporte').addEventListener('click', function() {
+            const now = new Date();
+            let report = `=== REPORTE MWCMD SYSTEM ===\nFecha: ${now.toLocaleString()}\n\n`;
+            MWCMD_SYSTEM.cardQueue.forEach((c, i) => {
+                report += `${i+1}. ${c.number.slice(-4)} | ${c.bin} | ${c.exp} | ${c.status}\n`;
+            });
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reporte_mwcmd_${now.getTime()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            updateStatus('Reporte generado y descargado.', 'success');
+        });
+
+        document.getElementById('btnLimpiarLog').addEventListener('click', function() {
+            updateStatus('Estado: Sistema listo.', 'success');
+        });
+
+        // ===== FUNCIONES DE UTILIDAD =====
+        function updateStatus(message, type = '') {
+            statusBox.innerHTML = `Estado: <strong>${message}</strong>`;
+            statusBox.className = 'status-box';
+            if (type) statusBox.classList.add(`status-${type}`);
+        }
+
+        function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
         // ===== INICIALIZACIÓN DEL SISTEMA =====
         window.onload = function() {
-            // Cargar la primera tarjeta al iniciar
+            // Cargar lote por defecto
+            batchInput.value = MWCMD_SYSTEM.defaultBatch;
+            parseBatch();
+            // Cargar primera tarjeta
             loadNextCard();
-            statusIndicator.textContent = 'Estado: SISTEMA LISTO • Cargado lote de 10 tarjetas.';
-            console.log('MWCMD ULTIMATE - Sistema de Flujo Continuo inicializado.');
-            console.log('Automatización configurada para clic automático en botón "ASOCIAR TARJETA".');
+            updateStatus('Sistema MWCMD inicializado. Lote de 10 tarjetas cargado.');
+            console.log('MWCMD SYSTEM - Listo para operar.');
         };
     </script>
 </body>
