@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAAT Pro - Simulador de Procesamiento</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: #0f172a; color: #f1f5f9; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; display: grid; grid-template-columns: 1fr 350px; gap: 25px; }
+        .panel { background: #1e293b; border-radius: 16px; padding: 25px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); }
+        .simulator { grid-column: 1; }
+        .control-panel { grid-column: 2; }
+        h1, h2, h3 { color: #60a5fa; margin-top: 0; }
+        h1 { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
+        .card-ui { background: linear-gradient(135deg, #1a237e, #4a148c); padding: 30px; border-radius: 20px; margin-bottom: 25px; }
+        input, textarea, button, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid #475569; background: #334155; color: white; font-size: 16px; }
+        button { border: none; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
+        #btnProcesarManual { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+        #btnIniciarAuto { background: linear-gradient(90deg, #10b981, #059669); }
+        #btnDetener { background: linear-gradient(90deg, #ef4444, #dc2626); display: none; }
+        #btnGuardarPerfil { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        #btnCargarPerfil { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+        .autofill-section { background: rgba(100, 116, 139, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px dashed #60a5fa; }
+        .protocol-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin-left: 10px; }
+        .protocol-https { background: #10b981; color: white; }
+        .protocol-file { background: #f59e0b; color: black; }
+        #statusLog { height: 250px; overflow-y: auto; background: #0f172a; padding: 15px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; }
+        .log-entry { margin: 5px 0; padding: 8px; border-left: 4px solid; border-radius: 4px; }
+        .success { border-color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        .error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+        .processing { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+        .info { border-color: #60a5fa; background: rgba(96, 165, 250, 0.1); }
+        .processing-animation {
+            text-align: center; font-size: 48px; font-weight: bold; margin: 20px 0;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .hidden { display: none; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .stat-box { background: #475569; padding: 15px; border-radius: 10px; text-align: center; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #60a5fa; }
+        .input-group { display: flex; gap: 10px; }
+        .input-group button { width: auto; padding-left: 20px; padding-right: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel simulator">
+            <h1>🚀 SAAT Pro - Simulador de Producción
+                <span id="protocolBadge" class="protocol-badge protocol-file">Local</span>
+            </h1>
+            <div class="card-ui">
+                <h2>Asociar Nueva Tarjeta</h2>
+                <!-- CAMPOS CON AUTOCOMPLETADO NATIVO HABILITADO PARA HTTPS -->
+                <input type="text" id="inputCardNumber" placeholder="Número de tarjeta" 
+                       autocomplete="cc-number" inputmode="numeric" pattern="[\d ]{10,}" title="Ingresa 16 dígitos">
+                <input type="text" id="inputExpiry" placeholder="MM/AA" 
+                       autocomplete="cc-exp" inputmode="numeric" pattern="\d{2}/\d{2}" title="Formato: MM/AA">
+                <input type="text" id="inputCVV" placeholder="CVV (Simulación)" style="background:#64748b;" 
+                       autocomplete="off" disabled>
+
+                <button id="btnProcesarManual">🔘 PROCESAR TARJETA</button>
+
+                <!-- AUTOFILL PERSONALIZADO (RESPALDO) -->
+                <div class="autofill-section">
+                    <h3>💾 Sistema de Perfiles</h3>
+                    <div class="input-group">
+                        <button id="btnGuardarPerfil">💾 Guardar Perfil</button>
+                        <button id="btnCargarPerfil">🚀 Cargar Perfil</button>
+                    </div>
+                    <p style="font-size: 0.85em; margin-top: 10px; color: #94a3b8; font-style: italic;">
+                        <span id="autofillStatus">Modo: Autocompletado personalizado activo.</span>
+                    </p>
+                </div>
+
+                <div id="processingAnimation" class="processing-animation hidden">PROCESANDO <span id="counter">3</span></div>
+                <div id="resultMessage" style="text-align: center; font-size: 1.5em; font-weight: bold; min-height: 60px; padding: 15px;"></div>
+            </div>
+
+            <h2>📁 Lote de Tarjetas de Prueba</h2>
+            <textarea id="batchInput" rows="10">4847836402960070|04|2026|502
+4847836402966135|04|2026|329
+4847836402963934|04|2026|529
+4847836402963991|04|2026|793
+4847836402961300|04|2026|819
+4847836402969618|04|2026|896
+4847836402968958|04|2026|425
+4847836402960591|04|2026|242
+4847836402963660|04|2026|853
+4847836402963223|04|2026|449</textarea>
+
+            <div class="stats">
+                <div class="stat-box"><div class="stat-value" id="statTotal">10</div>Total en Lote</div>
+                <div class="stat-box"><div class="stat-value" id="statPendiente">10</div>Pendientes</div>
+                <div class="stat-box"><div class="stat-value" id="statExito">0</div>Éxitos</div>
+                <div class="stat-box"><div class="stat-value" id="statError">0</div>Errores</div>
+            </div>
+        </div>
+
+        <div class="panel control-panel">
+            <h2>⚙️ Panel de Control</h2>
+            <h3 style="color:#f1f5f9; font-size:1em;">Configuración de Simulación</h3>
+            <label><strong>Velocidad (segundos):</strong></label>
+            <input type="range" id="inputSpeed" min="1" max="10" value="3">
+            <output for="inputSpeed" id="speedValue">3s</output>
+
+            <label><strong>% de Error Aleatorio:</strong></label>
+            <input type="range" id="inputErrorRate" min="0" max="50" value="10">
+            <output for="inputErrorRate" id="errorRateValue">10%</output>
+
+            <div style="margin-top: 25px;">
+                <button id="btnIniciarAuto">🚀 INICIAR AUTOMATIZACIÓN</button>
+                <button id="btnDetener">⏹️ DETENER</button>
+                <button id="btnGenerarReporte">📊 GENERAR REPORTE</button>
+                <button id="btnLimpiarLog" style="background:#475569;">🗑️ LIMPIAR LOG</button>
+            </div>
+
+            <h2>📜 Log de Ejecución</h2>
+            <div id="statusLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========== SAAT PRO - SISTEMA DE PRODUCCIÓN ==========
+        class SAAT_Pro_Simulator {
+            constructor() {
+                this.cardQueue = [];
+                this.isAutomationRunning = false;
+                this.currentCardIndex = 0;
+                this.stats = { total: 10, success: 0, error: 0, pending: 10 };
+                this.config = { speedSec: 3, errorRate: 10 };
+                this.STORAGE_KEY = 'saat_pro_profile_v2';
+                this.isSecureContext = window.location.protocol === 'https:';
+                this.init();
+            }
+
+            init() {
+                this.setupProtocolBadge();
+                this.bindEvents();
+                this.parseBatch(); // Carga el lote predefinido
+                this.updateStatsUI();
+                this.attemptAutoLoadProfile();
+                this.log(`Sistema iniciado. Protocolo seguro: ${this.isSecureContext ? 'SÍ (HTTPS)' : 'NO (Local)'}`, 'info');
+            }
+
+            setupProtocolBadge() {
+                const badge = document.getElementById('protocolBadge');
+                if (this.isSecureContext) {
+                    badge.textContent = 'HTTPS';
+                    badge.className = 'protocol-badge protocol-https';
+                    document.getElementById('autofillStatus').textContent = 'Modo: Autocompletado nativo del navegador habilitado.';
+                } else {
+                    badge.textContent = 'Local';
+                    badge.className = 'protocol-badge protocol-file';
+                    document.getElementById('autofillStatus').textContent = 'Modo: Autocompletado personalizado (Local).';
+                }
+            }
+
+            bindEvents() {
+                document.getElementById('btnProcesarManual').onclick = () => this.processSingleCard();
+                document.getElementById('btnIniciarAuto').onclick = () => this.startAutomation();
+                document.getElementById('btnDetener').onclick = () => this.stopAutomation();
+                document.getElementById('btnGenerarReporte').onclick = () => this.generateReport();
+                document.getElementById('btnLimpiarLog').onclick = () => { document.getElementById('statusLog').innerHTML = ''; this.log('Log limpiado.', 'info'); };
+                document.getElementById('btnGuardarPerfil').onclick = () => this.saveCurrentProfile();
+                document.getElementById('btnCargarPerfil').onclick = () => this.loadSavedProfile();
+                document.getElementById('batchInput').oninput = () => this.parseBatch();
+                document.getElementById('inputSpeed').oninput = (e) => {
+                    this.config.speedSec = parseInt(e.target.value);
+                    document.getElementById('speedValue').textContent = this.config.speedSec + 's';
+                };
+                document.getElementById('inputErrorRate').oninput = (e) => {
+                    this.config.errorRate = parseInt(e.target.value);
+                    document.getElementById('errorRateValue').textContent = this.config.errorRate + '%';
+                };
+                // Formatear número de tarjeta en tiempo real
+                document.getElementById('inputCardNumber').addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+                    value = value.replace(/(\d{4})/g, '$1 ').trim();
+                    e.target.value = value.substring(0, 19);
+                });
+                // Formatear fecha en tiempo real
+                document.getElementById('inputExpiry').addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) value = value.substring(0,2) + '/' + value.substring(2,4);
+                    e.target.value = value.substring(0,5);
+                });
+            }
+
+            // --- AUTOFILL PERSONALIZADO (MEJORADO) ---
+            saveCurrentProfile() {
+                const profile = {
+                    cardNumber: document.getElementById('inputCardNumber').value.replace(/\s/g, ''),
+                    expiry: document.getElementById('inputExpiry').value,
+                    timestamp: new Date().toISOString()
+                };
+                if (!profile.cardNumber || !profile.expiry) {
+                    this.log('❌ No hay datos válidos para guardar.', 'error');
+                    alert('Completa los campos de tarjeta y fecha antes de guardar.');
+                    return;
+                }
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(profile));
+                this.log(`✅ Perfil guardado. (****${profile.cardNumber.slice(-4)})`, 'success');
+                alert('Perfil guardado. Se cargará automáticamente en la próxima sesión.');
+            }
+
+            loadSavedProfile() {
+                const saved = localStorage.getItem(this.STORAGE_KEY);
+                if (!saved) {
+                    this.log('❌ No hay perfil guardado.', 'error');
+                    alert('No hay perfil guardado. Guarda uno primero.');
+                    return;
+                }
+                try {
+                    const profile = JSON.parse(saved);
+                    document.getElementById('inputCardNumber').value = profile.cardNumber.replace(/(\d{4})/g, '$1 ').trim();
+                    document.getElementById('inputExpiry').value = profile.expiry;
+                    this.log(`🔍 Perfil cargado (Guardado: ${new Date(profile.timestamp).toLocaleDateString()})`, 'info');
+                } catch(e) {
+                    this.log('❌ Error al cargar el perfil. Datos corruptos.', 'error');
+                }
+            }
+
+            attemptAutoLoadProfile() {
+                const saved = localStorage.getItem(this.STORAGE_KEY);
+                if (saved) {
+                    setTimeout(() => {
+                        if (confirm('¿Cargar automáticamente el perfil de tarjeta guardado?')) {
+                            this.loadSavedProfile();
+                        }
+                    }, 500);
+                }
+            }
+
+            // --- NÚCLEO DEL PROCESAMIENTO (SIN FILTRO BIN) ---
+            parseBatch() {
+                const batchText = document.getElementById('batchInput').value;
+                this.cardQueue = [];
+                const lines = batchText.split('\n').filter(l => l.trim());
+                let validCount = 0, invalidCount = 0;
+
+                lines.forEach(line => {
+                    const parts = line.split('|').map(p => p.trim());
+                    if (parts.length >= 4) {
+                        const [fullNumber, expMonth, expYear] = parts;
+                        const expDate = `${expMonth.padStart(2,'0')}/${expYear.slice(-2)}`;
+
+                        if (this.validateLuhn(fullNumber) && this.isFutureDate(expMonth, expYear)) {
+                            this.cardQueue.push({
+                                number: fullNumber,
+                                exp: expDate,
+                                bin: fullNumber.substring(0,6),
+                                status: 'PENDING'
+                            });
+                            validCount++;
+                        } else {
+                            invalidCount++;
+                        }
+                    }
+                });
+
+                this.stats.total = this.cardQueue.length;
+                this.stats.pending = this.cardQueue.length;
+                this.stats.success = 0;
+                this.stats.error = 0;
+                this.updateStatsUI();
+
+                if (invalidCount > 0) {
+                    this.log(`[LOTE] ${validCount} tarjetas válidas cargadas. ${invalidCount} líneas ignoradas (Luhn/Fecha inválida).`, 'info');
+                } else {
+                    this.log(`[LOTE] ${validCount} tarjetas válidas cargadas en cola.`, 'success');
+                }
+            }
+
+            validateLuhn(cardNo) {
+                let sum = 0; let isEven = false;
+                for (let i = cardNo.length - 1; i >= 0; i--) {
+                    let digit = parseInt(cardNo.charAt(i));
+                    if (isEven && (digit *= 2) > 9) digit -= 9;
+                    sum += digit; isEven = !isEven;
+                }
+                return (sum % 10) === 0;
+            }
+
+            isFutureDate(month, year) {
+                const now = new Date();
+                const exp = new Date(parseInt(year), parseInt(month) - 1);
+                return exp > now;
+            }
+
+            // --- AUTOMATIZACIÓN PRINCIPAL ---
+            async startAutomation() {
+                if (this.cardQueue.length === 0) { 
+                    alert('⚠️ La cola está vacía. Agrega tarjetas válidas al lote.'); 
+                    return; 
+                }
+                this.isAutomationRunning = true;
+                document.getElementById('btnIniciarAuto').style.display = 'none';
+                document.getElementById('btnDetener').style.display = 'block';
+                this.log('[AUTO] Iniciando simulación automatizada...', 'processing');
+
+                for (this.currentCardIndex = 0; this.currentCardIndex < this.cardQueue.length; this.currentCardIndex++) {
+                    if (!this.isAutomationRunning) break;
+                    const card = this.cardQueue[this.currentCardIndex];
+                    await this.simulateCardEntry(card);
+                    await this.delay(this.config.speedSec * 1000);
+                }
+                this.stopAutomation();
+                this.log('[AUTO] Simulación automatizada completada.', 'success');
+            }
+
+            stopAutomation() {
+                this.isAutomationRunning = false;
+                document.getElementById('btnIniciarAuto').style.display = 'block';
+                document.getElementById('btnDetener').style.display = 'none';
+                this.log('[AUTO] Automatización detenida por el usuario.', 'info');
+            }
+
+            async simulateCardEntry(card) {
+                document.getElementById('inputCardNumber').value = card.number.replace(/(\d{4})/g, '$1 ').trim();
+                document.getElementById('inputExpiry').value = card.exp;
+                this.log(`[AUTO] Procesando: ****${card.number.slice(-4)}`, 'processing');
+                document.getElementById('btnProcesarManual').click();
+                await this.delay(3500);
+            }
+
+            processSingleCard() {
+                const number = document.getElementById('inputCardNumber').value.replace(/\s/g, '');
+                const exp = document.getElementById('inputExpiry').value;
+                if (!number || number.length < 16) {
+                    this.log('❌ Número de tarjeta incompleto.', 'error');
+                    document.getElementById('resultMessage').innerHTML = '❌ <br>Número de tarjeta incompleto.';
+                    document.getElementById('resultMessage').style.color = '#ef4444';
+                    return;
+                }
+                this.showProcessingAnimation();
+                setTimeout(() => {
+                    // REGLA ÚNICA: Error Aleatorio. NO HAY FILTRO DE BIN.
+                    const isRandomError = Math.random() * 100 < this.config.errorRate;
+                    const success = !isRandomError;
+
+                    const cardInQueue = this.cardQueue.find(c => c.number === number);
+                    if (cardInQueue) {
+                        cardInQueue.status = success ? 'SIM_SUCCESS' : 'SIM_ERROR';
+                        this.stats.pending--;
+                        success ? this.stats.success++ : this.stats.error++;
+                        this.updateStatsUI();
+                    }
+
+                    if (success) {
+                        document.getElementById('resultMessage').innerHTML = 
+                            '✅ <br><strong>¡TARJETA ASOCIADA CON ÉXITO!</strong><br><small>Simulación completada.</small>';
+                        document.getElementById('resultMessage').style.color = '#10b981';
+                        this.log(`[SIM] ****${number.slice(-4)}: Aceptada.`, 'success');
+                    } else {
+                        document.getElementById('resultMessage').innerHTML = 
+                            '❌ <br><strong>ASOCIACIÓN RECHAZADA</strong><br><small>Error aleatorio simulado.</small>';
+                        document.getElementById('resultMessage').style.color = '#ef4444';
+                        this.log(`[SIM] ****${number.slice(-4)}: Rechazada por error aleatorio (${this.config.errorRate}%).`, 'error');
+                    }
+                    this.hideProcessingAnimation();
+                }, 3000);
+            }
+
+            showProcessingAnimation() {
+                const anim = document.getElementById('processingAnimation');
+                const counter = document.getElementById('counter');
+                anim.classList.remove('hidden');
+                let count = 3;
+                const countdown = setInterval(() => {
+                    count--;
+                    counter.textContent = count;
+                    if (count === 0) clearInterval(countdown);
+                }, 1000);
+            }
+
+            hideProcessingAnimation() {
+                document.getElementById('processingAnimation').classList.add('hidden');
+                document.getElementById('counter').textContent = '3';
+            }
+
+            generateReport() {
+                const now = new Date();
+                let report = `=== REPORTE SAAT Pro - Simulación de Producción ===\n`;
+                report += `Fecha: ${now.toLocaleString()}\n`;
+                report += `Protocolo: ${this.isSecureContext ? 'HTTPS' : 'Local'}\n`;
+                report += `Configuración: Velocidad ${this.config.speedSec}s, Error ${this.config.errorRate}%\n`;
+                report += `\n--- ESTADÍSTICAS ---\n`;
+                report += `Total Procesadas: ${this.stats.total}\n`;
+                report += `Éxitos Simulados: ${this.stats.success}\n`;
+                report += `Errores Simulados: ${this.stats.error}\n`;
+                report += `Pendientes: ${this.stats.pending}\n`;
+                report += `\n--- DETALLE DEL LOTE ---\n`;
+                report += `Número (Últ.4) | BIN | Expiración | Estado\n`;
+                report += `---------------------------------------------\n`;
+                this.cardQueue.forEach(c => {
+                    report += `${c.number.slice(-4)} | ${c.bin} | ${c.exp} | ${c.status}\n`;
+                });
+
+                const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `reporte_saat_pro_${now.getTime()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                this.log('[SISTEMA] Reporte generado y descargado.', 'success');
+            }
+
+            log(message, type = 'info') {
+                const logElem = document.getElementById('statusLog');
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                logElem.appendChild(entry);
+                logElem.scrollTop = logElem.scrollHeight;
+            }
+
+            updateStatsUI() {
+                document.getElementById('statTotal').textContent = this.stats.total;
+                document.getElementById('statPendiente').textContent = this.stats.pending;
+                document.getElementById('statExito').textContent = this.stats.success;
+                document.getElementById('statError').textContent = this.stats.error;
+            }
+
+            delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+        }
+
+        // Inicialización al cargar la página
+        window.onload = () => { 
+            window.saatPro = new SAAT_Pro_Simulator();
+            console.log('SAAT Pro - Simulador de Producción cargado.');
+        };
+    </script>
+</body>
+</html>
