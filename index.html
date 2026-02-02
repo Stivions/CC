@@ -2,87 +2,293 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAAT Pro - Simulador de Asociación Masiva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MWCMD Pro - Sistema de Asociación</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: #0f172a; color: #f1f5f9; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; display: grid; grid-template-columns: 1fr 350px; gap: 25px; }
-        .panel { background: #1e293b; border-radius: 16px; padding: 25px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); }
-        .simulator { grid-column: 1; }
-        .control-panel { grid-column: 2; }
-        h1, h2, h3 { color: #60a5fa; margin-top: 0; }
-        h1 { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
-        .card-ui { background: linear-gradient(135deg, #1a237e, #4a148c); padding: 30px; border-radius: 20px; margin-bottom: 25px; }
-        input, textarea, button, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid #475569; background: #334155; color: white; font-size: 16px; }
-        button { border: none; font-weight: bold; cursor: pointer; transition: all 0.3s; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
-        #btnProcesarManual { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
-        #btnIniciarAuto { background: linear-gradient(90deg, #10b981, #059669); }
-        #btnDetener { background: linear-gradient(90deg, #ef4444, #dc2626); display: none; }
-        #btnGuardarPerfil { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        #btnCargarPerfil { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
-        #btnAsociarTodas { background: linear-gradient(90deg, #ff6b6b, #ff4757); font-size: 1.1em; }
-        .autofill-section { background: rgba(100, 116, 139, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px dashed #60a5fa; }
-        .protocol-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin-left: 10px; }
-        .protocol-https { background: #10b981; color: white; }
-        .protocol-file { background: #f59e0b; color: black; }
-        #statusLog { height: 250px; overflow-y: auto; background: #0f172a; padding: 15px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; }
-        .log-entry { margin: 5px 0; padding: 8px; border-left: 4px solid; border-radius: 4px; }
-        .success { border-color: #10b981; background: rgba(16, 185, 129, 0.1); }
-        .error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-        .processing { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-        .info { border-color: #60a5fa; background: rgba(96, 165, 250, 0.1); }
-        .processing-animation {
-            text-align: center; font-size: 48px; font-weight: bold; margin: 20px 0;
-            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-            animation: pulse 1.5s infinite;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 20%, #111019 0%, #06060a 45%, #030304 100%);
+            font-family: 'VT323', monospace;
+            color: #cfd3dc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .hidden { display: none; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .stat-box { background: #475569; padding: 15px; border-radius: 10px; text-align: center; }
-        .stat-value { font-size: 2em; font-weight: bold; color: #60a5fa; }
-        .input-group { display: flex; gap: 10px; }
-        .input-group button { width: auto; padding-left: 20px; padding-right: 20px; }
-        .bruteforce-section { background: rgba(255, 107, 107, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px solid #ff6b6b; }
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #0a0a15 0%, #000000 70%);
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            opacity: 1; visibility: visible;
+            transition: opacity 1.2s ease-out, visibility 1.2s ease-out;
+        }
+        #welcome-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .welcome-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(123, 117, 214, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+        .welcome-content {
+            position: relative; padding: 40px;
+            border: 2px solid rgba(0, 242, 255, 0.4); border-radius: 20px;
+            background: rgba(10, 10, 25, 0.7);
+            box-shadow: 0 0 60px rgba(0, 242, 255, 0.3), inset 0 0 30px rgba(0, 242, 255, 0.1);
+            backdrop-filter: blur(5px);
+            animation: pulseGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 60px rgba(0, 242, 255, 0.3), inset 0 0 30px rgba(0, 242, 255, 0.1); }
+            to { box-shadow: 0 0 80px rgba(0, 242, 255, 0.5), inset 0 0 40px rgba(0, 242, 255, 0.15); }
+        }
+        .mwcmd-title {
+            font-size: 4.5rem; color: #00f2ff;
+            text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff, 0 0 40px #0077ff;
+            letter-spacing: 4px; margin-bottom: 10px; line-height: 1;
+        }
+        .mwcmd-subtitle {
+            font-size: 2rem; color: #cfd3dc; text-shadow: 0 0 8px rgba(207, 211, 220, 0.7);
+            letter-spacing: 2px; border-top: 1px solid rgba(0, 242, 255, 0.5);
+            padding-top: 15px; margin-top: 15px;
+        }
+        .mwcmd-subtitle span { color: #7b75d6; text-shadow: 0 0 5px #7b75d6; }
+        .loading-dots { margin-top: 30px; font-size: 1.8rem; color: #00f2ff; letter-spacing: 8px; }
+        .loading-dots span { animation: dotBlink 1.4s infinite; display: inline-block; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotBlink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; 
+            opacity: 0.35; pointer-events: none;
+        }
+        .logo-float { position: fixed; z-index: 5; pointer-events: none; object-fit: contain; }
+        .logo-top-left {
+            top: 15px; left: 15px; width: 60px; height: 60px; border-radius: 50%;
+            box-shadow: 0 0 10px rgba(123, 117, 214, 0.4); border: 2px solid rgba(123, 117, 214, 0.6);
+            background: #000;
+        }
+        .logo-bottom-left { bottom: 10px; left: 10px; width: 80px; height: auto; opacity: 0.8; }
+        .logo-bottom-right { bottom: 10px; right: 10px; width: 80px; height: auto; opacity: 0.8; }
+        .page-container {
+            position: relative; z-index: 10; width: 100%; max-width: 1000px;
+            display: flex; flex-direction: column; gap: 20px;
+            background: rgba(12, 12, 18, 0.85); padding: 25px; border-radius: 20px;
+            border: 1px solid rgba(123, 117, 214, 0.3); box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px); margin-bottom: 50px;
+            opacity: 0; animation: fadeInMain 0.8s ease-out 5.5s forwards;
+        }
+        @keyframes fadeInMain { to { opacity: 1; } }
+        .top-bar {
+            text-align: center; border-bottom: 1.5px solid #7b75d6;
+            padding-bottom: 15px; margin-bottom: 10px;
+            font-size: 22px; color: #cfd3dc; text-shadow: 0 0 4px rgba(123, 117, 214, 0.4);
+        }
+        .blink { animation: blink 1.4s step-start infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .content-area { display: flex; flex-direction: row; gap: 40px; align-items: center; justify-content: center; }
+        .card-wrapper { flex: 1; max-width: 420px; min-width: 300px; }
+        .card-visual {
+            aspect-ratio: 1.58/1; width: 100%; border-radius: 18px; padding: 25px; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1.5px solid rgba(123, 117, 214, 0.5); box-shadow: 0 0 20px rgba(123, 117, 214, 0.2);
+            overflow: hidden; transition: transform 0.3s;
+        }
+        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.6; pointer-events: none; }
+        .card-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .chip {
+            width: 50px; height: 36px; background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
+            border-radius: 6px; position: relative; border: 1px solid #8a6e18;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .chip::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.3); transform: translateY(-50%); }
+        .chip::after { content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%; border-left: 1px solid rgba(0,0,0,0.3); border-right: 1px solid rgba(0,0,0,0.3); }
+        .card-logo-type { font-size: 24px; font-weight: bold; font-style: italic; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.5); color: #fff; }
+        .card-number-display { font-size: 28px; letter-spacing: 3px; color: #fff; text-shadow: 0 0 8px rgba(123,117,214,0.8); margin-top: 10px; white-space: nowrap; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+        .card-label { font-size: 14px; color: #aaa; text-transform: uppercase; }
+        .card-value { font-size: 20px; color: #fff; }
+        .form-area { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 300px; }
+        .input-group { position: relative; }
+        .label { font-size: 20px; color: #cfd3dc; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .emoji-jump { display: inline-block; animation: jump 1.5s infinite ease-in-out; }
+        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        input {
+            width: 100%; background: rgba(0, 0, 0, 0.4); border: 2px solid #555; color: #fff;
+            font-family: 'VT323', monospace; font-size: 24px; padding: 12px; border-radius: 8px; outline: none; transition: all 0.3s;
+        }
+        input:focus { border-color: #7b75d6; box-shadow: 0 0 15px rgba(123, 117, 214, 0.3); }
+        .msg-feedback { font-size: 16px; margin-top: 5px; min-height: 20px; transition: all 0.3s; }
+        .msg-error { color: #ff4444; text-shadow: 0 0 5px rgba(255, 0, 0, 0.4); display: none;}
+        .msg-info { color: #d042ff; text-shadow: 0 0 8px rgba(208, 66, 255, 0.6); display: none; font-weight: bold; letter-spacing: 1px; }
+        .input-error { border-color: #ff4444 !important; box-shadow: 0 0 10px rgba(255,68,68,0.3) !important; }
+        .btn-wrapper { perspective: 1000px; margin-top: 10px; display: flex; flex-direction: column; gap: 15px; }
+        .btn-action {
+            width: 100%; background: #2a2a40; border: 2px solid #7b75d6; color: #fff;
+            font-family: 'VT323', monospace; font-size: 24px; padding: 15px; cursor: pointer; border-radius: 10px;
+            text-transform: uppercase; transform-style: preserve-3d; animation: signSwing 4s ease-in-out infinite;
+            display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none;
+        }
+        @keyframes signSwing { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(15deg); } 100% { transform: rotateX(0deg); } }
+        .btn-action:hover { background: #7b75d6; color: #000; box-shadow: 0 0 20px #7b75d6; }
+        #btnAsociarTodas { background: #402a2a; border-color: #d67575; animation-delay: 0.3s; }
+        #btnAsociarTodas:hover { background: #d67575; color: #000; box-shadow: 0 0 20px #d67575; }
+        .emoji-spin { display: inline-block; animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .footer { text-align: center; font-size: 14px; opacity: 0.6; margin-top: 10px;}
+        #loading-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 8, 0.95); z-index: 100;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .counter { font-size: 120px; color: #7b75d6; text-shadow: 0 0 20px #7b75d6; }
+        .success-text { font-size: 30px; color: #fff; margin-top: 20px; }
+        .success-details {
+            background: rgba(20, 20, 30, 0.9); margin-top: 30px; padding: 25px;
+            border-radius: 15px; border: 1px solid #7b75d6; max-width: 500px; text-align: left;
+        }
+        .success-details h3 { color: #75d675; margin-bottom: 15px; font-size: 22px; }
+        .success-details p { margin: 10px 0; font-size: 18px; }
+        .card-preview { display: flex; align-items: center; background: #1a1a2e; padding: 15px; border-radius: 10px; margin: 15px 0; }
+        .card-icon { font-size: 40px; margin-right: 15px; }
+        .card-info { flex-grow: 1; }
+        .terms { font-size: 14px; color: #aaa; margin-top: 20px; border-top: 1px solid #444; padding-top: 15px; }
+        .email-display { color: #4af; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px; }
+        .control-panel-mwcmd {
+            background: rgba(20, 20, 35, 0.9); margin-top: 30px; padding: 20px;
+            border-radius: 15px; border: 1px solid #555; display: none;
+        }
+        .panel-title { color: #f59e0b; font-size: 22px; margin-bottom: 15px; border-bottom: 1px solid #f59e0b; padding-bottom: 5px; }
+        .control-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+        .control-row label { min-width: 150px; color: #cfd3dc; }
+        .control-row input[type="range"] { flex-grow: 1; }
+        .control-row output { min-width: 40px; text-align: center; color: #00f2ff; }
+        .batch-input { width: 100%; height: 150px; font-family: monospace; font-size: 16px; }
+        .control-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .control-btn { padding: 12px; border-radius: 8px; border: none; font-family: 'VT323'; font-size: 20px; cursor: pointer; }
+        .btn-primary { background: #2a2a40; color: #fff; border: 1px solid #7b75d6; }
+        .btn-success { background: #2a402a; color: #fff; border: 1px solid #75d675; }
+        .btn-danger { background: #402a2a; color: #fff; border: 1px solid #d67575; }
+        @media (max-width: 768px) {
+            body { align-items: flex-start; padding: 10px; padding-top: 80px; }
+            .page-container { width: 100%; padding: 15px; }
+            .content-area { flex-direction: column; gap: 25px; }
+            .card-visual { width: 100%; }
+            .card-number-display { font-size: 22px; }
+            .logo-top-left { width: 50px; height: 50px; }
+            .logo-bottom-left, .logo-bottom-right { width: 60px; }
+            .mwcmd-title { font-size: 3rem; }
+            .mwcmd-subtitle { font-size: 1.5rem; }
+            .control-row { flex-direction: column; align-items: stretch; }
+            .control-row label { min-width: auto; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="panel simulator">
-            <h1>🚀 SAAT Pro - Asociación Masiva
-                <span id="protocolBadge" class="protocol-badge protocol-https">HTTPS</span>
-            </h1>
-            <div class="card-ui">
-                <h2>Asociar Nueva Tarjeta</h2>
-                <input type="text" id="inputCardNumber" placeholder="Número de tarjeta" 
-                       autocomplete="cc-number" inputmode="numeric" pattern="[\d ]{10,}" title="Ingresa 16 dígitos">
-                <input type="text" id="inputExpiry" placeholder="MM/AA" 
-                       autocomplete="cc-exp" inputmode="numeric" pattern="\d{2}/\d{2}" title="Formato: MM/AA">
-                <input type="text" id="inputCVV" placeholder="CVV (Simulación)" style="background:#64748b;" 
-                       autocomplete="off" disabled>
+    <!-- PANTALLA DE BIENVENIDA MWCMD -->
+    <div id="welcome-screen">
+        <div class="welcome-bg"></div>
+        <div class="welcome-content">
+            <div class="mwcmd-title">MWCMD PRO</div>
+            <div class="mwcmd-subtitle">Sistema de Asociación Avanzada</div>
+            <div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>
+        </div>
+    </div>
 
-                <button id="btnProcesarManual">🔘 PROCESAR TARJETA</button>
+    <img src="https://i.imgur.com/placeholder.png" class="logo-float logo-top-left" alt="Logo">
+    <img src="https://i.imgur.com/placeholder.png" class="logo-float logo-bottom-left" alt="Img Left">
+    <img src="https://i.imgur.com/placeholder.png" class="logo-float logo-bottom-right" alt="Img Right">
 
-                <div class="autofill-section">
-                    <h3>💾 Sistema de Perfiles</h3>
-                    <div class="input-group">
-                        <button id="btnGuardarPerfil">💾 Guardar Perfil</button>
-                        <button id="btnCargarPerfil">🚀 Cargar Perfil</button>
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="page-container">
+        <div class="top-bar"><span class="blink">SYSTEM_ROOT: ASOCIAR_TARJETA </span></div>
+
+        <div class="content-area">
+            <div class="card-wrapper">
+                <div class="card-visual" id="cardVisual">
+                    <canvas id="card-neural-net"></canvas>
+                    <div class="card-content">
+                        <div class="card-top">
+                            <div class="chip"></div>
+                            <div class="card-logo-type" id="cardBrandLabel" style="color: #4af;">VISA</div>
+                        </div>
+                        <div class="card-number-display" id="displayNumber">#### #### #### ####</div>
+                        <div class="card-bottom">
+                            <div>
+                                <div class="card-label">TITULAR</div>
+                                <div class="card-value">USUARIO</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="card-label">VENCE</div>
+                                <div class="card-value" id="displayDate">MM/AA</div>
+                            </div>
+                        </div>
                     </div>
-                    <p style="font-size: 0.85em; margin-top: 10px; color: #94a3b8; font-style: italic;">
-                        <span id="autofillStatus">Modo: Autocompletado nativo HTTPS activo.</span>
-                    </p>
                 </div>
-
-                <div id="processingAnimation" class="processing-animation hidden">PROCESANDO <span id="counter">3</span></div>
-                <div id="resultMessage" style="text-align: center; font-size: 1.5em; font-weight: bold; min-height: 60px; padding: 15px;"></div>
             </div>
 
-            <h2>📁 Lote de Tarjetas de Prueba</h2>
-            <textarea id="batchInput" rows="10">4847836402960070|04|2026|502
+            <div class="form-area">
+                <form id="payment-form">
+                    <div class="input-group">
+                        <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
+                        <input type="tel" id="cardNumber" name="cardnumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23">
+                        <div id="msgNumber" class="msg-feedback">
+                            <span class="msg-error">ERROR: Tarjeta inválida o incompleta</span>
+                            <span class="msg-info">Faltan dígitos...</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="label">► FECHA DE VENCIMIENTO</label>
+                        <input type="tel" id="cardDate" name="cc-exp" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
+                        <div id="msgDate" class="msg-feedback">
+                            <span class="msg-error">Fecha incompleta</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-wrapper">
+                        <button type="submit" id="btnAsociar" class="btn-action">
+                            <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
+                        </button>
+                        <button type="button" id="btnAsociarTodas" class="btn-action">
+                            <span>🔥</span> [ ASOCIAR TODAS ]
+                        </button>
+                        <button type="button" id="btnPanelControl" class="btn-action" style="background:#3a2a40; border-color:#a75dd6;">
+                            <span>⚙️</span> [ PANEL DE CONTROL ]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- PANEL DE CONTROL OCULTO (SAAT Pro) -->
+        <div class="control-panel-mwcmd" id="controlPanel">
+            <div class="panel-title">⚙️ PANEL DE CONTROL MWCMD Pro</div>
+            
+            <div class="control-row">
+                <label>Velocidad (segundos):</label>
+                <input type="range" id="inputSpeed" min="1" max="10" value="3">
+                <output for="inputSpeed" id="speedValue">3s</output>
+            </div>
+            
+            <div class="control-row">
+                <label>% de Error Aleatorio:</label>
+                <input type="range" id="inputErrorRate" min="0" max="50" value="10">
+                <output for="inputErrorRate" id="errorRateValue">10%</output>
+            </div>
+
+            <label>📁 Lote de Tarjetas (Formato: NUMERO|MM|AAAA|CVV):</label>
+            <textarea id="batchInput" class="batch-input" placeholder="4847836402960070|04|2026|502
+4847836402966135|04|2026|329
+...">4847836402960070|04|2026|502
 4847836402966135|04|2026|329
 4847836402963934|04|2026|529
 4847836402963991|04|2026|793
@@ -93,206 +299,172 @@
 4847836402963660|04|2026|853
 4847836402963223|04|2026|449</textarea>
 
-            <div class="stats">
-                <div class="stat-box"><div class="stat-value" id="statTotal">10</div>Total en Lote</div>
-                <div class="stat-box"><div class="stat-value" id="statPendiente">10</div>Pendientes</div>
-                <div class="stat-box"><div class="stat-value" id="statExito">0</div>Éxitos</div>
-                <div class="stat-box"><div class="stat-value" id="statError">0</div>Errores</div>
+            <div class="control-buttons">
+                <button id="btnIniciarAuto" class="control-btn btn-success">🚀 INICIAR AUTOMATIZACIÓN</button>
+                <button id="btnDetener" class="control-btn btn-danger" style="display:none;">⏹️ DETENER</button>
+                <button id="btnGuardarPerfil" class="control-btn btn-primary">💾 GUARDAR PERFIL</button>
+                <button id="btnCargarPerfil" class="control-btn btn-primary">🔄 CARGAR PERFIL</button>
+                <button id="btnGenerarReporte" class="control-btn btn-success">📊 GENERAR REPORTE</button>
+                <button id="btnLimpiarLog" class="control-btn btn-danger">🗑️ LIMPIAR LOG</button>
             </div>
         </div>
 
-        <div class="panel control-panel">
-            <h2>⚙️ Panel de Control</h2>
-            <h3 style="color:#f1f5f9; font-size:1em;">Configuración de Simulación</h3>
-            <label><strong>Velocidad (segundos):</strong></label>
-            <input type="range" id="inputSpeed" min="1" max="10" value="3">
-            <output for="inputSpeed" id="speedValue">3s</output>
+        <div class="footer">MWCMD Pro - Sistema de Simulación de Asociación</div>
+    </div>
 
-            <label><strong>% de Error Aleatorio:</strong></label>
-            <input type="range" id="inputErrorRate" min="0" max="50" value="10">
-            <output for="inputErrorRate" id="errorRateValue">10%</output>
-
-            <div style="margin-top: 25px;">
-                <button id="btnIniciarAuto">🚀 INICIAR AUTOMATIZACIÓN</button>
-                <button id="btnDetener">⏹️ DETENER</button>
-                <button id="btnGenerarReporte">📊 GENERAR REPORTE</button>
-                <button id="btnLimpiarLog" style="background:#475569;">🗑️ LIMPIAR LOG</button>
+    <!-- PANTALLA DE PROCESAMIENTO / ÉXITO (ACTUALIZADA) -->
+    <div id="loading-screen">
+        <div class="loading-title" style="color:#fff; font-size:24px; margin-bottom:20px;">[ PROCESANDO ]</div>
+        <div class="counter" id="counterNumber">3</div>
+        <div class="success-text" id="finalMessage">¡TARJETA ASOCIADA CON ÉXITO!</div>
+        
+        <!-- NUEVA SECCIÓN CON LOS DETALLES VISUALES QUE SOLICITASTE -->
+        <div class="success-details" id="successDetails" style="display:none;">
+            <h3>Save card securely?</h3>
+            <p>Pay faster when your card is saved. Card details are encrypted in your Google Account.</p>
+            
+            <div class="card-preview">
+                <div class="card-icon">💳</div>
+                <div class="card-info">
+                    <strong id="successCardBrand">VISA</strong><br>
+                    <span id="successCardNumber">**** 0070 • 04/26</span>
+                </div>
             </div>
-
-            <div class="bruteforce-section">
-                <h3>🔥 Asociación Masiva (Fuerza Bruta)</h3>
-                <p style="font-size: 0.9em; color: #f8fafc; margin-bottom: 15px;">
-                    Marca <strong>TODAS</strong> las tarjetas válidas del lote como <strong>ASOCIADAS CON ÉXITO</strong>.
-                </p>
-                <button id="btnAsociarTodas">🔥 ASOCIAR TODAS (FUERZA BRUTA)</button>
-                <p style="font-size: 0.8em; color: #cbd5e1; margin-top: 10px; font-style: italic;">
-                    Estado: <span id="bruteforceStatus">Listo.</span>
-                </p>
+            
+            <p>By continuing, you agree to the Google Payments Terms of Service. The Privacy Notice describes how your data is handled. Your card and billing address are saved to your Google Account.</p>
+            
+            <div class="terms">
+                <p>Email asociado: <span class="email-display" id="successEmail">sanchez14562005@gmail.com</span></p>
+                <p style="margin-top:10px; font-size:12px;">GTA SAN ANDREAS...</p>
             </div>
-
-            <h2>📜 Log de Ejecución</h2>
-            <div id="statusLog"></div>
         </div>
     </div>
 
     <script>
-        class SAAT_Pro_Simulator {
+        // ===== CONFIGURACIÓN INICIAL Y BIENVENIDA =====
+        const welcomeScreen = document.getElementById('welcome-screen');
+        setTimeout(() => welcomeScreen.classList.add('hidden'), 5000);
+
+        // ===== CÓDIGO VISUAL MWCMD (MATRIX, ANIMACIONES, VALIDACIÓN BÁSICA) =====
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        function resizeMatrix() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeMatrix); resizeMatrix();
+        const cols = Math.floor(width / 20) + 1;
+        const ypos = Array(cols).fill(0);
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#8a7dff'; ctx.font = '15pt monospace';
+            ypos.forEach((y, ind) => {
+                const text = String.fromCharCode(Math.random() * 128);
+                const x = ind * 20; ctx.fillText(text, x, y);
+                if (y > 100 + Math.random() * 10000) ypos[ind] = 0; else ypos[ind] = y + 20;
+            });
+        } setInterval(drawMatrix, 50);
+
+        const netCanvas = document.getElementById('card-neural-net');
+        const netCtx = netCanvas.getContext('2d');
+        let netW, netH; let nodes = [];
+        function resizeNet() {
+            const card = document.getElementById('cardVisual');
+            const rect = card.getBoundingClientRect();
+            netW = netCanvas.width = rect.width; netH = netCanvas.height = rect.height;
+            if (nodes.length === 0) initNodes();
+        }
+        function initNodes() { nodes = []; for(let i=0; i<30; i++) nodes.push({ x: Math.random() * netW, y: Math.random() * netH, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 }); }
+        window.addEventListener('resize', resizeNet); setTimeout(resizeNet, 100);
+        function drawNet() {
+            netCtx.clearRect(0,0,netW,netH);
+            for(let i=0; i<nodes.length; i++) {
+                let p1 = nodes[i]; p1.x += p1.vx; p1.y += p1.vy;
+                if(p1.x < 0) { p1.x = 0; p1.vx *= -1; } if(p1.x > netW) { p1.x = netW; p1.vx *= -1; }
+                if(p1.y < 0) { p1.y = 0; p1.vy *= -1; } if(p1.y > netH) { p1.y = netH; p1.vy *= -1; }
+                for(let j=i+1; j<nodes.length; j++) {
+                    let p2 = nodes[j]; let d = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
+                    if(d < 70) { netCtx.beginPath(); netCtx.strokeStyle = `rgba(0, 242, 255, ${1 - d/70})`; netCtx.lineWidth = 0.8; netCtx.moveTo(p1.x, p1.y); netCtx.lineTo(p2.x, p2.y); netCtx.stroke(); }
+                }
+                netCtx.beginPath(); netCtx.fillStyle = '#00f2ff'; netCtx.arc(p1.x, p1.y, 1.5, 0, Math.PI*2); netCtx.fill();
+            } requestAnimationFrame(drawNet);
+        } drawNet();
+
+        const numInput = document.getElementById('cardNumber');
+        const dateInput = document.getElementById('cardDate');
+        const displayNum = document.getElementById('displayNumber');
+        const displayDate = document.getElementById('displayDate');
+        const brandLabel = document.getElementById('cardBrandLabel');
+
+        const cardPatterns = { visa: /^4/, mastercard: /^5[1-5]/, amex: /^3[47]/, discover: /^6(?:011|5)/, diners: /^3(?:0[0-5]|[68])/ };
+
+        numInput.addEventListener('input', (e) => {
+            let raw = e.target.value.replace(/\D/g, ''); let formatted = '';
+            let type = "VISA"; let color = "#4af";
+            if (cardPatterns.mastercard.test(raw)) { type = "MASTERCARD"; color = "#f55"; }
+            else if (cardPatterns.amex.test(raw)) { type = "AMEX"; color = "#0cf"; }
+            else if (cardPatterns.discover.test(raw)) { type = "DISCOVER"; color = "#fa0"; }
+            else if (cardPatterns.diners.test(raw)) { type = "DINERS"; color = "#aaa"; }
+            else if (cardPatterns.visa.test(raw)) { type = "VISA"; color = "#4af"; }
+            brandLabel.textContent = type; brandLabel.style.color = color;
+            if (type === "AMEX") { for(let i=0; i<raw.length; i++) { if (i===4 || i===10) formatted += ' '; formatted += raw[i]; } }
+            else { for(let i=0; i<raw.length; i++) { if (i>0 && i%4===0) formatted += ' '; formatted += raw[i]; } }
+            e.target.value = formatted; displayNum.textContent = formatted || "#### #### #### ####";
+        });
+
+        dateInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length >= 3) e.target.value = val.slice(0,2) + '/' + val.slice(2,4); else e.target.value = val;
+            displayDate.textContent = e.target.value || "MM/AA";
+        });
+
+        // ===== NÚCLEO SAAT PRO (INYECTADO EN MWCMD) =====
+        class MWCMD_Pro_System {
             constructor() {
-                this.cardQueue = [];
-                this.isAutomationRunning = false;
-                this.stats = { total: 10, success: 0, error: 0, pending: 10 };
-                this.config = { speedSec: 3, errorRate: 10 };
-                this.STORAGE_KEY = 'saat_pro_netlify_profile';
-                this.init();
+                this.cardQueue = []; this.isAutomationRunning = false; this.stats = { total: 10, success: 0, error: 0, pending: 10 };
+                this.config = { speedSec: 3, errorRate: 10 }; this.STORAGE_KEY = 'mwcmd_pro_profile'; this.init();
             }
 
             init() {
-                this.bindEvents();
-                this.parseBatch();
-                this.updateStatsUI();
-                this.attemptAutoLoadProfile();
-                this.log('✅ SAAT Pro inicializado en Netlify (HTTPS).', 'success');
+                this.bindEvents(); this.parseBatch(); this.updateStatsUI(); this.attemptAutoLoadProfile();
+                console.log('MWCMD Pro System inicializado.');
             }
 
             bindEvents() {
-                document.getElementById('btnProcesarManual').onclick = () => this.processSingleCard();
+                document.getElementById('btnAsociar').onclick = (e) => { e.preventDefault(); this.processSingleCardUI(); };
+                document.getElementById('btnAsociarTodas').onclick = () => this.forceAssociateAllCards();
+                document.getElementById('btnPanelControl').onclick = () => this.toggleControlPanel();
                 document.getElementById('btnIniciarAuto').onclick = () => this.startAutomation();
                 document.getElementById('btnDetener').onclick = () => this.stopAutomation();
                 document.getElementById('btnGenerarReporte').onclick = () => this.generateReport();
-                document.getElementById('btnLimpiarLog').onclick = () => { document.getElementById('statusLog').innerHTML = ''; this.log('Log limpiado.', 'info'); };
+                document.getElementById('btnLimpiarLog').onclick = () => { /* Log se implementaría en div adicional */ };
                 document.getElementById('btnGuardarPerfil').onclick = () => this.saveCurrentProfile();
                 document.getElementById('btnCargarPerfil').onclick = () => this.loadSavedProfile();
-                document.getElementById('btnAsociarTodas').onclick = () => this.forceAssociateAllCards();
                 document.getElementById('batchInput').oninput = () => this.parseBatch();
-                document.getElementById('inputSpeed').oninput = (e) => {
-                    this.config.speedSec = parseInt(e.target.value);
-                    document.getElementById('speedValue').textContent = this.config.speedSec + 's';
-                };
-                document.getElementById('inputErrorRate').oninput = (e) => {
-                    this.config.errorRate = parseInt(e.target.value);
-                    document.getElementById('errorRateValue').textContent = this.config.errorRate + '%';
-                };
-                document.getElementById('inputCardNumber').addEventListener('input', (e) => {
-                    let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
-                    value = value.replace(/(\d{4})/g, '$1 ').trim();
-                    e.target.value = value.substring(0, 19);
-                });
-                document.getElementById('inputExpiry').addEventListener('input', (e) => {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 2) value = value.substring(0,2) + '/' + value.substring(2,4);
-                    e.target.value = value.substring(0,5);
-                });
+                document.getElementById('inputSpeed').oninput = (e) => { this.config.speedSec = parseInt(e.target.value); document.getElementById('speedValue').textContent = this.config.speedSec + 's'; };
+                document.getElementById('inputErrorRate').oninput = (e) => { this.config.errorRate = parseInt(e.target.value); document.getElementById('errorRateValue').textContent = this.config.errorRate + '%'; };
+                numInput.addEventListener('input', (e) => { let raw = e.target.value.replace(/\D/g, ''); if(raw.length === 16) this.autoFillFromBatch(raw); });
             }
 
-            async forceAssociateAllCards() {
-                const pendingCards = this.cardQueue.filter(card => card.status === 'PENDING');
-                if (pendingCards.length === 0) {
-                    document.getElementById('bruteforceStatus').textContent = 'No hay pendientes.';
-                    this.log('[FUERZA BRUTA] No hay tarjetas pendientes.', 'info');
-                    alert('No hay tarjetas pendientes.');
-                    return;
-                }
-
-                if (!confirm(`¿ASOCIAR ${pendingCards.length} TARJETAS DE FORMA MASIVA?\n\nSe marcarán como ASOCIADAS CON ÉXITO.`)) {
-                    document.getElementById('bruteforceStatus').textContent = 'Cancelado.';
-                    return;
-                }
-
-                document.getElementById('bruteforceStatus').textContent = 'Ejecutando...';
-                document.getElementById('btnAsociarTodas').disabled = true;
-                this.log(`[FUERZA BRUTA] Iniciando asociación de ${pendingCards.length} tarjeta(s)...`, 'processing');
-
-                for (let i = 0; i < pendingCards.length; i++) {
-                    const card = pendingCards[i];
-                    card.status = 'SIM_SUCCESS';
-                    this.stats.success++;
-                    this.stats.pending--;
-                    this.updateStatsUI();
-                    this.log(`[FUERZA BRUTA] Asociada: ****${card.number.slice(-4)}`, 'success');
-                    await this.delay(50);
-                }
-
-                document.getElementById('bruteforceStatus').textContent = `Completado. ${pendingCards.length} asociadas.`;
-                document.getElementById('btnAsociarTodas').disabled = false;
-                document.getElementById('resultMessage').innerHTML = '🔥 <br><strong>ASOCIACIÓN MASIVA COMPLETADA</strong><br><small>Todas las tarjetas marcadas como exitosas.</small>';
-                document.getElementById('resultMessage').style.color = '#10b981';
-                this.log(`[FUERZA BRUTA] ${pendingCards.length} tarjeta(s) asociadas.`, 'success');
-                alert(`✅ Asociación masiva completada.\n${pendingCards.length} tarjeta(s) asociadas.`);
-            }
-
-            saveCurrentProfile() {
-                const profile = {
-                    cardNumber: document.getElementById('inputCardNumber').value.replace(/\s/g, ''),
-                    expiry: document.getElementById('inputExpiry').value,
-                    timestamp: new Date().toISOString()
-                };
-                if (!profile.cardNumber || !profile.expiry) {
-                    this.log('❌ No hay datos para guardar.', 'error');
-                    alert('Completa los campos primero.');
-                    return;
-                }
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(profile));
-                this.log(`✅ Perfil guardado. (****${profile.cardNumber.slice(-4)})`, 'success');
-            }
-
-            loadSavedProfile() {
-                const saved = localStorage.getItem(this.STORAGE_KEY);
-                if (!saved) {
-                    this.log('❌ No hay perfil guardado.', 'error');
-                    alert('Guarda un perfil primero.');
-                    return;
-                }
-                try {
-                    const profile = JSON.parse(saved);
-                    document.getElementById('inputCardNumber').value = profile.cardNumber.replace(/(\d{4})/g, '$1 ').trim();
-                    document.getElementById('inputExpiry').value = profile.expiry;
-                    this.log(`🔍 Perfil cargado.`, 'info');
-                } catch(e) {
-                    this.log('❌ Error al cargar perfil.', 'error');
-                }
-            }
-
-            attemptAutoLoadProfile() {
-                const saved = localStorage.getItem(this.STORAGE_KEY);
-                if (saved) {
-                    setTimeout(() => {
-                        if (confirm('¿Cargar automáticamente el perfil de tarjeta guardado?')) {
-                            this.loadSavedProfile();
-                        }
-                    }, 500);
-                }
+            toggleControlPanel() {
+                const panel = document.getElementById('controlPanel');
+                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
             }
 
             parseBatch() {
-                const batchText = document.getElementById('batchInput').value;
-                this.cardQueue = [];
-                const lines = batchText.split('\n').filter(l => l.trim());
-                let validCount = 0;
-
+                const batchText = document.getElementById('batchInput').value; this.cardQueue = [];
+                const lines = batchText.split('\n').filter(l => l.trim()); let validCount = 0;
                 lines.forEach(line => {
                     const parts = line.split('|').map(p => p.trim());
                     if (parts.length >= 4) {
                         const [fullNumber, expMonth, expYear] = parts;
                         const expDate = `${expMonth.padStart(2,'0')}/${expYear.slice(-2)}`;
-
                         if (this.validateLuhn(fullNumber) && this.isFutureDate(expMonth, expYear)) {
-                            this.cardQueue.push({
-                                number: fullNumber,
-                                exp: expDate,
-                                bin: fullNumber.substring(0,6),
-                                status: 'PENDING'
-                            });
+                            this.cardQueue.push({ number: fullNumber, exp: expDate, bin: fullNumber.substring(0,6), status: 'PENDING' });
                             validCount++;
                         }
                     }
                 });
-
-                this.stats.total = this.cardQueue.length;
-                this.stats.pending = this.cardQueue.length;
-                this.stats.success = 0;
-                this.stats.error = 0;
-                this.updateStatsUI();
-                this.log(`[LOTE] ${validCount} tarjetas válidas cargadas.`, 'success');
+                this.stats.total = this.cardQueue.length; this.stats.pending = this.cardQueue.length;
+                this.stats.success = 0; this.stats.error = 0; this.updateStatsUI();
             }
 
             validateLuhn(cardNo) {
@@ -301,150 +473,153 @@
                     let digit = parseInt(cardNo.charAt(i));
                     if (isEven && (digit *= 2) > 9) digit -= 9;
                     sum += digit; isEven = !isEven;
-                }
-                return (sum % 10) === 0;
+                } return (sum % 10) === 0;
             }
 
             isFutureDate(month, year) {
-                const now = new Date();
-                const exp = new Date(parseInt(year), parseInt(month) - 1);
-                return exp > now;
+                const now = new Date(); const exp = new Date(parseInt(year), parseInt(month) - 1); return exp > now;
             }
 
-            async startAutomation() {
-                if (this.cardQueue.length === 0) { 
-                    alert('⚠️ La cola está vacía.'); 
-                    return; 
+            autoFillFromBatch(fullNumber) {
+                const foundCard = this.cardQueue.find(c => c.number === fullNumber);
+                if (foundCard) { dateInput.value = foundCard.exp; displayDate.textContent = foundCard.exp; }
+            }
+
+            // === FUNCIÓN PRINCIPAL ACTUALIZADA CON LA NUEVA INTERFAZ DE ÉXITO ===
+            processSingleCardUI() {
+                const number = numInput.value.replace(/\D/g, '');
+                const exp = dateInput.value;
+                if (!number || number.length < 16 || !exp || exp.length < 5) {
+                    alert('Completa los campos correctamente.'); return;
                 }
-                this.isAutomationRunning = true;
-                document.getElementById('btnIniciarAuto').style.display = 'none';
-                document.getElementById('btnDetener').style.display = 'block';
-                this.log('[AUTO] Iniciando...', 'processing');
 
-                for (let i = 0; i < this.cardQueue.length; i++) {
-                    if (!this.isAutomationRunning) break;
-                    const card = this.cardQueue[i];
-                    await this.simulateCardEntry(card);
-                    await this.delay(this.config.speedSec * 1000);
-                }
-                this.stopAutomation();
-                this.log('[AUTO] Completado.', 'success');
-            }
+                // Mostrar pantalla de procesamiento MWCMD
+                const loadingScreen = document.getElementById('loading-screen');
+                const counter = document.getElementById('counterNumber');
+                const finalMsg = document.getElementById('finalMessage');
+                const successDetails = document.getElementById('successDetails');
+                const successCardBrand = document.getElementById('successCardBrand');
+                const successCardNumber = document.getElementById('successCardNumber');
+                const successEmail = document.getElementById('successEmail');
 
-            stopAutomation() {
-                this.isAutomationRunning = false;
-                document.getElementById('btnIniciarAuto').style.display = 'block';
-                document.getElementById('btnDetener').style.display = 'none';
-            }
+                loadingScreen.style.display = 'flex';
+                finalMsg.style.display = 'none';
+                successDetails.style.display = 'none';
+                counter.style.display = 'block';
+                counter.textContent = '3';
 
-            async simulateCardEntry(card) {
-                document.getElementById('inputCardNumber').value = card.number.replace(/(\d{4})/g, '$1 ').trim();
-                document.getElementById('inputExpiry').value = card.exp;
-                this.log(`[AUTO] Procesando: ****${card.number.slice(-4)}`, 'processing');
-                document.getElementById('btnProcesarManual').click();
-                await this.delay(3500);
-            }
-
-            processSingleCard() {
-                const number = document.getElementById('inputCardNumber').value.replace(/\s/g, '');
-                const exp = document.getElementById('inputExpiry').value;
-                if (!number || number.length < 16) {
-                    this.log('❌ Número incompleto.', 'error');
-                    document.getElementById('resultMessage').innerHTML = '❌ <br>Número incompleto.';
-                    document.getElementById('resultMessage').style.color = '#ef4444';
-                    return;
-                }
-                this.showProcessingAnimation();
-                setTimeout(() => {
-                    const isRandomError = Math.random() * 100 < this.config.errorRate;
-                    const success = !isRandomError;
-
-                    const cardInQueue = this.cardQueue.find(c => c.number === number);
-                    if (cardInQueue) {
-                        cardInQueue.status = success ? 'SIM_SUCCESS' : 'SIM_ERROR';
-                        this.stats.pending--;
-                        success ? this.stats.success++ : this.stats.error++;
-                        this.updateStatsUI();
-                    }
-
-                    if (success) {
-                        document.getElementById('resultMessage').innerHTML = '✅ <br><strong>¡ASOCIADA CON ÉXITO!</strong>';
-                        document.getElementById('resultMessage').style.color = '#10b981';
-                        this.log(`[SIM] ****${number.slice(-4)}: Aceptada.`, 'success');
-                    } else {
-                        document.getElementById('resultMessage').innerHTML = '❌ <br><strong>RECHAZADA</strong><br><small>Error aleatorio.</small>';
-                        document.getElementById('resultMessage').style.color = '#ef4444';
-                        this.log(`[SIM] ****${number.slice(-4)}: Rechazada.`, 'error');
-                    }
-                    this.hideProcessingAnimation();
-                }, 3000);
-            }
-
-            showProcessingAnimation() {
-                const anim = document.getElementById('processingAnimation');
-                const counter = document.getElementById('counter');
-                anim.classList.remove('hidden');
                 let count = 3;
-                const countdown = setInterval(() => {
-                    count--;
-                    counter.textContent = count;
-                    if (count === 0) clearInterval(countdown);
+                const timer = setInterval(() => {
+                    count--; counter.textContent = count;
+                    if(count <= 0) {
+                        clearInterval(timer);
+                        counter.style.display = 'none';
+                        finalMsg.style.display = 'block';
+
+                        // MOSTRAR LOS DETALLES VISUALES NUEVOS (como en tu captura)
+                        successCardBrand.textContent = brandLabel.textContent;
+                        successCardNumber.textContent = `**** ${number.slice(-4)} • ${exp}`;
+                        successEmail.textContent = 'sanchez14562005@gmail.com'; // Puedes hacerlo editable
+                        successDetails.style.display = 'block';
+
+                        // Lógica SAAT: Marcar como exitosa si está en lote
+                        const cardInQueue = this.cardQueue.find(c => c.number === number);
+                        if (cardInQueue && cardInQueue.status === 'PENDING') {
+                            cardInQueue.status = 'SIM_SUCCESS';
+                            this.stats.success++;
+                            this.stats.pending--;
+                            this.updateStatsUI();
+                        }
+                        // Recargar después de 5 segundos
+                        setTimeout(() => { window.location.reload(); }, 5000);
+                    }
                 }, 1000);
             }
 
-            hideProcessingAnimation() {
-                document.getElementById('processingAnimation').classList.add('hidden');
-                document.getElementById('counter').textContent = '3';
+            async forceAssociateAllCards() {
+                const pendingCards = this.cardQueue.filter(card => card.status === 'PENDING');
+                if (pendingCards.length === 0) { alert('No hay tarjetas pendientes.'); return; }
+                if (!confirm(`¿Asociar ${pendingCards.length} tarjetas masivamente?`)) return;
+
+                // Mostrar pantalla de procesamiento
+                const loadingScreen = document.getElementById('loading-screen');
+                const counter = document.getElementById('counterNumber');
+                const finalMsg = document.getElementById('finalMessage');
+                loadingScreen.style.display = 'flex';
+                finalMsg.textContent = `ASOCIANDO ${pendingCards.length} TARJETAS...`;
+                finalMsg.style.display = 'block';
+                counter.style.display = 'none';
+
+                for (let i = 0; i < pendingCards.length; i++) {
+                    const card = pendingCards[i];
+                    card.status = 'SIM_SUCCESS';
+                    this.stats.success++;
+                    this.stats.pending--;
+                    this.updateStatsUI();
+                    await this.delay(300); // Pausa corta entre cada una
+                }
+
+                finalMsg.textContent = `✅ ${pendingCards.length} TARJETAS ASOCIADAS`;
+                setTimeout(() => { loadingScreen.style.display = 'none'; window.location.reload(); }, 2000);
             }
+
+            async startAutomation() {
+                if (this.cardQueue.length === 0) { alert('La cola está vacía.'); return; }
+                this.isAutomationRunning = true;
+                document.getElementById('btnIniciarAuto').style.display = 'none';
+                document.getElementById('btnDetener').style.display = 'block';
+                for (let i = 0; i < this.cardQueue.length; i++) {
+                    if (!this.isAutomationRunning) break;
+                    const card = this.cardQueue[i];
+                    numInput.value = card.number.replace(/(\d{4})/g, '$1 ').trim();
+                    dateInput.value = card.exp;
+                    displayNum.textContent = numInput.value;
+                    displayDate.textContent = card.exp;
+                    this.processSingleCardUI();
+                    await this.delay((this.config.speedSec + 3) * 1000);
+                } this.stopAutomation();
+            }
+
+            stopAutomation() { this.isAutomationRunning = false; document.getElementById('btnIniciarAuto').style.display = 'block'; document.getElementById('btnDetener').style.display = 'none'; }
 
             generateReport() {
-                const now = new Date();
-                let report = `=== REPORTE SAAT Pro - Netlify ===\n`;
-                report += `Fecha: ${now.toLocaleString()}\n`;
-                report += `Total: ${this.stats.total}\n`;
-                report += `Éxitos: ${this.stats.success}\n`;
-                report += `Errores: ${this.stats.error}\n`;
-                report += `Pendientes: ${this.stats.pending}\n`;
-                report += `\n--- DETALLE ---\n`;
-                this.cardQueue.forEach(c => {
-                    report += `${c.number.slice(-4)} | ${c.bin} | ${c.exp} | ${c.status}\n`;
-                });
-
-                const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `reporte_saat_${now.getTime()}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                this.log('[SISTEMA] Reporte generado.', 'success');
+                const now = new Date(); let report = `=== REPORTE MWCMD Pro ===\nFecha: ${now.toLocaleString()}\n`;
+                report += `Total: ${this.stats.total}\nÉxitos: ${this.stats.success}\nErrores: ${this.stats.error}\nPendientes: ${this.stats.pending}\n\n`;
+                this.cardQueue.forEach(c => { report += `${c.number.slice(-4)} | ${c.bin} | ${c.exp} | ${c.status}\n`; });
+                const blob = new Blob([report], { type: 'text/plain' }); const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `reporte_mwcmd_${now.getTime()}.txt`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                alert('Reporte generado y descargado.');
             }
 
-            log(message, type = 'info') {
-                const logElem = document.getElementById('statusLog');
-                const entry = document.createElement('div');
-                entry.className = `log-entry ${type}`;
-                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-                logElem.appendChild(entry);
-                logElem.scrollTop = logElem.scrollHeight;
+            saveCurrentProfile() {
+                const profile = { cardNumber: numInput.value.replace(/\s/g, ''), expiry: dateInput.value, timestamp: new Date().toISOString() };
+                if (!profile.cardNumber || !profile.expiry) { alert('Completa los campos primero.'); return; }
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(profile)); alert('Perfil guardado.');
             }
 
-            updateStatsUI() {
-                document.getElementById('statTotal').textContent = this.stats.total;
-                document.getElementById('statPendiente').textContent = this.stats.pending;
-                document.getElementById('statExito').textContent = this.stats.success;
-                document.getElementById('statError').textContent = this.stats.error;
+            loadSavedProfile() {
+                const saved = localStorage.getItem(this.STORAGE_KEY);
+                if (!saved) { alert('No hay perfil guardado.'); return; }
+                try {
+                    const profile = JSON.parse(saved);
+                    numInput.value = profile.cardNumber.replace(/(\d{4})/g, '$1 ').trim();
+                    dateInput.value = profile.expiry;
+                    displayNum.textContent = numInput.value; displayDate.textContent = profile.expiry;
+                } catch(e) { alert('Error al cargar perfil.'); }
             }
+
+            attemptAutoLoadProfile() {
+                const saved = localStorage.getItem(this.STORAGE_KEY);
+                if (saved) { setTimeout(() => { if (confirm('¿Cargar perfil guardado?')) this.loadSavedProfile(); }, 1000); }
+            }
+
+            updateStatsUI() { /* Actualizaría elementos de estadísticas si los agregas */ }
 
             delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
         }
 
-        window.onload = () => { 
-            window.saatPro = new SAAT_Pro_Simulator();
-            console.log('SAAT Pro Netlify - Listo.');
-        };
+        window.onload = () => { window.mwcmdPro = new MWCMD_Pro_System(); };
     </script>
 </body>
 </html>
