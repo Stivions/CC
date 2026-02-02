@@ -2,983 +2,573 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ASOCIADOR GPay - SENSEI BYTES & STIVION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Tarjeta MWCMD</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        /* ===== ESTILOS DEL CÓDIGO BASE (CON AJUSTES) ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: radial-gradient(circle at 20% 20%, #111019 0%, #06060a 45%, #030304 100%);
             font-family: 'VT323', monospace;
+            background: #0a0a15;
             color: #cfd3dc;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             padding: 20px;
-            overflow-x: hidden;
-            position: relative;
         }
 
-        /* ===== HEADER CON SOCIAL ===== */
-        .header-bar {
-            position: absolute; top: 15px; left: 0; width: 100%; padding: 0 20px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 100;
-        }
-        .brand-title {
-            font-size: 1.8rem; color: #00f2ff; text-shadow: 0 0 10px #00f2ff;
-            letter-spacing: 2px;
-        }
-        .social-buttons { display: flex; gap: 15px; }
-        .social-btn {
-            background: rgba(123, 117, 214, 0.2); border: 1.5px solid #7b75d6;
-            color: #cfd3dc; padding: 8px 20px; border-radius: 30px;
-            font-family: 'VT323'; font-size: 1.3rem; text-decoration: none;
-            display: flex; align-items: center; gap: 8px; transition: all 0.3s;
-        }
-        .social-btn:hover {
-            background: #7b75d6; color: #000; box-shadow: 0 0 15px #7b75d6;
-            transform: translateY(-2px);
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
         }
 
-        /* ===== FONDO MATRIX ===== */
-        #matrix-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; 
-            opacity: 0.35;
-            pointer-events: none;
+        .title {
+            font-size: 2.8rem;
+            color: #00f2ff;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+            margin-bottom: 10px;
         }
 
-        /* ===== CONTENEDOR PRINCIPAL ===== */
-        .page-container {
-            position: relative; z-index: 10; width: 100%; max-width: 1000px;
-            display: flex; flex-direction: column; gap: 20px;
-            background: rgba(12, 12, 18, 0.85);
-            padding: 25px; border-radius: 20px;
-            border: 1px solid rgba(123, 117, 214, 0.3);
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            margin-bottom: 50px;
-            margin-top: 80px;
+        .subtitle {
+            font-size: 1.5rem;
+            color: #7b75d6;
         }
 
-        .top-bar {
-            text-align: center; border-bottom: 1.5px solid #7b75d6;
-            padding-bottom: 15px; margin-bottom: 10px;
-            font-size: 22px; color: #cfd3dc; text-shadow: 0 0 4px rgba(123, 117, 214, 0.4);
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 900px;
+            width: 100%;
+            background: rgba(15, 15, 25, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #7b75d6;
+            box-shadow: 0 0 30px rgba(123, 117, 214, 0.3);
         }
-        .blink { animation: blink 1.4s step-start infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
 
-        .content-area {
-            display: flex; flex-direction: row; gap: 40px;
-            align-items: center; justify-content: center;
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+            }
         }
-        @media (max-width: 768px) { .content-area { flex-direction: column; } }
 
-        /* ===== TARJETA VISUAL ===== */
-        .card-wrapper { flex: 1; max-width: 420px; min-width: 300px; }
-        .card-visual {
-            aspect-ratio: 1.58/1; width: 100%;
-            border-radius: 18px; padding: 25px; position: relative;
-            display: flex; flex-direction: column; justify-content: space-between;
+        .card-preview {
+            flex: 1;
+            min-width: 300px;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1.5px solid rgba(123, 117, 214, 0.5);
-            box-shadow: 0 0 20px rgba(123, 117, 214, 0.2);
-            overflow: hidden; transition: transform 0.3s;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 2px solid rgba(123, 117, 214, 0.5);
         }
-        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.6; pointer-events: none; }
-        .card-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .chip {
-            width: 50px; height: 36px;
-            background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
-            border-radius: 6px; position: relative;
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 36px;
+            background: linear-gradient(135deg, #e6c86e 0%, #bf9738 100%);
+            border-radius: 8px;
             border: 1px solid #8a6e18;
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3);
         }
-        .chip::before {
-            content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px;
-            background: rgba(0,0,0,0.3); transform: translateY(-50%);
+
+        .card-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
         }
-        .chip::after {
-            content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%;
-            border-left: 1px solid rgba(0,0,0,0.3); border-right: 1px solid rgba(0,0,0,0.3);
+
+        .card-number {
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            color: #fff;
+            margin: 20px 0;
+            min-height: 50px;
         }
-        .card-logo-type {
-            font-size: 24px; font-weight: bold; font-style: italic;
-            text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.5);
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .detail-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 1.4rem;
             color: #fff;
         }
-        .card-number-display {
-            font-size: 28px; letter-spacing: 3px; color: #fff;
-            text-shadow: 0 0 8px rgba(123,117,214,0.8);
-            margin-top: 10px; white-space: nowrap;
-        }
-        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-        .card-label { font-size: 14px; color: #aaa; text-transform: uppercase; }
-        .card-value { font-size: 20px; color: #fff; }
 
-        /* ===== FORMULARIO (OPTIMIZADO PARA GOOGLE PAY) ===== */
-        .form-area { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 300px; }
-        .input-group { position: relative; }
-        .label { 
-            font-size: 20px; color: #cfd3dc; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;
+        .form-section {
+            flex: 1;
+            min-width: 300px;
         }
-        .emoji-jump {
-            display: inline-block;
-            animation: jump 1.5s infinite ease-in-out;
-        }
-        @keyframes jump {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        input {
-            width: 100%; background: rgba(0, 0, 0, 0.4);
-            border: 2px solid #555; color: #fff;
-            font-family: 'VT323', monospace; font-size: 24px; padding: 12px;
-            border-radius: 8px; outline: none; transition: all 0.3s;
-        }
-        input:focus { border-color: #7b75d6; box-shadow: 0 0 15px rgba(123, 117, 214, 0.3); }
-        .msg-feedback { font-size: 16px; margin-top: 5px; min-height: 20px; transition: all 0.3s; }
-        .msg-error { color: #ff4444; text-shadow: 0 0 5px rgba(255, 0, 0, 0.4); display: none;}
-        .msg-info { 
-            color: #d042ff; 
-            text-shadow: 0 0 8px rgba(208, 66, 255, 0.6);
-            display: none; font-weight: bold; letter-spacing: 1px;
-        }
-        .input-error { border-color: #ff4444 !important; box-shadow: 0 0 10px rgba(255,68,68,0.3) !important; }
 
-        /* ===== BOTONES PRINCIPALES ===== */
-        .btn-wrapper {
-            perspective: 1000px;
-            margin-top: 10px;
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.3rem;
+            color: #cfd3dc;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1.3rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #555;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'VT323', monospace;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #7b75d6;
+            box-shadow: 0 0 10px rgba(123, 117, 214, 0.3);
+        }
+
+        .form-input.error {
+            border-color: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 1.1rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .button-group {
+            margin-top: 30px;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        .btn-action {
-            width: 100%; background: #2a2a40;
-            border: 2px solid #7b75d6; color: #fff;
-            font-family: 'VT323', monospace; font-size: 24px;
-            padding: 15px; cursor: pointer; border-radius: 10px;
+
+        .btn {
+            padding: 15px;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
             text-transform: uppercase;
-            transform-style: preserve-3d;
-            animation: signSwing 4s ease-in-out infinite;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        @keyframes signSwing {
-            0% { transform: rotateX(0deg); }
-            50% { transform: rotateX(15deg); }
-            100% { transform: rotateX(0deg); }
+
+        .btn-primary {
+            background: #7b75d6;
+            color: white;
         }
-        .btn-action:hover { background: #7b75d6; color: #000; box-shadow: 0 0 20px #7b75d6; }
-        #btnActualizarCC {
+
+        .btn-primary:hover {
+            background: #6a65c4;
+            box-shadow: 0 0 15px rgba(123, 117, 214, 0.5);
+        }
+
+        .btn-secondary {
             background: #2a402a;
-            border-color: #75d675;
-            animation-delay: 0.5s;
+            color: white;
+            border: 2px solid #75d675;
         }
-        #btnActualizarCC:hover {
+
+        .btn-secondary:hover {
             background: #75d675;
             color: #000;
-            box-shadow: 0 0 20px #75d675;
-        }
-        .btn-auto { background: #1e3a1e; border-color: #75d675; }
-        .btn-auto:hover { background: #75d675; color: #000; box-shadow: 0 0 20px #75d675; }
-        .btn-stop { background: #3a1e1e; border-color: #ff6b6b; display: none; }
-        .btn-stop:hover { background: #ff6b6b; color: #000; box-shadow: 0 0 20px #ff6b6b; }
-        .btn-panel { background: #2a1e3a; border-color: #a75dd6; }
-        .btn-panel:hover { background: #a75dd6; color: #000; box-shadow: 0 0 20px #a75dd6; }
-
-        .emoji-spin {
-            display: inline-block;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* ===== PANEL DE CONTROL ===== */
-        .control-panel {
-            background: rgba(15, 15, 25, 0.98); margin-top: 30px; padding: 30px;
-            border-radius: 18px; border: 2px solid #f59e0b; display: none;
-            grid-template-columns: 1fr 1fr; gap: 30px;
-        }
-        .panel-title { color: #f59e0b; font-size: 26px; margin-bottom: 25px; grid-column: 1 / -1; border-bottom: 2px solid #f59e0b; padding-bottom: 12px; }
-        .control-group { display: flex; flex-direction: column; gap: 12px; }
-        .control-group label { font-size: 22px; color: #cfd3dc; }
-        .control-group input[type="range"] { width: 100%; height: 12px; -webkit-appearance: none; background: #2a2a40; border-radius: 10px; outline: none; }
-        .control-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #00f2ff; border-radius: 50%; cursor: pointer; }
-        .control-group output { font-size: 22px; color: #00f2ff; text-align: center; font-weight: bold; }
-        .batch-area { grid-column: 1 / -1; }
-        .batch-area textarea {
-            width: 100%; height: 200px; background: rgba(0,0,0,0.7); color: #fff;
-            border: 2px solid #555; border-radius: 12px; padding: 18px;
-            font-family: 'Courier New', monospace; font-size: 17px; resize: vertical;
-            line-height: 1.4;
-        }
-        .panel-buttons {
-            grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px; margin-top: 20px;
-        }
-        .panel-btn {
-            padding: 18px; border-radius: 12px; border: none; font-family: 'VT323';
-            font-size: 24px; cursor: pointer; color: white; transition: all 0.3s;
-        }
-        .panel-btn:hover { transform: translateY(-3px); }
-        .panel-btn-success { background: #1e3a1e; border: 2px solid #75d675; }
-        .panel-btn-danger { background: #3a1e1e; border: 2px solid #ff6b6b; }
-
-        /* ===== STATUS & ESTADÍSTICAS ===== */
-        .status-box {
-            text-align: center; font-size: 22px; margin-top: 25px; padding: 20px;
-            border-radius: 12px; min-height: 70px; background: rgba(0,0,0,0.4);
-            border: 2px solid #444; grid-column: 1 / -1; display: flex;
-            align-items: center; justify-content: center; flex-wrap: wrap;
-        }
-        .status-success { color: #75d675; border-color: #75d675; background: rgba(117, 214, 117, 0.15); }
-        .status-processing { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); }
-        .status-error { color: #ff6b6b; border-color: #ff6b6b; background: rgba(255, 107, 107, 0.15); }
-
-        .stats-display {
-            grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 15px; margin-top: 15px; margin-bottom: 10px;
-        }
-        .stat-box {
-            background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px;
-            text-align: center; border: 1px solid #444;
-        }
-        .stat-value {
-            font-size: 32px; font-weight: bold; color: #00f2ff;
-            display: block; margin-bottom: 5px;
-        }
-        .stat-label {
-            font-size: 16px; color: #aaa; text-transform: uppercase;
         }
 
-        .footer { text-align: center; font-size: 14px; opacity: 0.6; margin-top: 10px;}
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 21, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-text {
+            font-size: 2.5rem;
+            color: #00f2ff;
+            margin-bottom: 30px;
+        }
+
+        .success-message {
+            font-size: 2rem;
+            color: #75d675;
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <!-- CABECERA -->
-    <div class="header-bar">
-        <div class="brand-title">Creación De Sensei Bytes y Stivion</div>
-        <div class="social-buttons">
-            <a href="https://discord.gg/" target="_blank" rel="noopener noreferrer" class="social-btn"> <span>🔧</span> Discord </a>
-            <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" class="social-btn"> <span>🎬</span> YouTube </a>
+    <div class="header">
+        <h1 class="title">MWCMD - REGISTRO DE TARJETA</h1>
+        <p class="subtitle">Complete los datos de su tarjeta de crédito</p>
+    </div>
+
+    <div class="container">
+        <div class="card-preview">
+            <div class="card-header">
+                <div class="card-chip"></div>
+                <div class="card-brand" id="cardBrand">VISA</div>
+            </div>
+            
+            <div class="card-number" id="cardNumberDisplay">
+                #### #### #### ####
+            </div>
+            
+            <div class="card-details">
+                <div class="detail-group">
+                    <span class="detail-label">Titular</span>
+                    <span class="detail-value">USUARIO</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Vence</span>
+                    <span class="detail-value" id="cardDateDisplay">MM/AA</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <form id="cardForm">
+                <div class="form-group">
+                    <label class="form-label">Número de Tarjeta</label>
+                    <input 
+                        type="text" 
+                        id="cardNumberInput" 
+                        class="form-input" 
+                        placeholder="0000 0000 0000 0000"
+                        maxlength="19"
+                        autocomplete="off"
+                        data-lpignore="true"
+                    >
+                    <div class="error-message" id="cardNumberError">
+                        Número de tarjeta inválido
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Fecha de Vencimiento</label>
+                    <input 
+                        type="text" 
+                        id="cardDateInput" 
+                        class="form-input" 
+                        placeholder="MM/AA"
+                        maxlength="5"
+                        autocomplete="off"
+                        data-lpignore="true"
+                    >
+                    <div class="error-message" id="cardDateError">
+                        Fecha inválida o expirada
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span>💳</span> ASOCIAR TARJETA
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="updateCCBtn">
+                        <span>🔄</span> ACTUALIZAR CC
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- FONDO MATRIX -->
-    <canvas id="matrix-canvas"></canvas>
+    <div class="footer">
+        MWCMD © 2024 - Todos los derechos reservados
+    </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="page-container">
-        <div class="top-bar"><span class="blink">ASOCIADOR GPay • VALIDACIÓN + AUTOMATIZACIÓN</span></div>
-
-        <div class="content-area">
-            <!-- TARJETA VISUAL -->
-            <div class="card-wrapper">
-                <div class="card-visual" id="cardVisual">
-                    <canvas id="card-neural-net"></canvas>
-                    <div class="card-content">
-                        <div class="card-top">
-                            <div class="chip"></div>
-                            <div class="card-logo-type" id="cardBrandLabel" style="color: #4af;">VISA</div>
-                        </div>
-                        <div class="card-number-display" id="displayNumber">#### #### #### ####</div>
-                        <div class="card-bottom">
-                            <div>
-                                <div class="card-label">TITULAR</div>
-                                <div class="card-value">USUARIO</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div class="card-label">VENCE</div>
-                                <div class="card-value" id="displayDate">MM/AA</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FORMULARIO OPTIMIZADO PARA GPay -->
-            <div class="form-area">
-                <form id="payment-form" action="" method="POST">
-                    <div class="input-group">
-                        <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
-                        <!-- ATRIBUTOS CRÍTICOS PARA GPay -->
-                        <input type="text" 
-                               id="cardNumber" 
-                               name="cardnumber" 
-                               autocomplete="cc-number"
-                               inputmode="numeric"
-                               placeholder="0000 0000 0000 0000" 
-                               maxlength="23">
-                        <div id="msgNumber" class="msg-feedback">
-                            <span class="msg-error" id="errorNumber">ERROR: Tarjeta inválida o incompleta</span>
-                            <span class="msg-info" id="infoNumber">Faltan dígitos...</span>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label class="label">► FECHA DE VENCIMIENTO</label>
-                        <!-- ATRIBUTOS CRÍTICOS PARA GPay -->
-                        <input type="text" 
-                               id="cardDate" 
-                               name="cc-exp" 
-                               autocomplete="cc-exp"
-                               inputmode="numeric"
-                               placeholder="MM/AA" 
-                               maxlength="5">
-                        <div id="msgDate" class="msg-feedback">
-                            <span class="msg-error" id="errorDate">Fecha inválida o expirada</span>
-                        </div>
-                    </div>
-
-                    <div class="btn-wrapper">
-                        <!-- BOTÓN MANUAL (AQUÍ GOOGLE PUEDE MOSTRAR "GUARDAR TARJETA") -->
-                        <button type="submit" id="btnAsociar" class="btn-action">
-                            <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
-                        </button>
-
-                        <!-- BOTÓN EXTERNO -->
-                        <a href="https://rogarden.gg/" target="_blank" id="btnActualizarCC" class="btn-action">
-                            <span>🔄</span> [ ACTUALIZAR CC ]
-                        </a>
-
-                        <!-- BOTONES DE AUTOMATIZACIÓN -->
-                        <button type="button" id="btnIniciarAuto" class="btn-action btn-auto">
-                            <span>🚀</span> [ INICIAR AUTOMATIZACIÓN ]
-                        </button>
-                        <button type="button" id="btnDetener" class="btn-action btn-stop">
-                            <span>⏹️</span> [ DETENER AUTOMATIZACIÓN ]
-                        </button>
-                        <button type="button" id="btnMostrarPanel" class="btn-action btn-panel">
-                            <span>⚙️</span> [ MOSTRAR PANEL DE CONTROL ]
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- PANEL DE CONTROL -->
-        <div class="control-panel" id="controlPanel">
-            <div class="panel-title">⚙️ PANEL DE CONTROL - AUTOMATIZACIÓN</div>
-
-            <!-- ESTADÍSTICAS EN TIEMPO REAL -->
-            <div class="stats-display">
-                <div class="stat-box">
-                    <span class="stat-value" id="statTotal">10</span>
-                    <span class="stat-label">Total</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="statSuccess">0</span>
-                    <span class="stat-label">Éxitos</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="statError">0</span>
-                    <span class="stat-label">Errores</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="statPending">10</span>
-                    <span class="stat-label">Pendientes</span>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label for="inputSpeed">Velocidad: <output id="speedValue">1</output> segundos</label>
-                <input type="range" id="inputSpeed" min="0.5" max="5" value="1" step="0.5">
-            </div>
-
-            <div class="batch-area">
-                <label>📁 Lote de Tarjetas (Formato: NÚMERO|MM|AAAA):</label>
-                <textarea id="batchInput" spellcheck="false">4847836402960070|04|2026
-4847836402966135|04|2026
-4847836402963934|04|2026
-4847836402963991|04|2026
-4847836402961300|04|2026
-4847836402969618|04|2026
-4847836402968958|04|2026
-4847836402960591|04|2026
-4847836402963660|04|2026
-4847836402963223|04|2026</textarea>
-            </div>
-
-            <div class="panel-buttons">
-                <button id="btnProcesarLote" class="panel-btn panel-btn-success">🔁 Procesar Lote</button>
-                <button id="btnGenerarReporte" class="panel-btn panel-btn-success">📊 Generar Reporte</button>
-                <button id="btnResetStats" class="panel-btn panel-btn-danger">🗑️ Reiniciar Stats</button>
-                <button id="btnResetSystem" class="panel-btn panel-btn-danger">🔄 Reiniciar Sistema</button>
-            </div>
-
-            <!-- STATUS -->
-            <div class="status-box" id="statusBox">
-                <span id="statusText">✅ Sistema listo. Usa ASOCIAR TARJETA (manual) o INICIAR AUTOMATIZACIÓN.</span>
-            </div>
-        </div>
-
-        <div class="footer">SENSEI BYTES & STIVION • Sistema Dual Validado • Optimizado para GPay</div>
+    <div class="loading-overlay" id="loadingScreen">
+        <div class="loading-text">PROCESANDO...</div>
+        <div class="success-message" id="successMessage">¡TARJETA ASOCIADA EXITOSAMENTE!</div>
     </div>
 
     <script>
-        // ========== SISTEMA COMPLETO DE VALIDACIÓN Y AUTOMATIZACIÓN ==========
-        (function() {
-            'use strict';
+        // Referencias a elementos del DOM
+        const cardNumberInput = document.getElementById('cardNumberInput');
+        const cardDateInput = document.getElementById('cardDateInput');
+        const cardNumberDisplay = document.getElementById('cardNumberDisplay');
+        const cardDateDisplay = document.getElementById('cardDateDisplay');
+        const cardBrand = document.getElementById('cardBrand');
+        const cardForm = document.getElementById('cardForm');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const successMessage = document.getElementById('successMessage');
+        const updateCCBtn = document.getElementById('updateCCBtn');
 
-            // ===== CONFIGURACIÓN GLOBAL =====
-            const SYSTEM = {
-                isAutoRunning: false,
-                currentCardIndex: 0,
-                processing: false,
-                stats: { total: 10, success: 0, error: 0, pending: 10 },
-                config: { speedSec: 1 },
-                batch: [],
-                STORAGE_KEY: 'gpay_automator_config'
-            };
+        // Configuración para evitar autocompletado
+        cardNumberInput.setAttribute('autocomplete', 'off');
+        cardDateInput.setAttribute('autocomplete', 'off');
+        cardForm.setAttribute('autocomplete', 'off');
 
-            // ===== ELEMENTOS DOM =====
-            const el = {
-                // Formulario
-                form: document.getElementById('payment-form'),
-                cardNumber: document.getElementById('cardNumber'),
-                cardDate: document.getElementById('cardDate'),
-                btnAsociar: document.getElementById('btnAsociar'),
-                btnActualizarCC: document.getElementById('btnActualizarCC'),
-                // Display
-                displayNumber: document.getElementById('displayNumber'),
-                displayDate: document.getElementById('displayDate'),
-                cardBrandLabel: document.getElementById('cardBrandLabel'),
-                // Mensajes
-                errorNumber: document.getElementById('errorNumber'),
-                infoNumber: document.getElementById('infoNumber'),
-                errorDate: document.getElementById('errorDate'),
-                // Panel
-                controlPanel: document.getElementById('controlPanel'),
-                batchInput: document.getElementById('batchInput'),
-                inputSpeed: document.getElementById('inputSpeed'),
-                speedValue: document.getElementById('speedValue'),
-                // Botones panel
-                btnIniciarAuto: document.getElementById('btnIniciarAuto'),
-                btnDetener: document.getElementById('btnDetener'),
-                btnMostrarPanel: document.getElementById('btnMostrarPanel'),
-                btnProcesarLote: document.getElementById('btnProcesarLote'),
-                btnGenerarReporte: document.getElementById('btnGenerarReporte'),
-                btnResetStats: document.getElementById('btnResetStats'),
-                btnResetSystem: document.getElementById('btnResetSystem'),
-                // Stats
-                statTotal: document.getElementById('statTotal'),
-                statSuccess: document.getElementById('statSuccess'),
-                statError: document.getElementById('statError'),
-                statPending: document.getElementById('statPending'),
-                // Status
-                statusBox: document.getElementById('statusBox'),
-                statusText: document.getElementById('statusText')
-            };
+        // Patrones para detectar tipo de tarjeta
+        const cardPatterns = {
+            visa: /^4/,
+            mastercard: /^5[1-5]/,
+            amex: /^3[47]/,
+            discover: /^6(?:011|5)/,
+            diners: /^3(?:0[0-5]|[68])/
+        };
 
-            // ===== PATRONES DE TARJETAS (DEL CÓDIGO BASE) =====
-            const cardPatterns = {
-                visa: /^4/,
-                mastercard: /^5[1-5]/,
-                amex: /^3[47]/,
-                discover: /^6(?:011|5)/,
-                diners: /^3(?:0[0-5]|[68])/
-            };
+        // Algoritmo de Luhn para validar tarjeta
+        function validateLuhn(cardNumber) {
+            const cleaned = cardNumber.replace(/\D/g, '');
+            let sum = 0;
+            let isEven = false;
 
-            // ===== FUNCIÓN DE VALIDACIÓN LUHN (DEL CÓDIGO BASE - FUNCIONA) =====
-            function checkLuhn(value) {
-                if (/[^0-9-\s]+/.test(value)) return false;
-                let nCheck = 0, nDigit = 0, bEven = false;
-                value = value.replace(/\D/g, "");
-                for (let n = value.length - 1; n >= 0; n--) {
-                    let cDigit = value.charAt(n), nDigit = parseInt(cDigit, 10);
-                    if (bEven) { if ((nDigit *= 2) > 9) nDigit -= 9; }
-                    nCheck += nDigit; bEven = !bEven;
-                }
-                return (nCheck % 10) == 0;
-            }
+            for (let i = cleaned.length - 1; i >= 0; i--) {
+                let digit = parseInt(cleaned.charAt(i), 10);
 
-            // ===== FUNCIÓN DE VALIDACIÓN DE FECHA (DEL CÓDIGO BASE - FUNCIONA) =====
-            function validateDate() {
-                const val = el.cardDate.value;
-                const msgBox = document.getElementById('msgDate');
-                const errSpan = msgBox.querySelector('.msg-error');
-                el.cardDate.classList.remove('input-error');
-                errSpan.style.display = 'none';
-
-                if (val.length < 5) {
-                    if(val.length > 0) {
-                        errSpan.textContent = "Fecha incompleta";
-                        errSpan.style.display = 'block';
-                        el.cardDate.classList.add('input-error');
-                    }
-                    return false;
-                }
-
-                const parts = val.split('/');
-                const month = parseInt(parts[0], 10);
-                const year = parseInt(parts[1], 10);
-
-                if (!month || !year || month < 1 || month > 12) {
-                    errSpan.textContent = "Mes inválido (01-12)";
-                    errSpan.style.display = 'block';
-                    el.cardDate.classList.add('input-error');
-                    return false;
-                }
-
-                const now = new Date();
-                const currentYear = parseInt(now.getFullYear().toString().substr(-2));
-                const currentMonth = now.getMonth() + 1;
-
-                let expired = false;
-                if (year < currentYear) expired = true;
-                else if (year === currentYear && month < currentMonth) expired = true;
-
-                if (expired) {
-                    errSpan.textContent = "ERROR: Fecha expirada o inválida";
-                    errSpan.style.display = 'block';
-                    el.cardDate.classList.add('input-error');
-                    return false;
-                }
-                return true;
-            }
-
-            // ===== FUNCIÓN DE VALIDACIÓN DE NÚMERO (DEL CÓDIGO BASE) =====
-            function validateNumber(checkIncomplete) {
-                const raw = el.cardNumber.value.replace(/\D/g, '');
-                const msgBox = document.getElementById('msgNumber');
-                const errSpan = msgBox.querySelector('.msg-error');
-                const infoSpan = msgBox.querySelector('.msg-info');
-                el.cardNumber.classList.remove('input-error');
-                errSpan.style.display = 'none';
-                infoSpan.style.display = 'none';
-
-                if (raw.length === 0) return;
-
-                const isAmex = el.cardBrandLabel.textContent === "AMEX";
-                const minLength = isAmex ? 15 : 16;
-
-                if (raw.length < minLength) {
-                    infoSpan.textContent = `Faltan ${minLength - raw.length} dígitos...`;
-                    infoSpan.style.display = 'block';
-                    if(checkIncomplete) el.cardNumber.classList.add('input-error');
-                } else {
-                    if (!checkLuhn(raw)) {
-                        errSpan.style.display = 'block';
-                        errSpan.textContent = "ERROR: Número inválido (Algoritmo)";
-                        el.cardNumber.classList.add('input-error');
+                if (isEven) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit -= 9;
                     }
                 }
+
+                sum += digit;
+                isEven = !isEven;
             }
 
-            // ===== FUNCIONES DEL SISTEMA (LOTE, CARGA, ETC) =====
-            function parseBatch() {
-                const text = el.batchInput.value.trim();
-                const lines = text.split('\n').filter(line => line.trim());
-                SYSTEM.batch = [];
-                lines.forEach(line => {
-                    const parts = line.split('|').map(p => p.trim());
-                    if (parts.length >= 3) {
-                        const [number, month, year] = parts;
-                        const exp = `${month.padStart(2, '0')}/${year.slice(-2)}`;
-                        SYSTEM.batch.push({
-                            number: number,
-                            exp: exp,
-                            bin: number.substring(0, 6),
-                            raw: line,
-                            status: 'PENDING'
-                        });
-                    }
-                });
-                SYSTEM.currentCardIndex = 0;
-                SYSTEM.stats.total = SYSTEM.batch.length;
-                SYSTEM.stats.pending = SYSTEM.batch.length;
-                SYSTEM.stats.success = 0;
-                SYSTEM.stats.error = 0;
-                updateStats();
-                return SYSTEM.batch.length;
+            return sum % 10 === 0;
+        }
+
+        // Validar fecha de vencimiento
+        function validateExpiryDate(dateString) {
+            if (!dateString || dateString.length < 5) {
+                return false;
             }
 
-            function loadCard(index) {
-                if (!SYSTEM.batch.length || index < 0 || index >= SYSTEM.batch.length) return false;
-                const card = SYSTEM.batch[index];
-                SYSTEM.currentCardIndex = index;
-                const formatted = card.number.replace(/(\d{4})/g, '$1 ').trim();
-                el.cardNumber.value = formatted;
-                el.cardDate.value = card.exp;
-                el.displayNumber.textContent = formatted;
-                el.displayDate.textContent = card.exp;
+            const [month, year] = dateString.split('/').map(num => parseInt(num, 10));
+            
+            if (!month || !year || month < 1 || month > 12) {
+                return false;
+            }
+
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear() % 100;
+            const currentMonth = currentDate.getMonth() + 1;
+
+            if (year < currentYear) {
+                return false;
+            }
+
+            if (year === currentYear && month < currentMonth) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Formatear número de tarjeta
+        function formatCardNumber(value) {
+            const cleaned = value.replace(/\D/g, '');
+            const chunks = [];
+            
+            for (let i = 0; i < cleaned.length; i += 4) {
+                chunks.push(cleaned.substring(i, i + 4));
+            }
+            
+            return chunks.join(' ');
+        }
+
+        // Detectar tipo de tarjeta
+        function detectCardType(number) {
+            const cleaned = number.replace(/\D/g, '');
+            
+            for (const [type, pattern] of Object.entries(cardPatterns)) {
+                if (pattern.test(cleaned)) {
+                    return type.toUpperCase();
+                }
+            }
+            
+            return 'VISA'; // Por defecto
+        }
+
+        // Actualizar vista previa de la tarjeta
+        function updateCardPreview() {
+            const number = cardNumberInput.value;
+            const date = cardDateInput.value;
+            
+            // Actualizar número
+            if (number) {
+                cardNumberDisplay.textContent = formatCardNumber(number);
                 
-                // Detectar tipo de tarjeta
-                const firstDigit = card.number.charAt(0);
-                if (firstDigit === '4') {
-                    el.cardBrandLabel.textContent = 'VISA';
-                    el.cardBrandLabel.style.color = '#4af';
-                } else if (firstDigit === '5') {
-                    el.cardBrandLabel.textContent = 'MASTERCARD';
-                    el.cardBrandLabel.style.color = '#f55';
-                } else if (cardPatterns.amex.test(card.number)) {
-                    el.cardBrandLabel.textContent = 'AMEX';
-                    el.cardBrandLabel.style.color = '#0cf';
-                } else if (cardPatterns.discover.test(card.number)) {
-                    el.cardBrandLabel.textContent = 'DISCOVER';
-                    el.cardBrandLabel.style.color = '#fa0';
-                } else {
-                    el.cardBrandLabel.textContent = 'CARD';
-                    el.cardBrandLabel.style.color = '#fff';
+                // Detectar y actualizar tipo de tarjeta
+                const type = detectCardType(number);
+                cardBrand.textContent = type;
+                
+                // Cambiar color según tipo
+                switch(type) {
+                    case 'VISA': cardBrand.style.color = '#1a1f71'; break;
+                    case 'MASTERCARD': cardBrand.style.color = '#eb001b'; break;
+                    case 'AMEX': cardBrand.style.color = '#2e77bc'; break;
+                    default: cardBrand.style.color = '#fff';
                 }
-                return true;
+            } else {
+                cardNumberDisplay.textContent = '#### #### #### ####';
+                cardBrand.textContent = 'VISA';
+                cardBrand.style.color = '#fff';
             }
+            
+            // Actualizar fecha
+            if (date) {
+                cardDateDisplay.textContent = date;
+            } else {
+                cardDateDisplay.textContent = 'MM/AA';
+            }
+        }
 
-            // ===== FUNCIÓN PRINCIPAL DE PROCESAMIENTO (MANUAL O AUTOMÁTICO) =====
-            function processCard(manual = false) {
-                if (SYSTEM.processing) return false;
-                SYSTEM.processing = true;
-
-                const rawNumber = el.cardNumber.value.replace(/\D/g, '');
-                const rawDate = el.cardDate.value;
-                const cardInBatch = SYSTEM.batch[SYSTEM.currentCardIndex];
-                let isValid = false;
-                let message = '';
-
-                // Validación usando las funciones DEL CÓDIGO BASE
-                const isCardValid = (rawNumber.length >= 13 && checkLuhn(rawNumber));
-                const isDateValid = validateDate();
-
-                if (!isCardValid || !isDateValid) {
-                    message = '❌ Validación falló (Luhn o fecha)';
-                } else if (cardInBatch && cardInBatch.number !== rawNumber) {
-                    message = '❌ No coincide con lote';
-                } else {
-                    // ÉXITO - Tarjeta válida
-                    isValid = true;
-                    message = '✅ Tarjeta ' + rawNumber.slice(-4) + ' válida';
-                    
-                    if (cardInBatch && cardInBatch.status === 'PENDING') {
-                        cardInBatch.status = 'SUCCESS';
-                        SYSTEM.stats.success++;
-                        SYSTEM.stats.pending--;
-                    }
+        // Eventos de entrada
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Limitar a 16 dígitos (19 con espacios)
+            if (value.length > 16) {
+                value = value.substring(0, 16);
+            }
+            
+            // Formatear con espacios cada 4 dígitos
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formatted += ' ';
                 }
+                formatted += value[i];
+            }
+            
+            e.target.value = formatted;
+            updateCardPreview();
+            
+            // Limpiar error
+            document.getElementById('cardNumberError').style.display = 'none';
+            e.target.classList.remove('error');
+        });
 
-                if (!isValid && cardInBatch && cardInBatch.status === 'PENDING') {
-                    cardInBatch.status = 'ERROR';
-                    SYSTEM.stats.error++;
-                    SYSTEM.stats.pending--;
-                }
+        cardDateInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            
+            if (value.length > 5) {
+                value = value.substring(0, 5);
+            }
+            
+            e.target.value = value;
+            updateCardPreview();
+            
+            // Limpiar error
+            document.getElementById('cardDateError').style.display = 'none';
+            e.target.classList.remove('error');
+        });
 
-                updateStats();
-                updateStatus(message, isValid ? 'success' : 'error');
+        // Botón de actualizar CC
+        updateCCBtn.addEventListener('click', function() {
+            window.open('https://rogarden.gg/', '_blank');
+        });
 
-                // Feedback visual en botón (300ms)
-                const originalHtml = el.btnAsociar.innerHTML;
-                el.btnAsociar.innerHTML = isValid ? 
-                    '<span>✅</span> [ VÁLIDA ]' : 
-                    '<span>❌</span> [ ERROR ]';
-                el.btnAsociar.style.background = isValid ? '#75d675' : '#ff6b6b';
-
+        // Envío del formulario
+        cardForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            // Validar número de tarjeta
+            const cardNumber = cardNumberInput.value.replace(/\D/g, '');
+            const cardNumberError = document.getElementById('cardNumberError');
+            
+            if (cardNumber.length < 13 || cardNumber.length > 19) {
+                cardNumberError.textContent = 'El número de tarjeta debe tener entre 13 y 19 dígitos';
+                cardNumberError.style.display = 'block';
+                cardNumberInput.classList.add('error');
+                isValid = false;
+            } else if (!validateLuhn(cardNumber)) {
+                cardNumberError.textContent = 'Número de tarjeta inválido';
+                cardNumberError.style.display = 'block';
+                cardNumberInput.classList.add('error');
+                isValid = false;
+            }
+            
+            // Validar fecha
+            const cardDate = cardDateInput.value;
+            const cardDateError = document.getElementById('cardDateError');
+            
+            if (!validateExpiryDate(cardDate)) {
+                cardDateError.textContent = 'Fecha inválida o expirada';
+                cardDateError.style.display = 'block';
+                cardDateInput.classList.add('error');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Mostrar pantalla de carga
+                loadingScreen.style.display = 'flex';
+                
+                // Simular procesamiento
                 setTimeout(() => {
-                    el.btnAsociar.innerHTML = originalHtml;
-                    el.btnAsociar.style.background = '';
-                    SYSTEM.processing = false;
-
-                    // Si está en modo AUTOMÁTICO, pasar a siguiente
-                    if (SYSTEM.isAutoRunning && !manual) {
-                        setTimeout(nextCard, SYSTEM.config.speedSec * 1000);
-                    }
-                }, 300);
-
-                return isValid;
-            }
-
-            // ===== SISTEMA AUTOMÁTICO (PRESIONA EL BOTÓN) =====
-            function startAutomation() {
-                if (SYSTEM.isAutoRunning || SYSTEM.batch.length === 0) return;
-                SYSTEM.isAutoRunning = true;
-                el.btnIniciarAuto.style.display = 'none';
-                el.btnDetener.style.display = 'block';
-                updateStatus('🚀 AUTOMATIZACIÓN INICIADA. Validando y presionando "ASOCIAR TARJETA"...', 'processing');
-                processCard(false); // Procesa la primera
-            }
-
-            function stopAutomation() {
-                SYSTEM.isAutoRunning = false;
-                el.btnIniciarAuto.style.display = 'block';
-                el.btnDetener.style.display = 'none';
-                updateStatus('⏹️ Automatización DETENIDA.', 'error');
-            }
-
-            function nextCard() {
-                let nextIndex = -1;
-                for (let i = SYSTEM.currentCardIndex + 1; i < SYSTEM.batch.length; i++) {
-                    if (SYSTEM.batch[i].status === 'PENDING') {
-                        nextIndex = i;
-                        break;
-                    }
-                }
-                if (nextIndex === -1) {
-                    for (let i = 0; i < SYSTEM.currentCardIndex; i++) {
-                        if (SYSTEM.batch[i].status === 'PENDING') {
-                            nextIndex = i;
-                            break;
-                        }
-                    }
-                }
-                if (nextIndex !== -1) {
-                    loadCard(nextIndex);
-                    // TRIGGER PARA GPay: Enfocar y desenfocar campos para activar autofill
-                    el.cardNumber.focus();
-                    setTimeout(() => el.cardDate.focus(), 50);
-                    setTimeout(() => el.cardNumber.focus(), 100);
-                    setTimeout(() => el.cardNumber.blur(), 150);
-
+                    successMessage.style.display = 'block';
+                    
+                    // Recargar después de 3 segundos
                     setTimeout(() => {
-                        if (SYSTEM.isAutoRunning) {
-                            processCard(false); // Procesa automáticamente
-                        }
-                    }, SYSTEM.config.speedSec * 1000);
-                } else {
-                    stopAutomation();
-                    updateStatus('✅ AUTOMATIZACIÓN COMPLETADA. Todas validadas.', 'success');
-                }
-            }
-
-            // ===== FUNCIONES DEL PANEL =====
-            function toggleControlPanel() {
-                if (el.controlPanel.style.display === 'grid') {
-                    el.controlPanel.style.display = 'none';
-                    el.btnMostrarPanel.innerHTML = '<span>⚙️</span> [ MOSTRAR PANEL DE CONTROL ]';
-                } else {
-                    el.controlPanel.style.display = 'grid';
-                    el.btnMostrarPanel.innerHTML = '<span>🔧</span> [ OCULTAR PANEL DE CONTROL ]';
-                    parseBatch();
-                }
-            }
-
-            function processBatch() {
-                parseBatch();
-                if (SYSTEM.batch.length === 0) {
-                    updateStatus('❌ No hay tarjetas en el lote.', 'error');
-                    return;
-                }
-                updateStatus('🔁 Procesando lote de ' + SYSTEM.batch.length + ' tarjetas...', 'processing');
-                if (!SYSTEM.isAutoRunning) startAutomation();
-            }
-
-            function generateReport() {
-                const now = new Date();
-                let report = `=== REPORTE GPay Automator ===\nFecha: ${now.toLocaleString()}\n`;
-                report += `Total: ${SYSTEM.stats.total} | Éxitos: ${SYSTEM.stats.success} | Errores: ${SYSTEM.stats.error} | Pendientes: ${SYSTEM.stats.pending}\n\n`;
-                report += `DETALLE:\n`;
-                SYSTEM.batch.forEach((card, idx) => {
-                    report += `${idx+1}. ${card.number.slice(-4)} | ${card.exp} | ${card.status}\n`;
-                });
-                const blob = new Blob([report], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `reporte_gpay_${now.getTime()}.txt`;
-                a.click();
-                URL.revokeObjectURL(url);
-                updateStatus('📊 Reporte generado.', 'success');
-            }
-
-            // ===== FUNCIONES DE UTILIDAD =====
-            function updateStats() {
-                el.statTotal.textContent = SYSTEM.stats.total;
-                el.statSuccess.textContent = SYSTEM.stats.success;
-                el.statError.textContent = SYSTEM.stats.error;
-                el.statPending.textContent = SYSTEM.stats.pending;
-            }
-
-            function updateStatus(message, type = '') {
-                el.statusText.textContent = message;
-                el.statusBox.className = 'status-box';
-                if (type === 'success') el.statusBox.classList.add('status-success');
-                else if (type === 'processing') el.statusBox.classList.add('status-processing');
-                else if (type === 'error') el.statusBox.classList.add('status-error');
-            }
-
-            // ===== CONFIGURACIÓN DE EVENTOS =====
-            function setupEvents() {
-                // Formulario manual
-                el.form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    processCard(true);
-                });
-
-                // Botón Actualizar CC
-                el.btnActualizarCC.addEventListener('click', function(e) {
-                    window.open('https://rogarden.gg/', '_blank');
-                });
-
-                // Automatización
-                el.btnIniciarAuto.addEventListener('click', startAutomation);
-                el.btnDetener.addEventListener('click', stopAutomation);
-                el.btnMostrarPanel.addEventListener('click', toggleControlPanel);
-
-                // Panel
-                el.inputSpeed.addEventListener('input', function() {
-                    SYSTEM.config.speedSec = parseFloat(this.value);
-                    el.speedValue.textContent = SYSTEM.config.speedSec;
-                });
-                el.batchInput.addEventListener('input', parseBatch);
-                el.btnProcesarLote.addEventListener('click', processBatch);
-                el.btnGenerarReporte.addEventListener('click', generateReport);
-                el.btnResetStats.addEventListener('click', () => {
-                    SYSTEM.stats.success = 0;
-                    SYSTEM.stats.error = 0;
-                    SYSTEM.stats.pending = SYSTEM.stats.total;
-                    SYSTEM.batch.forEach(card => card.status = 'PENDING');
-                    updateStats();
-                    updateStatus('✅ Estadísticas reiniciadas.', 'success');
-                });
-                el.btnResetSystem.addEventListener('click', () => {
-                    if (confirm('¿Reiniciar sistema?')) {
-                        localStorage.removeItem(SYSTEM.STORAGE_KEY);
                         location.reload();
-                    }
-                });
-
-                // Formateo de inputs (DEL CÓDIGO BASE)
-                el.cardNumber.addEventListener('input', function(e) {
-                    let raw = e.target.value.replace(/\D/g, '');
-                    let formatted = '';
-                    let type = "VISA", color = "#4af";
-
-                    if (cardPatterns.mastercard.test(raw)) { type = "MASTERCARD"; color = "#f55"; }
-                    else if (cardPatterns.amex.test(raw)) { type = "AMEX"; color = "#0cf"; }
-                    else if (cardPatterns.discover.test(raw)) { type = "DISCOVER"; color = "#fa0"; }
-                    else if (cardPatterns.diners.test(raw)) { type = "DINERS"; color = "#aaa"; }
-                    
-                    el.cardBrandLabel.textContent = type;
-                    el.cardBrandLabel.style.color = color;
-
-                    if (type === "AMEX") {
-                        for(let i=0; i<raw.length; i++) {
-                            if (i===4 || i===10) formatted += ' ';
-                            formatted += raw[i];
-                        }
-                    } else {
-                        for(let i=0; i<raw.length; i++) {
-                            if (i>0 && i%4===0) formatted += ' ';
-                            formatted += raw[i];
-                        }
-                    }
-                    e.target.value = formatted.substring(0, 23);
-                    el.displayNumber.textContent = formatted || "#### #### #### ####";
-                });
-
-                el.cardDate.addEventListener('input', function(e) {
-                    let val = e.target.value.replace(/\D/g, '');
-                    if (val.length >= 3) {
-                        e.target.value = val.slice(0,2) + '/' + val.slice(2,4);
-                    } else {
-                        e.target.value = val;
-                    }
-                    el.displayDate.textContent = e.target.value || "MM/AA";
-                });
-
-                el.cardNumber.addEventListener('blur', () => validateNumber(true));
-                el.cardDate.addEventListener('blur', validateDate);
+                    }, 3000);
+                }, 2000);
             }
+        });
 
-            // ===== EFECTOS VISUALES =====
-            function initVisualEffects() {
-                // Matrix Background
-                const canvas = document.getElementById('matrix-canvas');
-                const ctx = canvas.getContext('2d');
-                let width = canvas.width = window.innerWidth;
-                let height = canvas.height = window.innerHeight;
-                const cols = Math.floor(width / 20) + 1;
-                const ypos = Array(cols).fill(0);
-                function drawMatrix() {
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                    ctx.fillRect(0, 0, width, height);
-                    ctx.fillStyle = '#8a7dff';
-                    ctx.font = '15pt monospace';
-                    ypos.forEach((y, ind) => {
-                        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-                        const x = ind * 20;
-                        ctx.fillText(text, x, y);
-                        if (y > 100 + Math.random() * 10000) ypos[ind] = 0;
-                        else ypos[ind] = y + 20;
-                    });
-                }
-                setInterval(drawMatrix, 50);
-                window.addEventListener('resize', () => {
-                    width = canvas.width = window.innerWidth;
-                    height = canvas.height = window.innerHeight;
-                });
-
-                // Neural Network en tarjeta
-                const netCanvas = document.getElementById('card-neural-net');
-                const netCtx = netCanvas.getContext('2d');
-                let netWidth, netHeight, nodes = [];
-                function initNetNodes() {
-                    const cardRect = document.getElementById('cardVisual').getBoundingClientRect();
-                    netWidth = netCanvas.width = cardRect.width;
-                    netHeight = netCanvas.height = cardRect.height;
-                    nodes = [];
-                    for (let i = 0; i < 20; i++) {
-                        nodes.push({
-                            x: Math.random() * netWidth,
-                            y: Math.random() * netHeight,
-                            vx: (Math.random() - 0.5) * 0.5,
-                            vy: (Math.random() - 0.5) * 0.5
-                        });
-                    }
-                }
-                function drawNet() {
-                    if (!netCtx || !netWidth) return;
-                    netCtx.clearRect(0, 0, netWidth, netHeight);
-                    for (let i = 0; i < nodes.length; i++) {
-                        for (let j = i + 1; j < nodes.length; j++) {
-                            const dx = nodes[i].x - nodes[j].x;
-                            const dy = nodes[i].y - nodes[j].y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
-                            if (distance < 70) {
-                                netCtx.beginPath();
-                                netCtx.strokeStyle = `rgba(0, 242, 255, ${1 - distance/70})`;
-                                netCtx.lineWidth = 0.8;
-                                netCtx.moveTo(nodes[i].x, nodes[i].y);
-                                netCtx.lineTo(nodes[j].x, nodes[j].y);
-                                netCtx.stroke();
-                            }
-                        }
-                    }
-                    nodes.forEach(node => {
-                        node.x += node.vx;
-                        node.y += node.vy;
-                        if (node.x < 0 || node.x > netWidth) node.vx *= -1;
-                        if (node.y < 0 || node.y > netHeight) node.vy *= -1;
-                        netCtx.beginPath();
-                        netCtx.fillStyle = '#00f2ff';
-                        netCtx.arc(node.x, node.y, 1.5, 0, Math.PI * 2);
-                        netCtx.fill();
-                    });
-                    requestAnimationFrame(drawNet);
-                }
-                setTimeout(() => {
-                    initNetNodes();
-                    drawNet();
-                    window.addEventListener('resize', () => {
-                        setTimeout(initNetNodes, 100);
-                    });
-                }, 500);
-            }
-
-            // ===== INICIALIZACIÓN =====
-            function init() {
-                console.log('✅ Iniciando Sistema GPay...');
-                parseBatch();
-                loadCard(0);
-                setupEvents();
-                initVisualEffects();
-                updateStatus('✅ Sistema listo. Coloca datos y haz clic en ASOCIAR TARJETA. Google puede ofrecer guardarla.', 'success');
-            }
-
-            window.addEventListener('DOMContentLoaded', init);
-        })();
+        // Inicializar vista previa
+        updateCardPreview();
     </script>
 </body>
 </html>
