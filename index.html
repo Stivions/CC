@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MWCMD Pro - Sistema de Asociación</title>
+    <title>MWCMD ULTIMATE</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,197 +19,160 @@
             overflow-x: hidden;
             position: relative;
         }
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #0a0a15 0%, #000000 70%);
-            z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            opacity: 1; visibility: visible;
-            transition: opacity 1.2s ease-out, visibility 1.2s ease-out;
-        }
-        #welcome-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .welcome-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                radial-gradient(circle at 30% 20%, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(123, 117, 214, 0.05) 0%, transparent 50%);
-            z-index: -1;
-        }
-        .welcome-content {
-            position: relative; padding: 40px;
-            border: 2px solid rgba(0, 242, 255, 0.4); border-radius: 20px;
-            background: rgba(10, 10, 25, 0.7);
-            box-shadow: 0 0 60px rgba(0, 242, 255, 0.3), inset 0 0 30px rgba(0, 242, 255, 0.1);
-            backdrop-filter: blur(5px);
-            animation: pulseGlow 3s ease-in-out infinite alternate;
-        }
-        @keyframes pulseGlow {
-            from { box-shadow: 0 0 60px rgba(0, 242, 255, 0.3), inset 0 0 30px rgba(0, 242, 255, 0.1); }
-            to { box-shadow: 0 0 80px rgba(0, 242, 255, 0.5), inset 0 0 40px rgba(0, 242, 255, 0.15); }
-        }
-        .mwcmd-title {
-            font-size: 4.5rem; color: #00f2ff;
-            text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff, 0 0 40px #0077ff;
-            letter-spacing: 4px; margin-bottom: 10px; line-height: 1;
-        }
-        .mwcmd-subtitle {
-            font-size: 2rem; color: #cfd3dc; text-shadow: 0 0 8px rgba(207, 211, 220, 0.7);
-            letter-spacing: 2px; border-top: 1px solid rgba(0, 242, 255, 0.5);
-            padding-top: 15px; margin-top: 15px;
-        }
-        .mwcmd-subtitle span { color: #7b75d6; text-shadow: 0 0 5px #7b75d6; }
-        .loading-dots { margin-top: 30px; font-size: 1.8rem; color: #00f2ff; letter-spacing: 8px; }
-        .loading-dots span { animation: dotBlink 1.4s infinite; display: inline-block; }
-        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes dotBlink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
         #matrix-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
             opacity: 0.35; pointer-events: none;
         }
-        .logo-float { position: fixed; z-index: 5; pointer-events: none; object-fit: contain; }
-        .logo-top-left {
-            top: 15px; left: 15px; width: 60px; height: 60px; border-radius: 50%;
-            box-shadow: 0 0 10px rgba(123, 117, 214, 0.4); border: 2px solid rgba(123, 117, 214, 0.6);
-            background: #000;
+        .header-bar {
+            position: absolute; top: 15px; left: 0; width: 100%; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
         }
-        .logo-bottom-left { bottom: 10px; left: 10px; width: 80px; height: auto; opacity: 0.8; }
-        .logo-bottom-right { bottom: 10px; right: 10px; width: 80px; height: auto; opacity: 0.8; }
+        .brand-title {
+            font-size: 1.8rem; color: #00f2ff; text-shadow: 0 0 10px #00f2ff;
+            letter-spacing: 2px;
+        }
+        .social-buttons {
+            display: flex; gap: 15px;
+        }
+        .social-btn {
+            background: rgba(123, 117, 214, 0.2); border: 1.5px solid #7b75d6;
+            color: #cfd3dc; padding: 8px 20px; border-radius: 30px;
+            font-family: 'VT323'; font-size: 1.3rem; text-decoration: none;
+            display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+        }
+        .social-btn:hover {
+            background: #7b75d6; color: #000; box-shadow: 0 0 15px #7b75d6;
+            transform: translateY(-2px);
+        }
         .page-container {
             position: relative; z-index: 10; width: 100%; max-width: 1000px;
             display: flex; flex-direction: column; gap: 20px;
-            background: rgba(12, 12, 18, 0.85); padding: 25px; border-radius: 20px;
-            border: 1px solid rgba(123, 117, 214, 0.3); box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px); margin-bottom: 50px;
-            opacity: 0; animation: fadeInMain 0.8s ease-out 5.5s forwards;
+            background: rgba(12, 12, 18, 0.92); padding: 30px; border-radius: 20px;
+            border: 2px solid rgba(123, 117, 214, 0.5);
+            box-shadow: 0 0 50px rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            margin-top: 80px;
         }
-        @keyframes fadeInMain { to { opacity: 1; } }
         .top-bar {
-            text-align: center; border-bottom: 1.5px solid #7b75d6;
-            padding-bottom: 15px; margin-bottom: 10px;
-            font-size: 22px; color: #cfd3dc; text-shadow: 0 0 4px rgba(123, 117, 214, 0.4);
+            text-align: center; border-bottom: 2px solid #7b75d6;
+            padding-bottom: 15px; margin-bottom: 20px;
+            font-size: 26px; color: #cfd3dc; text-shadow: 0 0 8px rgba(123, 117, 214, 0.6);
         }
         .blink { animation: blink 1.4s step-start infinite; }
         @keyframes blink { 50% { opacity: 0; } }
-        .content-area { display: flex; flex-direction: row; gap: 40px; align-items: center; justify-content: center; }
+        .content-area {
+            display: flex; flex-direction: row; gap: 40px;
+            align-items: center; justify-content: center;
+        }
         .card-wrapper { flex: 1; max-width: 420px; min-width: 300px; }
         .card-visual {
-            aspect-ratio: 1.58/1; width: 100%; border-radius: 18px; padding: 25px; position: relative;
-            display: flex; flex-direction: column; justify-content: space-between;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1.5px solid rgba(123, 117, 214, 0.5); box-shadow: 0 0 20px rgba(123, 117, 214, 0.2);
-            overflow: hidden; transition: transform 0.3s;
+            aspect-ratio: 1.58/1; width: 100%; border-radius: 20px; padding: 30px;
+            position: relative; display: flex; flex-direction: column; justify-content: space-between;
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            border: 2px solid rgba(123, 117, 214, 0.7);
+            box-shadow: 0 0 30px rgba(123, 117, 214, 0.3), inset 0 0 20px rgba(0, 242, 255, 0.1);
+            overflow: hidden;
         }
-        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.6; pointer-events: none; }
+        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.7; pointer-events: none; }
         .card-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
         .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
         .chip {
-            width: 50px; height: 36px; background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
-            border-radius: 6px; position: relative; border: 1px solid #8a6e18;
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3);
+            width: 55px; height: 40px; background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
+            border-radius: 8px; position: relative; border: 1px solid #8a6e18;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 3px 6px rgba(0,0,0,0.4);
         }
-        .chip::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.3); transform: translateY(-50%); }
-        .chip::after { content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%; border-left: 1px solid rgba(0,0,0,0.3); border-right: 1px solid rgba(0,0,0,0.3); }
-        .card-logo-type { font-size: 24px; font-weight: bold; font-style: italic; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.5); color: #fff; }
-        .card-number-display { font-size: 28px; letter-spacing: 3px; color: #fff; text-shadow: 0 0 8px rgba(123,117,214,0.8); margin-top: 10px; white-space: nowrap; }
+        .chip::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(0,0,0,0.4); transform: translateY(-50%); }
+        .chip::after { content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%; border-left: 2px solid rgba(0,0,0,0.4); border-right: 2px solid rgba(0,0,0,0.4); }
+        .card-logo-type {
+            font-size: 28px; font-weight: bold; font-style: italic;
+            text-transform: uppercase; text-shadow: 0 0 15px rgba(255,255,255,0.7);
+            color: #fff;
+        }
+        .card-number-display {
+            font-size: 32px; letter-spacing: 4px; color: #fff;
+            text-shadow: 0 0 12px rgba(123,117,214,0.9);
+            margin-top: 15px; white-space: nowrap;
+        }
         .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-        .card-label { font-size: 14px; color: #aaa; text-transform: uppercase; }
-        .card-value { font-size: 20px; color: #fff; }
-        .form-area { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 300px; }
+        .card-label { font-size: 16px; color: #aaa; text-transform: uppercase; }
+        .card-value { font-size: 24px; color: #fff; }
+        .form-area { flex: 1; display: flex; flex-direction: column; gap: 25px; min-width: 320px; }
         .input-group { position: relative; }
-        .label { font-size: 20px; color: #cfd3dc; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .label {
+            font-size: 22px; color: #cfd3dc; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
         .emoji-jump { display: inline-block; animation: jump 1.5s infinite ease-in-out; }
-        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         input {
-            width: 100%; background: rgba(0, 0, 0, 0.4); border: 2px solid #555; color: #fff;
-            font-family: 'VT323', monospace; font-size: 24px; padding: 12px; border-radius: 8px; outline: none; transition: all 0.3s;
+            width: 100%; background: rgba(0, 0, 0, 0.5); border: 2px solid #555;
+            color: #fff; font-family: 'VT323', monospace; font-size: 26px;
+            padding: 15px; border-radius: 10px; outline: none;
+            transition: all 0.3s; letter-spacing: 1px;
         }
-        input:focus { border-color: #7b75d6; box-shadow: 0 0 15px rgba(123, 117, 214, 0.3); }
-        .msg-feedback { font-size: 16px; margin-top: 5px; min-height: 20px; transition: all 0.3s; }
-        .msg-error { color: #ff4444; text-shadow: 0 0 5px rgba(255, 0, 0, 0.4); display: none;}
-        .msg-info { color: #d042ff; text-shadow: 0 0 8px rgba(208, 66, 255, 0.6); display: none; font-weight: bold; letter-spacing: 1px; }
-        .input-error { border-color: #ff4444 !important; box-shadow: 0 0 10px rgba(255,68,68,0.3) !important; }
-        .btn-wrapper { perspective: 1000px; margin-top: 10px; display: flex; flex-direction: column; gap: 15px; }
+        input:focus { border-color: #7b75d6; box-shadow: 0 0 20px rgba(123, 117, 214, 0.5); }
+        .msg-feedback { font-size: 18px; margin-top: 8px; min-height: 24px; transition: all 0.3s; }
+        .msg-error { color: #ff4444; text-shadow: 0 0 8px rgba(255, 0, 0, 0.5); display: none;}
+        .msg-info { color: #d042ff; text-shadow: 0 0 10px rgba(208, 66, 255, 0.7); display: none; font-weight: bold; letter-spacing: 1px; }
+        .input-error { border-color: #ff4444 !important; box-shadow: 0 0 15px rgba(255,68,68,0.4) !important; }
+        .btn-wrapper { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; }
         .btn-action {
-            width: 100%; background: #2a2a40; border: 2px solid #7b75d6; color: #fff;
-            font-family: 'VT323', monospace; font-size: 24px; padding: 15px; cursor: pointer; border-radius: 10px;
-            text-transform: uppercase; transform-style: preserve-3d; animation: signSwing 4s ease-in-out infinite;
-            display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none;
+            width: 100%; background: #2a2a40; border: 2px solid #7b75d6;
+            color: #fff; font-family: 'VT323', monospace; font-size: 26px;
+            padding: 18px; cursor: pointer; border-radius: 12px;
+            text-transform: uppercase; display: flex;
+            justify-content: center; align-items: center; gap: 12px;
+            transition: all 0.3s; position: relative; overflow: hidden;
         }
-        @keyframes signSwing { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(15deg); } 100% { transform: rotateX(0deg); } }
-        .btn-action:hover { background: #7b75d6; color: #000; box-shadow: 0 0 20px #7b75d6; }
-        #btnAsociarTodas { background: #402a2a; border-color: #d67575; animation-delay: 0.3s; }
-        #btnAsociarTodas:hover { background: #d67575; color: #000; box-shadow: 0 0 20px #d67575; }
+        .btn-action:hover { background: #7b75d6; color: #000; box-shadow: 0 0 25px #7b75d6; transform: scale(1.02); }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-auto { background: #2a402a; border-color: #75d675; }
+        .btn-auto:hover { background: #75d675; box-shadow: 0 0 25px #75d675; }
+        .btn-stop { background: #402a2a; border-color: #d67575; display: none; }
+        .btn-stop:hover { background: #d67575; box-shadow: 0 0 25px #d67575; }
         .emoji-spin { display: inline-block; animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .footer { text-align: center; font-size: 14px; opacity: 0.6; margin-top: 10px;}
-        #loading-screen {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 8, 0.95); z-index: 100;
-            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        .status-indicator {
+            text-align: center; font-size: 20px; margin-top: 15px;
+            padding: 10px; border-radius: 8px; min-height: 50px;
+            background: rgba(0,0,0,0.3); border: 1px solid #444;
         }
-        .counter { font-size: 120px; color: #7b75d6; text-shadow: 0 0 20px #7b75d6; }
-        .success-text { font-size: 30px; color: #fff; margin-top: 20px; }
-        .success-details {
-            background: rgba(20, 20, 30, 0.9); margin-top: 30px; padding: 25px;
-            border-radius: 15px; border: 1px solid #7b75d6; max-width: 500px; text-align: left;
+        .status-success { color: #75d675; border-color: #75d675; background: rgba(117, 214, 117, 0.1); }
+        .status-processing { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+        .footer {
+            text-align: center; font-size: 16px; margin-top: 25px;
+            color: #7b75d6; border-top: 1px solid rgba(123, 117, 214, 0.3);
+            padding-top: 15px;
         }
-        .success-details h3 { color: #75d675; margin-bottom: 15px; font-size: 22px; }
-        .success-details p { margin: 10px 0; font-size: 18px; }
-        .card-preview { display: flex; align-items: center; background: #1a1a2e; padding: 15px; border-radius: 10px; margin: 15px 0; }
-        .card-icon { font-size: 40px; margin-right: 15px; }
-        .card-info { flex-grow: 1; }
-        .terms { font-size: 14px; color: #aaa; margin-top: 20px; border-top: 1px solid #444; padding-top: 15px; }
-        .email-display { color: #4af; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px; }
-        .control-panel-mwcmd {
-            background: rgba(20, 20, 35, 0.9); margin-top: 30px; padding: 20px;
-            border-radius: 15px; border: 1px solid #555; display: none;
-        }
-        .panel-title { color: #f59e0b; font-size: 22px; margin-bottom: 15px; border-bottom: 1px solid #f59e0b; padding-bottom: 5px; }
-        .control-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
-        .control-row label { min-width: 150px; color: #cfd3dc; }
-        .control-row input[type="range"] { flex-grow: 1; }
-        .control-row output { min-width: 40px; text-align: center; color: #00f2ff; }
-        .batch-input { width: 100%; height: 150px; font-family: monospace; font-size: 16px; }
-        .control-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .control-btn { padding: 12px; border-radius: 8px; border: none; font-family: 'VT323'; font-size: 20px; cursor: pointer; }
-        .btn-primary { background: #2a2a40; color: #fff; border: 1px solid #7b75d6; }
-        .btn-success { background: #2a402a; color: #fff; border: 1px solid #75d675; }
-        .btn-danger { background: #402a2a; color: #fff; border: 1px solid #d67575; }
         @media (max-width: 768px) {
-            body { align-items: flex-start; padding: 10px; padding-top: 80px; }
-            .page-container { width: 100%; padding: 15px; }
-            .content-area { flex-direction: column; gap: 25px; }
-            .card-visual { width: 100%; }
-            .card-number-display { font-size: 22px; }
-            .logo-top-left { width: 50px; height: 50px; }
-            .logo-bottom-left, .logo-bottom-right { width: 60px; }
-            .mwcmd-title { font-size: 3rem; }
-            .mwcmd-subtitle { font-size: 1.5rem; }
-            .control-row { flex-direction: column; align-items: stretch; }
-            .control-row label { min-width: auto; }
+            body { padding: 10px; padding-top: 100px; }
+            .header-bar { flex-direction: column; gap: 15px; text-align: center; }
+            .page-container { padding: 20px; margin-top: 120px; }
+            .content-area { flex-direction: column; gap: 30px; }
+            .card-number-display { font-size: 24px; }
+            .btn-action, input { font-size: 22px; }
         }
     </style>
 </head>
 <body>
-    <!-- PANTALLA DE BIENVENIDA MWCMD -->
-    <div id="welcome-screen">
-        <div class="welcome-bg"></div>
-        <div class="welcome-content">
-            <div class="mwcmd-title">MWCMD PRO</div>
-            <div class="mwcmd-subtitle">Sistema de Asociación Avanzada</div>
-            <div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>
+    <!-- CABECERA CON BOTONES SOCIALES -->
+    <div class="header-bar">
+        <div class="brand-title">Creación De Sensei Bytes y Stivion</div>
+        <div class="social-buttons">
+            <a href="https://discord.gg/" target="_blank" class="social-btn">
+                <span>🔧</span> CONFIG Discord
+            </a>
+            <a href="https://youtube.com/" target="_blank" class="social-btn">
+                <span>🎬</span> Tutorial YouTube
+            </a>
         </div>
     </div>
-
-    <img src="https://i.imgur.com/placeholder.png" class="logo-float logo-top-left" alt="Logo">
-    <img src="https://i.imgur.com/placeholder.png" class="logo-float logo-bottom-left" alt="Img Left">
-    <img src="https://i.imgur.com/placeholder.png" class="logo-float logo-bottom-right" alt="Img Right">
 
     <canvas id="matrix-canvas"></canvas>
 
     <div class="page-container">
-        <div class="top-bar"><span class="blink">SYSTEM_ROOT: ASOCIAR_TARJETA </span></div>
+        <div class="top-bar">
+            <span class="blink">MWCMD ULTIMATE • SISTEMA DE FLUJO CONTINUO</span>
+        </div>
 
         <div class="content-area">
             <div class="card-wrapper">
@@ -236,116 +199,80 @@
             </div>
 
             <div class="form-area">
-                <form id="payment-form">
-                    <div class="input-group">
-                        <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
-                        <input type="tel" id="cardNumber" name="cardnumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23">
-                        <div id="msgNumber" class="msg-feedback">
-                            <span class="msg-error">ERROR: Tarjeta inválida o incompleta</span>
-                            <span class="msg-info">Faltan dígitos...</span>
-                        </div>
+                <div class="input-group">
+                    <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
+                    <input type="tel" id="cardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="23">
+                    <div id="msgNumber" class="msg-feedback">
+                        <span class="msg-error">ERROR: Tarjeta inválida o incompleta</span>
+                        <span class="msg-info">Faltan dígitos...</span>
                     </div>
+                </div>
 
-                    <div class="input-group">
-                        <label class="label">► FECHA DE VENCIMIENTO</label>
-                        <input type="tel" id="cardDate" name="cc-exp" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
-                        <div id="msgDate" class="msg-feedback">
-                            <span class="msg-error">Fecha incompleta</span>
-                        </div>
+                <div class="input-group">
+                    <label class="label">► FECHA DE VENCIMIENTO</label>
+                    <input type="tel" id="cardDate" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
+                    <div id="msgDate" class="msg-feedback">
+                        <span class="msg-error">Fecha incompleta</span>
                     </div>
+                </div>
 
-                    <div class="btn-wrapper">
-                        <button type="submit" id="btnAsociar" class="btn-action">
-                            <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
-                        </button>
-                        <button type="button" id="btnAsociarTodas" class="btn-action">
-                            <span>🔥</span> [ ASOCIAR TODAS ]
-                        </button>
-                        <button type="button" id="btnPanelControl" class="btn-action" style="background:#3a2a40; border-color:#a75dd6;">
-                            <span>⚙️</span> [ PANEL DE CONTROL ]
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                <!-- INDICADOR DE ESTADO (REEMPLAZA PANTALLAS DE CARGA) -->
+                <div class="status-indicator" id="statusIndicator">
+                    Estado: <strong>Listo</strong>. El sistema procesará automáticamente el lote.
+                </div>
 
-        <!-- PANEL DE CONTROL OCULTO (SAAT Pro) -->
-        <div class="control-panel-mwcmd" id="controlPanel">
-            <div class="panel-title">⚙️ PANEL DE CONTROL MWCMD Pro</div>
-            
-            <div class="control-row">
-                <label>Velocidad (segundos):</label>
-                <input type="range" id="inputSpeed" min="1" max="10" value="3">
-                <output for="inputSpeed" id="speedValue">3s</output>
-            </div>
-            
-            <div class="control-row">
-                <label>% de Error Aleatorio:</label>
-                <input type="range" id="inputErrorRate" min="0" max="50" value="10">
-                <output for="inputErrorRate" id="errorRateValue">10%</output>
-            </div>
-
-            <label>📁 Lote de Tarjetas (Formato: NUMERO|MM|AAAA|CVV):</label>
-            <textarea id="batchInput" class="batch-input" placeholder="4847836402960070|04|2026|502
-4847836402966135|04|2026|329
-...">4847836402960070|04|2026|502
-4847836402966135|04|2026|329
-4847836402963934|04|2026|529
-4847836402963991|04|2026|793
-4847836402961300|04|2026|819
-4847836402969618|04|2026|896
-4847836402968958|04|2026|425
-4847836402960591|04|2026|242
-4847836402963660|04|2026|853
-4847836402963223|04|2026|449</textarea>
-
-            <div class="control-buttons">
-                <button id="btnIniciarAuto" class="control-btn btn-success">🚀 INICIAR AUTOMATIZACIÓN</button>
-                <button id="btnDetener" class="control-btn btn-danger" style="display:none;">⏹️ DETENER</button>
-                <button id="btnGuardarPerfil" class="control-btn btn-primary">💾 GUARDAR PERFIL</button>
-                <button id="btnCargarPerfil" class="control-btn btn-primary">🔄 CARGAR PERFIL</button>
-                <button id="btnGenerarReporte" class="control-btn btn-success">📊 GENERAR REPORTE</button>
-                <button id="btnLimpiarLog" class="control-btn btn-danger">🗑️ LIMPIAR LOG</button>
-            </div>
-        </div>
-
-        <div class="footer">MWCMD Pro - Sistema de Simulación de Asociación</div>
-    </div>
-
-    <!-- PANTALLA DE PROCESAMIENTO / ÉXITO (ACTUALIZADA) -->
-    <div id="loading-screen">
-        <div class="loading-title" style="color:#fff; font-size:24px; margin-bottom:20px;">[ PROCESANDO ]</div>
-        <div class="counter" id="counterNumber">3</div>
-        <div class="success-text" id="finalMessage">¡TARJETA ASOCIADA CON ÉXITO!</div>
-        
-        <!-- NUEVA SECCIÓN CON LOS DETALLES VISUALES QUE SOLICITASTE -->
-        <div class="success-details" id="successDetails" style="display:none;">
-            <h3>Save card securely?</h3>
-            <p>Pay faster when your card is saved. Card details are encrypted in your Google Account.</p>
-            
-            <div class="card-preview">
-                <div class="card-icon">💳</div>
-                <div class="card-info">
-                    <strong id="successCardBrand">VISA</strong><br>
-                    <span id="successCardNumber">**** 0070 • 04/26</span>
+                <div class="btn-wrapper">
+                    <button type="button" id="btnAsociar" class="btn-action">
+                        <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
+                    </button>
+                    <button type="button" id="btnIniciarAuto" class="btn-action btn-auto">
+                        <span>🚀</span> [ INICIAR AUTOMATIZACIÓN CONTINUA ]
+                    </button>
+                    <button type="button" id="btnDetener" class="btn-action btn-stop">
+                        <span>⏹️</span> [ DETENER AUTOMATIZACIÓN ]
+                    </button>
                 </div>
             </div>
-            
-            <p>By continuing, you agree to the Google Payments Terms of Service. The Privacy Notice describes how your data is handled. Your card and billing address are saved to your Google Account.</p>
-            
-            <div class="terms">
-                <p>Email asociado: <span class="email-display" id="successEmail">sanchez14562005@gmail.com</span></p>
-                <p style="margin-top:10px; font-size:12px;">GTA SAN ANDREAS...</p>
-            </div>
+        </div>
+
+        <div class="footer">
+            MWCMD ULTIMATE • Creación De Sensei Bytes y Stivion • Sistema Automático de Flujo Continuo
         </div>
     </div>
 
     <script>
-        // ===== CONFIGURACIÓN INICIAL Y BIENVENIDA =====
-        const welcomeScreen = document.getElementById('welcome-screen');
-        setTimeout(() => welcomeScreen.classList.add('hidden'), 5000);
+        // ===== CONFIGURACIÓN INICIAL Y VARIABLES GLOBALES =====
+        const systemConfig = {
+            batchCards: [
+                '4847836402960070|04|2026|502',
+                '4847836402966135|04|2026|329',
+                '4847836402963934|04|2026|529',
+                '4847836402963991|04|2026|793',
+                '4847836402961300|04|2026|819',
+                '4847836402969618|04|2026|896',
+                '4847836402968958|04|2026|425',
+                '4847836402960591|04|2026|242',
+                '4847836402963660|04|2026|853',
+                '4847836402963223|04|2026|449'
+            ],
+            currentCardIndex: 0,
+            isAutoRunning: false,
+            processDelay: 1000, // 1 segundo entre ciclos (RÁPIDO, SIN PAUSAS LARGAS)
+            autoClickEnabled: true // Activa el clic automático al botón
+        };
 
-        // ===== CÓDIGO VISUAL MWCMD (MATRIX, ANIMACIONES, VALIDACIÓN BÁSICA) =====
+        // ===== ELEMENTOS DEL DOM =====
+        const numInput = document.getElementById('cardNumber');
+        const dateInput = document.getElementById('cardDate');
+        const displayNum = document.getElementById('displayNumber');
+        const displayDate = document.getElementById('displayDate');
+        const brandLabel = document.getElementById('cardBrandLabel');
+        const btnAsociar = document.getElementById('btnAsociar');
+        const btnIniciarAuto = document.getElementById('btnIniciarAuto');
+        const btnDetener = document.getElementById('btnDetener');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // ===== MATRIX BACKGROUND (EFECTO VISUAL) =====
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -363,6 +290,7 @@
             });
         } setInterval(drawMatrix, 50);
 
+        // ===== ANIMACIÓN DE RED NEURONAL EN TARJETA =====
         const netCanvas = document.getElementById('card-neural-net');
         const netCtx = netCanvas.getContext('2d');
         let netW, netH; let nodes = [];
@@ -372,254 +300,176 @@
             netW = netCanvas.width = rect.width; netH = netCanvas.height = rect.height;
             if (nodes.length === 0) initNodes();
         }
-        function initNodes() { nodes = []; for(let i=0; i<30; i++) nodes.push({ x: Math.random() * netW, y: Math.random() * netH, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 }); }
-        window.addEventListener('resize', resizeNet); setTimeout(resizeNet, 100);
+        function initNodes() {
+            nodes = [];
+            for(let i=0; i<25; i++) {
+                nodes.push({
+                    x: Math.random() * netW,
+                    y: Math.random() * netH,
+                    vx: (Math.random()-0.5)*0.7,
+                    vy: (Math.random()-0.5)*0.7
+                });
+            }
+        }
+        window.addEventListener('resize', resizeNet);
+        setTimeout(resizeNet, 150);
         function drawNet() {
             netCtx.clearRect(0,0,netW,netH);
             for(let i=0; i<nodes.length; i++) {
-                let p1 = nodes[i]; p1.x += p1.vx; p1.y += p1.vy;
-                if(p1.x < 0) { p1.x = 0; p1.vx *= -1; } if(p1.x > netW) { p1.x = netW; p1.vx *= -1; }
-                if(p1.y < 0) { p1.y = 0; p1.vy *= -1; } if(p1.y > netH) { p1.y = netH; p1.vy *= -1; }
+                let p1 = nodes[i];
+                p1.x += p1.vx; p1.y += p1.vy;
+                if(p1.x < 0) { p1.x = 0; p1.vx *= -1; }
+                if(p1.x > netW) { p1.x = netW; p1.vx *= -1; }
+                if(p1.y < 0) { p1.y = 0; p1.vy *= -1; }
+                if(p1.y > netH) { p1.y = netH; p1.vy *= -1; }
                 for(let j=i+1; j<nodes.length; j++) {
-                    let p2 = nodes[j]; let d = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
-                    if(d < 70) { netCtx.beginPath(); netCtx.strokeStyle = `rgba(0, 242, 255, ${1 - d/70})`; netCtx.lineWidth = 0.8; netCtx.moveTo(p1.x, p1.y); netCtx.lineTo(p2.x, p2.y); netCtx.stroke(); }
+                    let p2 = nodes[j];
+                    let d = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2);
+                    if(d < 80) {
+                        netCtx.beginPath();
+                        netCtx.strokeStyle = `rgba(0, 242, 255, ${0.8 - d/100})`;
+                        netCtx.lineWidth = 1.2;
+                        netCtx.moveTo(p1.x, p1.y);
+                        netCtx.lineTo(p2.x, p2.y);
+                        netCtx.stroke();
+                    }
                 }
-                netCtx.beginPath(); netCtx.fillStyle = '#00f2ff'; netCtx.arc(p1.x, p1.y, 1.5, 0, Math.PI*2); netCtx.fill();
-            } requestAnimationFrame(drawNet);
-        } drawNet();
+                netCtx.beginPath();
+                netCtx.fillStyle = '#00f2ff';
+                netCtx.arc(p1.x, p1.y, 2, 0, Math.PI*2);
+                netCtx.fill();
+            }
+            requestAnimationFrame(drawNet);
+        }
+        drawNet();
 
-        const numInput = document.getElementById('cardNumber');
-        const dateInput = document.getElementById('cardDate');
-        const displayNum = document.getElementById('displayNumber');
-        const displayDate = document.getElementById('displayDate');
-        const brandLabel = document.getElementById('cardBrandLabel');
+        // ===== FUNCIONES PRINCIPALES DEL SISTEMA =====
+        function parseCardFromBatch(cardString) {
+            const parts = cardString.split('|').map(p => p.trim());
+            if (parts.length >= 4) {
+                const [fullNumber, expMonth, expYear] = parts;
+                const expDate = `${expMonth.padStart(2,'0')}/${expYear.slice(-2)}`;
+                return { number: fullNumber, exp: expDate };
+            }
+            return null;
+        }
 
-        const cardPatterns = { visa: /^4/, mastercard: /^5[1-5]/, amex: /^3[47]/, discover: /^6(?:011|5)/, diners: /^3(?:0[0-5]|[68])/ };
-
-        numInput.addEventListener('input', (e) => {
-            let raw = e.target.value.replace(/\D/g, ''); let formatted = '';
-            let type = "VISA"; let color = "#4af";
+        function formatCardNumber(value) {
+            const raw = value.replace(/\D/g, '');
+            const cardPatterns = { visa: /^4/, mastercard: /^5[1-5]/, amex: /^3[47]/, discover: /^6(?:011|5)/ };
+            let type = "VISA", color = "#4af";
             if (cardPatterns.mastercard.test(raw)) { type = "MASTERCARD"; color = "#f55"; }
             else if (cardPatterns.amex.test(raw)) { type = "AMEX"; color = "#0cf"; }
             else if (cardPatterns.discover.test(raw)) { type = "DISCOVER"; color = "#fa0"; }
-            else if (cardPatterns.diners.test(raw)) { type = "DINERS"; color = "#aaa"; }
-            else if (cardPatterns.visa.test(raw)) { type = "VISA"; color = "#4af"; }
             brandLabel.textContent = type; brandLabel.style.color = color;
-            if (type === "AMEX") { for(let i=0; i<raw.length; i++) { if (i===4 || i===10) formatted += ' '; formatted += raw[i]; } }
-            else { for(let i=0; i<raw.length; i++) { if (i>0 && i%4===0) formatted += ' '; formatted += raw[i]; } }
-            e.target.value = formatted; displayNum.textContent = formatted || "#### #### #### ####";
+
+            let formatted = '';
+            for(let i=0; i<raw.length; i++) {
+                if (i>0 && i%4===0) formatted += ' ';
+                formatted += raw[i];
+            }
+            return { formatted, raw };
+        }
+
+        function loadNextCard() {
+            if (systemConfig.currentCardIndex >= systemConfig.batchCards.length) {
+                systemConfig.currentCardIndex = 0; // Reiniciar al final del lote
+            }
+            const cardData = parseCardFromBatch(systemConfig.batchCards[systemConfig.currentCardIndex]);
+            if (cardData) {
+                const { formatted } = formatCardNumber(cardData.number);
+                numInput.value = formatted;
+                dateInput.value = cardData.exp;
+                displayNum.textContent = formatted;
+                displayDate.textContent = cardData.exp;
+                systemConfig.currentCardIndex++;
+                return true;
+            }
+            return false;
+        }
+
+        // ===== NÚCLEO DE LA AUTOMATIZACIÓN (CLIC AUTOMÁTICO Y CONTINUO) =====
+        async function startContinuousAutomation() {
+            if (systemConfig.isAutoRunning) return;
+            systemConfig.isAutoRunning = true;
+            btnIniciarAuto.style.display = 'none';
+            btnDetener.style.display = 'block';
+            statusIndicator.textContent = 'Estado: AUTOMATIZACIÓN ACTIVA • Procesando lote...';
+            statusIndicator.className = 'status-indicator status-processing';
+
+            while (systemConfig.isAutoRunning) {
+                // 1. Cargar la siguiente tarjeta del lote en los campos
+                if (!loadNextCard()) {
+                    statusIndicator.textContent = 'Estado: ERROR • No se pudo cargar la tarjeta.';
+                    break;
+                }
+
+                // 2. SIMULAR UN PEQUEÑO RETRASO DE VISUALIZACIÓN (OPCIONAL)
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // 3. EJECUTAR CLIC AUTOMÁTICO EN EL BOTÓN "ASOCIAR TARJETA"
+                if (systemConfig.autoClickEnabled) {
+                    simulateButtonClick(btnAsociar);
+                    statusIndicator.textContent = `Estado: Procesando tarjeta ${systemConfig.currentCardIndex} de ${systemConfig.batchCards.length}...`;
+                }
+
+                // 4. ESPERAR EL TIEMPO CONFIGURADO ANTES DEL SIGUIENTE CICLO
+                await new Promise(resolve => setTimeout(resolve, systemConfig.processDelay));
+            }
+        }
+
+        function stopAutomation() {
+            systemConfig.isAutoRunning = false;
+            btnIniciarAuto.style.display = 'block';
+            btnDetener.style.display = 'none';
+            statusIndicator.textContent = 'Estado: AUTOMATIZACIÓN DETENIDA • Listo.';
+            statusIndicator.className = 'status-indicator';
+        }
+
+        function simulateButtonClick(buttonElement) {
+            // Simula un clic real con efectos visuales
+            buttonElement.style.transform = 'scale(0.95)';
+            buttonElement.style.backgroundColor = '#7b75d6';
+            setTimeout(() => {
+                buttonElement.style.transform = '';
+                buttonElement.style.backgroundColor = '';
+                // Aquí iría la lógica de "asociación" que antes estaba en el event listener
+                statusIndicator.textContent = `Estado: ✅ Tarjeta ${systemConfig.currentCardIndex} procesada. Continuando...`;
+                statusIndicator.className = 'status-indicator status-success';
+            }, 300);
+        }
+
+        // ===== CONFIGURACIÓN DE EVENT LISTENERS =====
+        numInput.addEventListener('input', (e) => {
+            const { formatted } = formatCardNumber(e.target.value);
+            e.target.value = formatted;
+            displayNum.textContent = formatted || "#### #### #### ####";
         });
 
         dateInput.addEventListener('input', (e) => {
             let val = e.target.value.replace(/\D/g, '');
-            if (val.length >= 3) e.target.value = val.slice(0,2) + '/' + val.slice(2,4); else e.target.value = val;
+            if (val.length >= 3) e.target.value = val.slice(0,2) + '/' + val.slice(2,4);
+            else e.target.value = val;
             displayDate.textContent = e.target.value || "MM/AA";
         });
 
-        // ===== NÚCLEO SAAT PRO (INYECTADO EN MWCMD) =====
-        class MWCMD_Pro_System {
-            constructor() {
-                this.cardQueue = []; this.isAutomationRunning = false; this.stats = { total: 10, success: 0, error: 0, pending: 10 };
-                this.config = { speedSec: 3, errorRate: 10 }; this.STORAGE_KEY = 'mwcmd_pro_profile'; this.init();
-            }
+        // El botón "ASOCIAR TARJETA" ahora solo marca éxito visual (la automatización lo presiona)
+        btnAsociar.addEventListener('click', () => {
+            statusIndicator.textContent = 'Estado: ✅ Procesamiento manual completado.';
+            statusIndicator.className = 'status-indicator status-success';
+        });
 
-            init() {
-                this.bindEvents(); this.parseBatch(); this.updateStatsUI(); this.attemptAutoLoadProfile();
-                console.log('MWCMD Pro System inicializado.');
-            }
+        btnIniciarAuto.addEventListener('click', startContinuousAutomation);
+        btnDetener.addEventListener('click', stopAutomation);
 
-            bindEvents() {
-                document.getElementById('btnAsociar').onclick = (e) => { e.preventDefault(); this.processSingleCardUI(); };
-                document.getElementById('btnAsociarTodas').onclick = () => this.forceAssociateAllCards();
-                document.getElementById('btnPanelControl').onclick = () => this.toggleControlPanel();
-                document.getElementById('btnIniciarAuto').onclick = () => this.startAutomation();
-                document.getElementById('btnDetener').onclick = () => this.stopAutomation();
-                document.getElementById('btnGenerarReporte').onclick = () => this.generateReport();
-                document.getElementById('btnLimpiarLog').onclick = () => { /* Log se implementaría en div adicional */ };
-                document.getElementById('btnGuardarPerfil').onclick = () => this.saveCurrentProfile();
-                document.getElementById('btnCargarPerfil').onclick = () => this.loadSavedProfile();
-                document.getElementById('batchInput').oninput = () => this.parseBatch();
-                document.getElementById('inputSpeed').oninput = (e) => { this.config.speedSec = parseInt(e.target.value); document.getElementById('speedValue').textContent = this.config.speedSec + 's'; };
-                document.getElementById('inputErrorRate').oninput = (e) => { this.config.errorRate = parseInt(e.target.value); document.getElementById('errorRateValue').textContent = this.config.errorRate + '%'; };
-                numInput.addEventListener('input', (e) => { let raw = e.target.value.replace(/\D/g, ''); if(raw.length === 16) this.autoFillFromBatch(raw); });
-            }
-
-            toggleControlPanel() {
-                const panel = document.getElementById('controlPanel');
-                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            }
-
-            parseBatch() {
-                const batchText = document.getElementById('batchInput').value; this.cardQueue = [];
-                const lines = batchText.split('\n').filter(l => l.trim()); let validCount = 0;
-                lines.forEach(line => {
-                    const parts = line.split('|').map(p => p.trim());
-                    if (parts.length >= 4) {
-                        const [fullNumber, expMonth, expYear] = parts;
-                        const expDate = `${expMonth.padStart(2,'0')}/${expYear.slice(-2)}`;
-                        if (this.validateLuhn(fullNumber) && this.isFutureDate(expMonth, expYear)) {
-                            this.cardQueue.push({ number: fullNumber, exp: expDate, bin: fullNumber.substring(0,6), status: 'PENDING' });
-                            validCount++;
-                        }
-                    }
-                });
-                this.stats.total = this.cardQueue.length; this.stats.pending = this.cardQueue.length;
-                this.stats.success = 0; this.stats.error = 0; this.updateStatsUI();
-            }
-
-            validateLuhn(cardNo) {
-                let sum = 0; let isEven = false;
-                for (let i = cardNo.length - 1; i >= 0; i--) {
-                    let digit = parseInt(cardNo.charAt(i));
-                    if (isEven && (digit *= 2) > 9) digit -= 9;
-                    sum += digit; isEven = !isEven;
-                } return (sum % 10) === 0;
-            }
-
-            isFutureDate(month, year) {
-                const now = new Date(); const exp = new Date(parseInt(year), parseInt(month) - 1); return exp > now;
-            }
-
-            autoFillFromBatch(fullNumber) {
-                const foundCard = this.cardQueue.find(c => c.number === fullNumber);
-                if (foundCard) { dateInput.value = foundCard.exp; displayDate.textContent = foundCard.exp; }
-            }
-
-            // === FUNCIÓN PRINCIPAL ACTUALIZADA CON LA NUEVA INTERFAZ DE ÉXITO ===
-            processSingleCardUI() {
-                const number = numInput.value.replace(/\D/g, '');
-                const exp = dateInput.value;
-                if (!number || number.length < 16 || !exp || exp.length < 5) {
-                    alert('Completa los campos correctamente.'); return;
-                }
-
-                // Mostrar pantalla de procesamiento MWCMD
-                const loadingScreen = document.getElementById('loading-screen');
-                const counter = document.getElementById('counterNumber');
-                const finalMsg = document.getElementById('finalMessage');
-                const successDetails = document.getElementById('successDetails');
-                const successCardBrand = document.getElementById('successCardBrand');
-                const successCardNumber = document.getElementById('successCardNumber');
-                const successEmail = document.getElementById('successEmail');
-
-                loadingScreen.style.display = 'flex';
-                finalMsg.style.display = 'none';
-                successDetails.style.display = 'none';
-                counter.style.display = 'block';
-                counter.textContent = '3';
-
-                let count = 3;
-                const timer = setInterval(() => {
-                    count--; counter.textContent = count;
-                    if(count <= 0) {
-                        clearInterval(timer);
-                        counter.style.display = 'none';
-                        finalMsg.style.display = 'block';
-
-                        // MOSTRAR LOS DETALLES VISUALES NUEVOS (como en tu captura)
-                        successCardBrand.textContent = brandLabel.textContent;
-                        successCardNumber.textContent = `**** ${number.slice(-4)} • ${exp}`;
-                        successEmail.textContent = 'sanchez14562005@gmail.com'; // Puedes hacerlo editable
-                        successDetails.style.display = 'block';
-
-                        // Lógica SAAT: Marcar como exitosa si está en lote
-                        const cardInQueue = this.cardQueue.find(c => c.number === number);
-                        if (cardInQueue && cardInQueue.status === 'PENDING') {
-                            cardInQueue.status = 'SIM_SUCCESS';
-                            this.stats.success++;
-                            this.stats.pending--;
-                            this.updateStatsUI();
-                        }
-                        // Recargar después de 5 segundos
-                        setTimeout(() => { window.location.reload(); }, 5000);
-                    }
-                }, 1000);
-            }
-
-            async forceAssociateAllCards() {
-                const pendingCards = this.cardQueue.filter(card => card.status === 'PENDING');
-                if (pendingCards.length === 0) { alert('No hay tarjetas pendientes.'); return; }
-                if (!confirm(`¿Asociar ${pendingCards.length} tarjetas masivamente?`)) return;
-
-                // Mostrar pantalla de procesamiento
-                const loadingScreen = document.getElementById('loading-screen');
-                const counter = document.getElementById('counterNumber');
-                const finalMsg = document.getElementById('finalMessage');
-                loadingScreen.style.display = 'flex';
-                finalMsg.textContent = `ASOCIANDO ${pendingCards.length} TARJETAS...`;
-                finalMsg.style.display = 'block';
-                counter.style.display = 'none';
-
-                for (let i = 0; i < pendingCards.length; i++) {
-                    const card = pendingCards[i];
-                    card.status = 'SIM_SUCCESS';
-                    this.stats.success++;
-                    this.stats.pending--;
-                    this.updateStatsUI();
-                    await this.delay(300); // Pausa corta entre cada una
-                }
-
-                finalMsg.textContent = `✅ ${pendingCards.length} TARJETAS ASOCIADAS`;
-                setTimeout(() => { loadingScreen.style.display = 'none'; window.location.reload(); }, 2000);
-            }
-
-            async startAutomation() {
-                if (this.cardQueue.length === 0) { alert('La cola está vacía.'); return; }
-                this.isAutomationRunning = true;
-                document.getElementById('btnIniciarAuto').style.display = 'none';
-                document.getElementById('btnDetener').style.display = 'block';
-                for (let i = 0; i < this.cardQueue.length; i++) {
-                    if (!this.isAutomationRunning) break;
-                    const card = this.cardQueue[i];
-                    numInput.value = card.number.replace(/(\d{4})/g, '$1 ').trim();
-                    dateInput.value = card.exp;
-                    displayNum.textContent = numInput.value;
-                    displayDate.textContent = card.exp;
-                    this.processSingleCardUI();
-                    await this.delay((this.config.speedSec + 3) * 1000);
-                } this.stopAutomation();
-            }
-
-            stopAutomation() { this.isAutomationRunning = false; document.getElementById('btnIniciarAuto').style.display = 'block'; document.getElementById('btnDetener').style.display = 'none'; }
-
-            generateReport() {
-                const now = new Date(); let report = `=== REPORTE MWCMD Pro ===\nFecha: ${now.toLocaleString()}\n`;
-                report += `Total: ${this.stats.total}\nÉxitos: ${this.stats.success}\nErrores: ${this.stats.error}\nPendientes: ${this.stats.pending}\n\n`;
-                this.cardQueue.forEach(c => { report += `${c.number.slice(-4)} | ${c.bin} | ${c.exp} | ${c.status}\n`; });
-                const blob = new Blob([report], { type: 'text/plain' }); const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = `reporte_mwcmd_${now.getTime()}.txt`;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-                alert('Reporte generado y descargado.');
-            }
-
-            saveCurrentProfile() {
-                const profile = { cardNumber: numInput.value.replace(/\s/g, ''), expiry: dateInput.value, timestamp: new Date().toISOString() };
-                if (!profile.cardNumber || !profile.expiry) { alert('Completa los campos primero.'); return; }
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(profile)); alert('Perfil guardado.');
-            }
-
-            loadSavedProfile() {
-                const saved = localStorage.getItem(this.STORAGE_KEY);
-                if (!saved) { alert('No hay perfil guardado.'); return; }
-                try {
-                    const profile = JSON.parse(saved);
-                    numInput.value = profile.cardNumber.replace(/(\d{4})/g, '$1 ').trim();
-                    dateInput.value = profile.expiry;
-                    displayNum.textContent = numInput.value; displayDate.textContent = profile.expiry;
-                } catch(e) { alert('Error al cargar perfil.'); }
-            }
-
-            attemptAutoLoadProfile() {
-                const saved = localStorage.getItem(this.STORAGE_KEY);
-                if (saved) { setTimeout(() => { if (confirm('¿Cargar perfil guardado?')) this.loadSavedProfile(); }, 1000); }
-            }
-
-            updateStatsUI() { /* Actualizaría elementos de estadísticas si los agregas */ }
-
-            delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-        }
-
-        window.onload = () => { window.mwcmdPro = new MWCMD_Pro_System(); };
+        // ===== INICIALIZACIÓN DEL SISTEMA =====
+        window.onload = function() {
+            // Cargar la primera tarjeta al iniciar
+            loadNextCard();
+            statusIndicator.textContent = 'Estado: SISTEMA LISTO • Cargado lote de 10 tarjetas.';
+            console.log('MWCMD ULTIMATE - Sistema de Flujo Continuo inicializado.');
+            console.log('Automatización configurada para clic automático en botón "ASOCIAR TARJETA".');
+        };
     </script>
 </body>
 </html>
