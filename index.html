@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MWCMD FINAL</title>
+    <title>SENSEI BYTES & STIVION - ASOCIADOR GPay</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        /* ===== [ALL CSS FROM YOUR ORIGINAL FILE REMAINS IDENTICAL] ===== */
-        /* [The entire CSS block you provided is preserved here verbatim] */
+        /* ===== RESET & GLOBALES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: radial-gradient(circle at 20% 20%, #111019 0%, #06060a 45%, #030304 100%);
@@ -21,7 +20,189 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* ... [Continue including ALL CSS styles from your initial prompt exactly as provided] ... */
+        /* ===== MATRIX BACKGROUND ===== */
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+            opacity: 0.35; pointer-events: none;
+        }
+        /* ===== HEADER CON SOCIAL ===== */
+        .header-bar {
+            position: absolute; top: 15px; left: 0; width: 100%; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        }
+        .brand-title {
+            font-size: 1.8rem; color: #00f2ff; text-shadow: 0 0 10px #00f2ff;
+            letter-spacing: 2px;
+        }
+        .social-buttons { display: flex; gap: 15px; }
+        .social-btn {
+            background: rgba(123, 117, 214, 0.2); border: 1.5px solid #7b75d6;
+            color: #cfd3dc; padding: 8px 20px; border-radius: 30px;
+            font-family: 'VT323'; font-size: 1.3rem; text-decoration: none;
+            display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+        }
+        .social-btn:hover {
+            background: #7b75d6; color: #000; box-shadow: 0 0 15px #7b75d6;
+            transform: translateY(-2px);
+        }
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        .page-container {
+            position: relative; z-index: 10; width: 100%; max-width: 1100px;
+            display: flex; flex-direction: column; gap: 20px;
+            background: rgba(12, 12, 18, 0.95); padding: 30px; border-radius: 20px;
+            border: 2px solid rgba(123, 117, 214, 0.6);
+            box-shadow: 0 0 60px rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            margin-top: 80px;
+        }
+        .top-bar {
+            text-align: center; border-bottom: 2px solid #7b75d6;
+            padding-bottom: 15px; margin-bottom: 20px;
+            font-size: 26px; color: #cfd3dc; text-shadow: 0 0 8px rgba(123, 117, 214, 0.7);
+        }
+        .blink { animation: blink 1.4s step-start infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        /* ===== AREA DE CONTENIDO ===== */
+        .content-area {
+            display: flex; flex-direction: row; gap: 40px;
+            align-items: stretch; justify-content: center;
+        }
+        @media (max-width: 900px) { .content-area { flex-direction: column; } }
+        /* ===== TARJETA VISUAL ===== */
+        .card-wrapper { flex: 1; max-width: 450px; min-width: 300px; }
+        .card-visual {
+            aspect-ratio: 1.58/1; width: 100%; border-radius: 20px; padding: 30px;
+            position: relative; display: flex; flex-direction: column; justify-content: space-between;
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            border: 2px solid rgba(123, 117, 214, 0.8);
+            box-shadow: 0 0 40px rgba(123, 117, 214, 0.4), inset 0 0 30px rgba(0, 242, 255, 0.15);
+            overflow: hidden;
+        }
+        #card-neural-net { position: absolute; inset: 0; z-index: 1; opacity: 0.7; pointer-events: none; }
+        .card-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .chip {
+            width: 55px; height: 40px; background: linear-gradient(135deg, #e6c86e 0%, #bf9738 50%, #e6c86e 100%);
+            border-radius: 8px; position: relative; border: 1px solid #8a6e18;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 3px 6px rgba(0,0,0,0.4);
+        }
+        .chip::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(0,0,0,0.4); transform: translateY(-50%); }
+        .chip::after { content: ""; position: absolute; left: 35%; top: 0; width: 30%; height: 100%; border-left: 2px solid rgba(0,0,0,0.4); border-right: 2px solid rgba(0,0,0,0.4); }
+        .card-logo-type {
+            font-size: 28px; font-weight: bold; font-style: italic;
+            text-transform: uppercase; text-shadow: 0 0 15px rgba(255,255,255,0.8);
+            color: #fff;
+        }
+        .card-number-display {
+            font-size: 32px; letter-spacing: 4px; color: #fff;
+            text-shadow: 0 0 15px rgba(123,117,214,1);
+            margin-top: 20px; white-space: nowrap;
+        }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+        .card-label { font-size: 16px; color: #aaa; text-transform: uppercase; }
+        .card-value { font-size: 24px; color: #fff; }
+        /* ===== FORMULARIO PRINCIPAL (OPTIMIZADO PARA GOOGLE AUTOFILL) ===== */
+        .form-area { flex: 1; display: flex; flex-direction: column; gap: 25px; min-width: 320px; }
+        .input-group { position: relative; }
+        .label {
+            font-size: 22px; color: #cfd3dc; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .emoji-jump { display: inline-block; animation: jump 1.8s infinite ease-in-out; }
+        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        input {
+            width: 100%; background: rgba(0, 0, 0, 0.6); border: 2px solid #555;
+            color: #fff; font-family: 'VT323', monospace; font-size: 26px;
+            padding: 16px 18px; border-radius: 12px; outline: none;
+            transition: all 0.3s; letter-spacing: 1.5px;
+        }
+        input:focus { border-color: #7b75d6; box-shadow: 0 0 25px rgba(123, 117, 214, 0.7); }
+        .msg-feedback { font-size: 18px; margin-top: 8px; min-height: 24px; }
+        .msg-error { color: #ff6b6b; text-shadow: 0 0 8px rgba(255, 107, 107, 0.6); display: none;}
+        .msg-info { color: #d042ff; text-shadow: 0 0 10px rgba(208, 66, 255, 0.8); display: none; font-weight: bold; }
+        .input-error { border-color: #ff6b6b !important; box-shadow: 0 0 15px rgba(255,107,107,0.5) !important; }
+        /* ===== BOTONES PRINCIPALES ===== */
+        .btn-wrapper { margin-top: 15px; display: flex; flex-direction: column; gap: 18px; }
+        .btn-main {
+            width: 100%; background: #2a2a40; border: 2px solid #7b75d6;
+            color: #fff; font-family: 'VT323', monospace; font-size: 26px;
+            padding: 20px; cursor: pointer; border-radius: 14px;
+            text-transform: uppercase; display: flex;
+            justify-content: center; align-items: center; gap: 15px;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .btn-main:hover:not(:disabled) { background: #7b75d6; color: #000; box-shadow: 0 0 30px #7b75d6; transform: translateY(-3px); }
+        .btn-main:active:not(:disabled) { transform: translateY(-1px); }
+        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+        #btnAsociar { animation: gentlePulse 2.5s ease-in-out infinite; }
+        @keyframes gentlePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.9; } }
+        .btn-auto { background: #1e3a1e; border-color: #75d675; }
+        .btn-auto:hover:not(:disabled) { background: #75d675; box-shadow: 0 0 30px #75d675; }
+        .btn-stop { background: #3a1e1e; border-color: #ff6b6b; display: none; }
+        .btn-stop:hover:not(:disabled) { background: #ff6b6b; box-shadow: 0 0 30px #ff6b6b; }
+        .btn-panel { background: #2a1e3a; border-color: #a75dd6; }
+        .btn-panel:hover:not(:disabled) { background: #a75dd6; box-shadow: 0 0 30px #a75dd6; }
+        .btn-external { background: #3a2a1e; border-color: #f59e0b; text-decoration: none; }
+        .btn-external:hover { background: #f59e0b; color: #000; box-shadow: 0 0 30px #f59e0b; }
+        .emoji-spin { display: inline-block; animation: spin 1.2s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* ===== PANEL DE CONTROL ===== */
+        .control-panel {
+            background: rgba(15, 15, 25, 0.98); margin-top: 30px; padding: 30px;
+            border-radius: 18px; border: 2px solid #f59e0b; display: none;
+            grid-template-columns: 1fr 1fr; gap: 30px;
+        }
+        .panel-title { color: #f59e0b; font-size: 26px; margin-bottom: 25px; grid-column: 1 / -1; border-bottom: 2px solid #f59e0b; padding-bottom: 12px; }
+        .control-group { display: flex; flex-direction: column; gap: 12px; }
+        .control-group label { font-size: 22px; color: #cfd3dc; }
+        .control-group input[type="range"] { width: 100%; height: 12px; -webkit-appearance: none; background: #2a2a40; border-radius: 10px; outline: none; }
+        .control-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #00f2ff; border-radius: 50%; cursor: pointer; }
+        .control-group output { font-size: 22px; color: #00f2ff; text-align: center; font-weight: bold; }
+        .batch-area { grid-column: 1 / -1; }
+        .batch-area textarea {
+            width: 100%; height: 200px; background: rgba(0,0,0,0.7); color: #fff;
+            border: 2px solid #555; border-radius: 12px; padding: 18px;
+            font-family: 'Courier New', monospace; font-size: 17px; resize: vertical;
+            line-height: 1.4;
+        }
+        .panel-buttons {
+            grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px; margin-top: 20px;
+        }
+        .panel-btn {
+            padding: 18px; border-radius: 12px; border: none; font-family: 'VT323';
+            font-size: 24px; cursor: pointer; color: white; transition: all 0.3s;
+        }
+        .panel-btn:hover { transform: translateY(-3px); }
+        .panel-btn-primary { background: #2a2a40; border: 2px solid #7b75d6; }
+        .panel-btn-success { background: #1e3a1e; border: 2px solid #75d675; }
+        .panel-btn-danger { background: #3a1e1e; border: 2px solid #ff6b6b; }
+        /* ===== STATUS & FEEDBACK ===== */
+        .status-box {
+            text-align: center; font-size: 22px; margin-top: 25px; padding: 20px;
+            border-radius: 12px; min-height: 70px; background: rgba(0,0,0,0.4);
+            border: 2px solid #444; grid-column: 1 / -1; display: flex;
+            align-items: center; justify-content: center; flex-wrap: wrap;
+        }
+        .status-success { color: #75d675; border-color: #75d675; background: rgba(117, 214, 117, 0.15); }
+        .status-processing { color: #f59e0b; border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); }
+        .status-error { color: #ff6b6b; border-color: #ff6b6b; background: rgba(255, 107, 107, 0.15); }
+        /* ===== STATS DISPLAY ===== */
+        .stats-display {
+            grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 15px; margin-top: 15px; margin-bottom: 10px;
+        }
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px;
+            text-align: center; border: 1px solid #444;
+        }
+        .stat-value {
+            font-size: 32px; font-weight: bold; color: #00f2ff;
+            display: block; margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 16px; color: #aaa; text-transform: uppercase;
+        }
+        /* ===== FOOTER ===== */
         .footer {
             text-align: center; font-size: 18px; margin-top: 30px;
             color: #7b75d6; border-top: 2px solid rgba(123, 117, 214, 0.4);
@@ -30,7 +211,7 @@
     </style>
 </head>
 <body>
-    <!-- CABECERA -->
+    <!-- CABECERA CON BOTONES SOCIALES -->
     <div class="header-bar">
         <div class="brand-title">Creación De Sensei Bytes y Stivion</div>
         <div class="social-buttons">
@@ -44,7 +225,7 @@
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="page-container">
-        <div class="top-bar"><span class="blink">MWCMD FINAL • SISTEMA CON AUTOCOMPLETADO DE NAVEGADOR</span></div>
+        <div class="top-bar"><span class="blink">SENSEI BYTES & STIVION • ASOCIADOR GPay (DUAL)</span></div>
 
         <div class="content-area">
             <!-- TARJETA VISUAL -->
@@ -71,18 +252,20 @@
                 </div>
             </div>
 
-            <!-- FORMULARIO REAL PARA NAVEGADOR (con autocomplete) -->
+            <!-- FORMULARIO OPTIMIZADO PARA GOOGLE AUTOFILL -->
             <div class="form-area">
-                <form id="payment-form" method="POST">
+                <form id="payment-form" method="POST" action="#">
                     <div class="input-group">
                         <label class="label">► NÚMERO DE TARJETA <span class="emoji-jump">💳</span></label>
-                        <input type="tel" 
+                        <!-- ATRIBUTOS CRÍTICOS PARA QUE GOOGLE LO RECONOZCA -->
+                        <input type="text" 
                                id="cardNumber" 
                                name="cardnumber" 
-                               autocomplete="cc-number" 
-                               placeholder="0000 0000 0000 0000" 
-                               maxlength="19" 
+                               autocomplete="cc-number"
                                inputmode="numeric"
+                               pattern="[0-9\s]{13,23}"
+                               placeholder="0000 0000 0000 0000" 
+                               maxlength="19"
                                required>
                         <div id="msgNumber" class="msg-feedback">
                             <span class="msg-error" id="errorNumber">ERROR: Tarjeta inválida o incompleta</span>
@@ -92,29 +275,33 @@
 
                     <div class="input-group">
                         <label class="label">► FECHA DE VENCIMIENTO</label>
-                        <input type="tel" 
+                        <!-- ATRIBUTOS CRÍTICOS PARA QUE GOOGLE LO RECONOZCA -->
+                        <input type="text" 
                                id="cardDate" 
                                name="cc-exp" 
-                               autocomplete="cc-exp" 
-                               placeholder="MM/AA" 
-                               maxlength="5" 
+                               autocomplete="cc-exp"
                                inputmode="numeric"
+                               placeholder="MM/AA" 
+                               maxlength="5"
                                required>
                         <div id="msgDate" class="msg-feedback">
                             <span class="msg-error" id="errorDate">Fecha inválida o expirada</span>
                         </div>
                     </div>
 
-                    <!-- BOTONES DE ACCIÓN -->
+                    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
                     <div class="btn-wrapper">
+                        <!-- BOTÓN MANUAL (GOOGLE PUEDE MOSTRAR "GUARDAR" AQUÍ) -->
                         <button type="submit" id="btnAsociar" class="btn-main">
                             <span class="emoji-spin">⚡</span> [ ASOCIAR TARJETA ]
                         </button>
                         
+                        <!-- BOTÓN EXTERNO -->
                         <a href="https://rogarden.gg/" target="_blank" rel="noopener noreferrer" class="btn-main btn-external">
                             <span>🔄</span> [ ACTUALIZAR CC ]
                         </a>
 
+                        <!-- BOTÓN DE AUTOMATIZACIÓN (ESTE ACTIVA EL SISTEMA AUTO) -->
                         <button type="button" id="btnIniciarAuto" class="btn-main btn-auto">
                             <span>🚀</span> [ INICIAR AUTOMATIZACIÓN ]
                         </button>
@@ -129,9 +316,9 @@
             </div>
         </div>
 
-        <!-- PANEL DE CONTROL -->
+        <!-- PANEL DE CONTROL (OCULTO INICIALMENTE) -->
         <div class="control-panel" id="controlPanel">
-            <div class="panel-title">⚙️ PANEL DE CONTROL - CONFIGURACIÓN</div>
+            <div class="panel-title">⚙️ PANEL DE CONTROL - AUTOMATIZACIÓN</div>
 
             <!-- ESTADÍSTICAS -->
             <div class="stats-display">
@@ -159,22 +346,20 @@
             </div>
 
             <div class="batch-area">
-                <label>📁 Lote de Tarjetas (Formato: NÚMERO|MM|AAAA|CVV):</label>
-                <textarea id="batchInput" spellcheck="false">4847836402960070|04|2026|502
-4847836402966135|04|2026|329
-4847836402963934|04|2026|529
-4847836402963991|04|2026|793
-4847836402961300|04|2026|819
-4847836402969618|04|2026|896
-4847836402968958|04|2026|425
-4847836402960591|04|2026|242
-4847836402963660|04|2026|853
-4847836402963223|04|2026|449</textarea>
+                <label>📁 Lote de Tarjetas (Formato: NÚMERO|MM|AAAA):</label>
+                <textarea id="batchInput" spellcheck="false">4847836402960070|04|2026
+4847836402966135|04|2026
+4847836402963934|04|2026
+4847836402963991|04|2026
+4847836402961300|04|2026
+4847836402969618|04|2026
+4847836402968958|04|2026
+4847836402960591|04|2026
+4847836402963660|04|2026
+4847836402963223|04|2026</textarea>
             </div>
 
             <div class="panel-buttons">
-                <button id="btnGuardarPerfil" class="panel-btn panel-btn-primary">💾 Guardar Perfil</button>
-                <button id="btnCargarPerfil" class="panel-btn panel-btn-primary">🔄 Cargar Perfil</button>
                 <button id="btnProcesarLote" class="panel-btn panel-btn-success">🔁 Procesar Lote</button>
                 <button id="btnGenerarReporte" class="panel-btn panel-btn-success">📊 Generar Reporte</button>
                 <button id="btnResetStats" class="panel-btn panel-btn-danger">🗑️ Reiniciar Stats</button>
@@ -183,74 +368,87 @@
 
             <!-- STATUS -->
             <div class="status-box" id="statusBox">
-                <span id="statusText">✅ Sistema listo. Usa "ASOCIAR TARJETA" para validación manual con autocompletado.</span>
+                <span id="statusText">✅ Sistema listo. Usa "ASOCIAR TARJETA" para validación manual. Google puede ofrecer guardar la tarjeta.</span>
             </div>
         </div>
 
         <div class="footer">
-            MWCMD FINAL • Creación De Sensei Bytes y Stivion • Sistema con Autocompletado de Navegador
+            SENSEI BYTES & STIVION • Sistema Dual (Manual + Automático) • Optimizado para GPay Autofill
         </div>
     </div>
 
     <script>
-        // ========== SISTEMA MWCMD FINAL - CÓDIGO COMPLETO Y CORREGIDO ==========
+        // ========== SISTEMA DUAL SENSEI BYTES & STIVION ==========
         (function() {
             'use strict';
 
             // ===== CONFIGURACIÓN GLOBAL =====
             const SYSTEM = {
-                isAutoRunning: false,
-                currentCardIndex: 0,
-                processing: false,
-                stats: { total: 10, success: 0, error: 0, pending: 10 },
-                config: { speedSec: 1 },
-                batch: [],
-                STORAGE_KEY: 'mwcmd_final_config'
+                isAutoRunning: false,       // Control del modo automático
+                currentCardIndex: 0,        // Índice de la tarjeta actual en el lote
+                processing: false,          // Bloqueo para no procesar dos a la vez
+                stats: { total: 10, success: 0, error: 0, pending: 10 }, // Estadísticas
+                config: { speedSec: 1 },    // Config (velocidad en segundos)
+                batch: [],                  // Lote de tarjetas parseado
+                STORAGE_KEY: 'sensei_bytes_config' // Clave para guardar config
             };
 
             // ===== ELEMENTOS DOM =====
             const el = {
+                // Formulario y inputs
                 form: document.getElementById('payment-form'),
                 cardNumber: document.getElementById('cardNumber'),
                 cardDate: document.getElementById('cardDate'),
+                
+                // Display de tarjeta visual
                 displayNumber: document.getElementById('displayNumber'),
                 displayDate: document.getElementById('displayDate'),
                 cardBrandLabel: document.getElementById('cardBrandLabel'),
+                
+                // Panel de control
                 batchInput: document.getElementById('batchInput'),
                 inputSpeed: document.getElementById('inputSpeed'),
                 speedValue: document.getElementById('speedValue'),
                 controlPanel: document.getElementById('controlPanel'),
+                
+                // Botones principales
                 btnAsociar: document.getElementById('btnAsociar'),
                 btnIniciarAuto: document.getElementById('btnIniciarAuto'),
                 btnDetener: document.getElementById('btnDetener'),
                 btnMostrarPanel: document.getElementById('btnMostrarPanel'),
+                
+                // Botones del panel
+                btnProcesarLote: document.getElementById('btnProcesarLote'),
+                btnGenerarReporte: document.getElementById('btnGenerarReporte'),
+                btnResetStats: document.getElementById('btnResetStats'),
+                btnResetSystem: document.getElementById('btnResetSystem'),
+                
+                // Stats
                 statTotal: document.getElementById('statTotal'),
                 statSuccess: document.getElementById('statSuccess'),
                 statError: document.getElementById('statError'),
                 statPending: document.getElementById('statPending'),
+                
+                // Status y mensajes
                 statusBox: document.getElementById('statusBox'),
                 statusText: document.getElementById('statusText'),
-                btnGuardarPerfil: document.getElementById('btnGuardarPerfil'),
-                btnCargarPerfil: document.getElementById('btnCargarPerfil'),
-                btnProcesarLote: document.getElementById('btnProcesarLote'),
-                btnGenerarReporte: document.getElementById('btnGenerarReporte'),
-                btnResetStats: document.getElementById('btnResetStats'),
-                btnResetSystem: document.getElementById('btnResetSystem')
+                errorNumber: document.getElementById('errorNumber'),
+                infoNumber: document.getElementById('infoNumber'),
+                errorDate: document.getElementById('errorDate')
             };
 
             // ===== INICIALIZACIÓN =====
             function init() {
-                console.log('🔄 Iniciando MWCMD FINAL...');
+                console.log('🔧 Iniciando Sistema Sensei Bytes & Stivion...');
                 loadConfig();
                 parseBatch();
                 loadCard(0);
                 setupEvents();
-                initEffects();
-                updateStatus('✅ Sistema listo. El navegador puede ofrecer autocompletar tarjetas guardadas.', 'success');
-                console.log('✅ MWCMD FINAL listo.');
+                initVisualEffects();
+                updateStatus('✅ Sistema listo. Coloca los datos y haz clic en ASOCIAR TARJETA. Google puede ofrecer guardarla.', 'success');
             }
 
-            // ===== FUNCIONES CORE =====
+            // ===== FUNCIONES CORE DE VALIDACIÓN =====
             function validateLuhn(cardNumber) {
                 const digits = cardNumber.replace(/\D/g, '');
                 if (digits.length < 13 || digits.length > 19) return false;
@@ -280,6 +478,7 @@
                 return true;
             }
 
+            // ===== FUNCIONES DE DATOS (LOTE) =====
             function parseBatch() {
                 const text = el.batchInput.value.trim();
                 const lines = text.split('\n').filter(line => line.trim());
@@ -307,11 +506,8 @@
                 return SYSTEM.batch.length;
             }
 
-            // ===== FUNCIONES DE UI =====
             function loadCard(index) {
-                if (!SYSTEM.batch.length || index < 0 || index >= SYSTEM.batch.length) {
-                    return false;
-                }
+                if (!SYSTEM.batch.length || index < 0 || index >= SYSTEM.batch.length) return false;
                 const card = SYSTEM.batch[index];
                 SYSTEM.currentCardIndex = index;
                 const formatted = card.number.replace(/(\d{4})/g, '$1 ').trim();
@@ -330,61 +526,79 @@
                 return true;
             }
 
+            // ===== FUNCIÓN PRINCIPAL DE VALIDACIÓN/PROCESAMIENTO =====
             function processCard(manual = false) {
                 if (SYSTEM.processing) return false;
                 SYSTEM.processing = true;
+
                 const number = el.cardNumber.value.replace(/\s/g, '');
                 const date = el.cardDate.value;
                 const card = SYSTEM.batch[SYSTEM.currentCardIndex];
                 let isValid = false;
                 let message = '';
+
+                // Validaciones estrictas
                 if (!number || number.length < 16) {
                     message = '❌ Número incompleto (16 dígitos requeridos)';
+                    showError('Número incompleto', 'number');
                 } else if (!validateDate(date)) {
                     message = '❌ Fecha inválida o expirada';
+                    showError('Fecha inválida', 'date');
                 } else if (!validateLuhn(number)) {
-                    message = '❌ Número de tarjeta inválido';
+                    message = '❌ Número de tarjeta inválido (Luhn)';
+                    showError('Número inválido', 'number');
                 } else if (card && card.number !== number) {
                     message = '❌ Tarjeta no coincide con el lote';
                 } else {
+                    // ÉXITO - Tarjeta válida
                     isValid = true;
-                    message = '✅ Tarjeta ' + number.slice(-4) + ' válida';
+                    message = '✅ Tarjeta ' + number.slice(-4) + ' válida y lista.';
                     if (card && card.status === 'PENDING') {
                         card.status = 'SUCCESS';
                         SYSTEM.stats.success++;
                         SYSTEM.stats.pending--;
                     }
                 }
+
+                // Manejo de error en el lote
                 if (!isValid && card && card.status === 'PENDING') {
                     card.status = 'ERROR';
                     SYSTEM.stats.error++;
                     SYSTEM.stats.pending--;
                 }
+
                 updateStats();
                 updateStatus(message, isValid ? 'success' : 'error');
+
+                // Feedback visual INSTANTÁNEO (300ms) en el botón
                 const originalHtml = el.btnAsociar.innerHTML;
                 el.btnAsociar.innerHTML = isValid ? 
                     '<span>✅</span> [ VÁLIDA ]' : 
                     '<span>❌</span> [ INVÁLIDA ]';
                 el.btnAsociar.style.background = isValid ? '#75d675' : '#ff6b6b';
+
                 setTimeout(() => {
                     el.btnAsociar.innerHTML = originalHtml;
                     el.btnAsociar.style.background = '';
                     SYSTEM.processing = false;
+
+                    // Si está en modo AUTOMÁTICO y no fue manual, pasa a la siguiente
                     if (SYSTEM.isAutoRunning && !manual) {
                         setTimeout(nextCard, SYSTEM.config.speedSec * 1000);
                     }
                 }, 300);
+
                 return isValid;
             }
 
-            // ===== AUTOMATIZACIÓN - FUNCIONES COMPLETADAS =====
+            // ===== SISTEMA AUTOMÁTICO (LO QUE PIDES) =====
             function startAutomation() {
                 if (SYSTEM.isAutoRunning || SYSTEM.batch.length === 0) return;
                 SYSTEM.isAutoRunning = true;
                 el.btnIniciarAuto.style.display = 'none';
                 el.btnDetener.style.display = 'block';
-                updateStatus('🚀 Automatización INICIADA. Procesando ' + SYSTEM.batch.length + ' tarjetas...', 'processing');
+                updateStatus('🚀 AUTOMATIZACIÓN INICIADA. El sistema presionará "ASOCIAR TARJETA" por ti.', 'processing');
+                // Procesa la primera tarjeta inmediatamente
                 processCard(false);
             }
 
@@ -397,12 +611,14 @@
 
             function nextCard() {
                 let nextIndex = -1;
+                // Busca siguiente tarjeta PENDING después de la actual
                 for (let i = SYSTEM.currentCardIndex + 1; i < SYSTEM.batch.length; i++) {
                     if (SYSTEM.batch[i].status === 'PENDING') {
                         nextIndex = i;
                         break;
                     }
                 }
+                // Si no encuentra, busca desde el inicio
                 if (nextIndex === -1) {
                     for (let i = 0; i < SYSTEM.currentCardIndex; i++) {
                         if (SYSTEM.batch[i].status === 'PENDING') {
@@ -413,20 +629,20 @@
                 }
                 if (nextIndex !== -1) {
                     loadCard(nextIndex);
+                    // Aquí está la magia: después de cargar, simula el clic en el botón
                     setTimeout(() => {
                         if (SYSTEM.isAutoRunning) {
                             processCard(false);
                         }
                     }, SYSTEM.config.speedSec * 1000);
                 } else {
-                    SYSTEM.isAutoRunning = false;
-                    el.btnIniciarAuto.style.display = 'block';
-                    el.btnDetener.style.display = 'none';
-                    updateStatus('✅ Automatización COMPLETADA. Todas las tarjetas procesadas.', 'success');
+                    // No hay más tarjetas pendientes
+                    stopAutomation();
+                    updateStatus('✅ AUTOMATIZACIÓN COMPLETADA. Todas las tarjetas procesadas.', 'success');
                 }
             }
 
-            // ===== FUNCIONES DEL PANEL =====
+            // ===== FUNCIONES DEL PANEL DE CONTROL =====
             function toggleControlPanel() {
                 if (el.controlPanel.style.display === 'grid') {
                     el.controlPanel.style.display = 'none';
@@ -434,37 +650,7 @@
                 } else {
                     el.controlPanel.style.display = 'grid';
                     el.btnMostrarPanel.innerHTML = '<span>🔧</span> [ OCULTAR PANEL DE CONTROL ]';
-                }
-            }
-
-            function saveProfile() {
-                const profile = {
-                    batch: el.batchInput.value,
-                    speed: SYSTEM.config.speedSec,
-                    stats: SYSTEM.stats
-                };
-                localStorage.setItem(SYSTEM.STORAGE_KEY, JSON.stringify(profile));
-                updateStatus('💾 Perfil guardado en el navegador.', 'success');
-            }
-
-            function loadProfile() {
-                const saved = localStorage.getItem(SYSTEM.STORAGE_KEY);
-                if (!saved) {
-                    updateStatus('❌ No hay perfil guardado.', 'error');
-                    return;
-                }
-                try {
-                    const profile = JSON.parse(saved);
-                    if (profile.batch) el.batchInput.value = profile.batch;
-                    if (profile.speed) {
-                        SYSTEM.config.speedSec = profile.speed;
-                        el.inputSpeed.value = profile.speed;
-                        el.speedValue.textContent = profile.speed;
-                    }
                     parseBatch();
-                    updateStatus('🔄 Perfil cargado exitosamente.', 'success');
-                } catch (error) {
-                    updateStatus('❌ Error al cargar el perfil.', 'error');
                 }
             }
 
@@ -474,7 +660,7 @@
                     updateStatus('❌ No hay tarjetas en el lote.', 'error');
                     return;
                 }
-                updateStatus('🔁 Procesando lote completo de ' + SYSTEM.batch.length + ' tarjetas...', 'processing');
+                updateStatus('🔁 Listo para procesar lote de ' + SYSTEM.batch.length + ' tarjetas.', 'processing');
                 if (!SYSTEM.isAutoRunning) {
                     startAutomation();
                 }
@@ -482,7 +668,7 @@
 
             function generateReport() {
                 const now = new Date();
-                let report = `=== REPORTE MWCMD FINAL ===\nFecha: ${now.toLocaleString()}\n`;
+                let report = `=== REPORTE SENSEI BYTES & STIVION ===\nFecha: ${now.toLocaleString()}\n`;
                 report += `Total: ${SYSTEM.stats.total} | Éxitos: ${SYSTEM.stats.success} | Errores: ${SYSTEM.stats.error} | Pendientes: ${SYSTEM.stats.pending}\n\n`;
                 report += `DETALLE:\n`;
                 SYSTEM.batch.forEach((card, idx) => {
@@ -492,29 +678,13 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `reporte_mwcmd_${now.getTime()}.txt`;
+                a.download = `reporte_sensei_${now.getTime()}.txt`;
                 a.click();
                 URL.revokeObjectURL(url);
                 updateStatus('📊 Reporte generado y descargado.', 'success');
             }
 
-            function resetStats() {
-                SYSTEM.stats.success = 0;
-                SYSTEM.stats.error = 0;
-                SYSTEM.stats.pending = SYSTEM.stats.total;
-                SYSTEM.batch.forEach(card => card.status = 'PENDING');
-                updateStats();
-                updateStatus('✅ Estadísticas reiniciadas.', 'success');
-            }
-
-            function resetSystem() {
-                if (confirm('¿Reiniciar el sistema? Se perderá el progreso actual.')) {
-                    localStorage.removeItem(SYSTEM.STORAGE_KEY);
-                    location.reload();
-                }
-            }
-
-            // ===== FUNCIONES DE UTILIDAD =====
+            // ===== FUNCIONES DE UTILIDAD/UI =====
             function updateStats() {
                 el.statTotal.textContent = SYSTEM.stats.total;
                 el.statSuccess.textContent = SYSTEM.stats.success;
@@ -530,6 +700,27 @@
                 else if (type === 'error') el.statusBox.classList.add('status-error');
             }
 
+            function showError(message, field) {
+                if (field === 'number') {
+                    el.errorNumber.textContent = message;
+                    el.errorNumber.style.display = 'block';
+                    el.infoNumber.style.display = 'none';
+                    el.cardNumber.classList.add('input-error');
+                    setTimeout(() => {
+                        el.errorNumber.style.display = 'none';
+                        el.cardNumber.classList.remove('input-error');
+                    }, 3000);
+                } else if (field === 'date') {
+                    el.errorDate.textContent = message;
+                    el.errorDate.style.display = 'block';
+                    el.cardDate.classList.add('input-error');
+                    setTimeout(() => {
+                        el.errorDate.style.display = 'none';
+                        el.cardDate.classList.remove('input-error');
+                    }, 3000);
+                }
+            }
+
             function loadConfig() {
                 const saved = localStorage.getItem(SYSTEM.STORAGE_KEY);
                 if (saved) {
@@ -541,25 +732,47 @@
                             el.inputSpeed.value = config.speed;
                             el.speedValue.textContent = config.speed;
                         }
-                    } catch (e) {
-                        console.warn('Error loading config:', e);
-                    }
+                    } catch (e) { console.warn('Error cargando config:', e); }
                 }
             }
 
+            // ===== CONFIGURACIÓN DE EVENTOS =====
             function setupEvents() {
+                // Formulario: Validación MANUAL
                 el.form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    processCard(true);
+                    processCard(true); // true = modo manual
                 });
+
+                // Botones de automatización
                 el.btnIniciarAuto.addEventListener('click', startAutomation);
                 el.btnDetener.addEventListener('click', stopAutomation);
                 el.btnMostrarPanel.addEventListener('click', toggleControlPanel);
+
+                // Panel de control
                 el.inputSpeed.addEventListener('input', function() {
                     SYSTEM.config.speedSec = parseFloat(this.value);
                     el.speedValue.textContent = SYSTEM.config.speedSec;
                 });
                 el.batchInput.addEventListener('input', parseBatch);
+                el.btnProcesarLote.addEventListener('click', processBatch);
+                el.btnGenerarReporte.addEventListener('click', generateReport);
+                el.btnResetStats.addEventListener('click', () => {
+                    SYSTEM.stats.success = 0;
+                    SYSTEM.stats.error = 0;
+                    SYSTEM.stats.pending = SYSTEM.stats.total;
+                    SYSTEM.batch.forEach(card => card.status = 'PENDING');
+                    updateStats();
+                    updateStatus('✅ Estadísticas reiniciadas.', 'success');
+                });
+                el.btnResetSystem.addEventListener('click', () => {
+                    if (confirm('¿Reiniciar el sistema? Se perderá el progreso actual.')) {
+                        localStorage.removeItem(SYSTEM.STORAGE_KEY);
+                        location.reload();
+                    }
+                });
+
+                // Formateo de inputs en tiempo real
                 el.cardNumber.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
                     let formatted = '';
@@ -570,24 +783,21 @@
                     e.target.value = formatted.substring(0, 19);
                     el.displayNumber.textContent = formatted || '#### #### #### ####';
                 });
+
                 el.cardDate.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 2) {
+                    if (value.length >= 3) {
                         e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
                     } else {
                         e.target.value = value;
                     }
                     el.displayDate.textContent = e.target.value || 'MM/AA';
                 });
-                el.btnGuardarPerfil.addEventListener('click', saveProfile);
-                el.btnCargarPerfil.addEventListener('click', loadProfile);
-                el.btnProcesarLote.addEventListener('click', processBatch);
-                el.btnGenerarReporte.addEventListener('click', generateReport);
-                el.btnResetStats.addEventListener('click', resetStats);
-                el.btnResetSystem.addEventListener('click', resetSystem);
             }
 
-            function initEffects() {
+            // ===== EFECTOS VISUALES (Matrix y Red Neuronal) =====
+            function initVisualEffects() {
+                // Matrix Background
                 const canvas = document.getElementById('matrix-canvas');
                 const ctx = canvas.getContext('2d');
                 let width = canvas.width = window.innerWidth;
@@ -612,6 +822,8 @@
                     width = canvas.width = window.innerWidth;
                     height = canvas.height = window.innerHeight;
                 });
+
+                // Neural Network Effect en la tarjeta
                 const netCanvas = document.getElementById('card-neural-net');
                 const netCtx = netCanvas.getContext('2d');
                 let netWidth, netHeight, nodes = [];
@@ -668,6 +880,7 @@
                 }, 500);
             }
 
+            // Iniciar todo cuando la página cargue
             window.addEventListener('DOMContentLoaded', init);
         })();
     </script>
