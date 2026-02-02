@@ -3,476 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Tarjeta MWCMD</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <title>Google Payments - Guardar Tarjeta</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            font-family: 'VT323', monospace;
-            background: #0a0a15;
-            color: #cfd3dc;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             padding: 20px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
+        .payment-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
         }
 
-        .title {
-            font-size: 2.8rem;
-            color: #00f2ff;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-            margin-bottom: 10px;
+        .payment-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .subtitle {
-            font-size: 1.5rem;
-            color: #7b75d6;
+        .payment-header h1 {
+            font-size: 24px;
+            color: #202124;
+            font-weight: 400;
         }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            max-width: 900px;
-            width: 100%;
-            background: rgba(15, 15, 25, 0.9);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid #7b75d6;
-            box-shadow: 0 0 30px rgba(123, 117, 214, 0.3);
+        .payment-form {
+            padding: 24px;
         }
 
-        @media (min-width: 768px) {
-            .container {
-                flex-direction: row;
-            }
-        }
-
-        .card-preview {
-            flex: 1;
-            min-width: 300px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 15px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            border: 2px solid rgba(123, 117, 214, 0.5);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .card-chip {
-            width: 50px;
-            height: 36px;
-            background: linear-gradient(135deg, #e6c86e 0%, #bf9738 100%);
-            border-radius: 8px;
-            border: 1px solid #8a6e18;
-        }
-
-        .card-brand {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #fff;
-            text-transform: uppercase;
-        }
-
-        .card-number {
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            color: #fff;
-            margin: 20px 0;
-            min-height: 50px;
-        }
-
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .detail-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .detail-label {
-            font-size: 0.9rem;
-            color: #aaa;
-            text-transform: uppercase;
-        }
-
-        .detail-value {
-            font-size: 1.4rem;
-            color: #fff;
-        }
-
-        .form-section {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
+        /* ATRIBUTOS ESPECÍFICOS PARA QUE GOOGLE RECONOZCA LA TARJETA */
+        .form-row {
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
-            font-size: 1.3rem;
-            color: #cfd3dc;
+            color: #5f6368;
+            font-size: 14px;
             margin-bottom: 8px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 15px;
-            font-size: 1.3rem;
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid #555;
+            padding: 13px 15px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
             border-radius: 8px;
-            color: #fff;
-            font-family: 'VT323', monospace;
-            transition: all 0.3s;
+            color: #202124;
+            transition: border 0.2s;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #7b75d6;
-            box-shadow: 0 0 10px rgba(123, 117, 214, 0.3);
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
         }
 
-        .form-input.error {
-            border-color: #ff4444;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+        .form-input::placeholder {
+            color: #9aa0a6;
         }
 
-        .error-message {
-            color: #ff4444;
-            font-size: 1.1rem;
-            margin-top: 5px;
-            display: none;
+        /* NOMBRES QUE GOOGLE RECONOCE PARA AUTOFILL */
+        input[name="cardnumber"] {
+            /* Chrome necesita este nombre específico */
         }
 
-        .button-group {
-            margin-top: 30px;
+        input[name="ccname"] {
+            /* Nombre del titular */
+        }
+
+        input[name="cc-exp"] {
+            /* Fecha de expiración */
+        }
+
+        input[name="cvc"] {
+            /* CVV - 3 dígitos */
+            width: 120px;
+        }
+
+        .form-row-flex {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            gap: 16px;
         }
 
-        .btn {
-            padding: 15px;
-            font-size: 1.4rem;
+        .form-row-flex > div {
+            flex: 1;
+        }
+
+        .payment-button {
+            width: 100%;
+            background: #1a73e8;
+            color: white;
             border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 500;
             border-radius: 8px;
             cursor: pointer;
-            font-family: 'VT323', monospace;
-            text-transform: uppercase;
-            transition: all 0.3s;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .payment-button:hover {
+            background: #0d62d9;
+        }
+
+        .payment-footer {
+            padding: 16px 24px 24px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #5f6368;
+            line-height: 1.4;
+        }
+
+        .payment-footer a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        /* TARJETA VISUAL */
+        .card-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(45deg, #ffd700, #ffec8b);
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .card-number {
+            font-size: 20px;
+            letter-spacing: 3px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .google-brand {
+            color: #5f6368;
+            font-size: 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: #7b75d6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #6a65c4;
-            box-shadow: 0 0 15px rgba(123, 117, 214, 0.5);
-        }
-
-        .btn-secondary {
-            background: #2a402a;
-            color: white;
-            border: 2px solid #75d675;
-        }
-
-        .btn-secondary:hover {
-            background: #75d675;
-            color: #000;
-        }
-
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 21, 0.95);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .loading-text {
-            font-size: 2.5rem;
-            color: #00f2ff;
-            margin-bottom: 30px;
-        }
-
-        .success-message {
-            font-size: 2rem;
-            color: #75d675;
-            display: none;
+            gap: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="title">MWCMD - REGISTRO DE TARJETA</h1>
-        <p class="subtitle">Complete los datos de su tarjeta de crédito</p>
-    </div>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>Pago con Tarjeta</h1>
+            <div class="google-brand">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path fill="#5F6368" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Secured by Google Payments
+            </div>
+        </div>
 
-    <div class="container">
         <div class="card-preview">
-            <div class="card-header">
-                <div class="card-chip"></div>
-                <div class="card-brand" id="cardBrand">VISA</div>
-            </div>
-            
-            <div class="card-number" id="cardNumberDisplay">
-                #### #### #### ####
-            </div>
-            
+            <div class="card-chip"></div>
+            <div class="card-number" id="cardDisplay">#### #### #### ####</div>
             <div class="card-details">
-                <div class="detail-group">
-                    <span class="detail-label">Titular</span>
-                    <span class="detail-value">USUARIO</span>
+                <div>
+                    <div style="font-size: 10px; opacity: 0.8;">TITULAR</div>
+                    <div id="nameDisplay">NOMBRE DEL TITULAR</div>
                 </div>
-                <div class="detail-group">
-                    <span class="detail-label">Vence</span>
-                    <span class="detail-value" id="cardDateDisplay">MM/AA</span>
+                <div>
+                    <div style="font-size: 10px; opacity: 0.8;">VENCE</div>
+                    <div id="expiryDisplay">MM/AA</div>
                 </div>
             </div>
         </div>
 
-        <div class="form-section">
-            <form id="cardForm">
-                <div class="form-group">
-                    <label class="form-label">Número de Tarjeta</label>
-                    <input 
-                        type="text" 
-                        id="cardNumberInput" 
-                        class="form-input" 
-                        placeholder="0000 0000 0000 0000"
-                        maxlength="19"
-                        autocomplete="off"
-                        data-lpignore="true"
-                    >
-                    <div class="error-message" id="cardNumberError">
-                        Número de tarjeta inválido
-                    </div>
-                </div>
+        <!-- FORMULARIO CON ATRIBUTOS QUE GOOGLE RECONOCE -->
+        <form id="paymentForm" class="payment-form" autocomplete="on">
+            <div class="form-row">
+                <label class="form-label">Nombre en la tarjeta</label>
+                <input 
+                    type="text" 
+                    class="form-input"
+                    name="ccname"
+                    id="cardName"
+                    autocomplete="cc-name"
+                    placeholder="Como aparece en la tarjeta"
+                    required
+                >
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">Fecha de Vencimiento</label>
+            <div class="form-row">
+                <label class="form-label">Número de tarjeta</label>
+                <input 
+                    type="text" 
+                    class="form-input"
+                    name="cardnumber"
+                    id="cardNumber"
+                    autocomplete="cc-number"
+                    inputmode="numeric"
+                    pattern="[0-9\s]{13,23}"
+                    placeholder="1234 5678 9012 3456"
+                    maxlength="23"
+                    required
+                >
+            </div>
+
+            <div class="form-row-flex">
+                <div>
+                    <label class="form-label">Fecha de vencimiento</label>
                     <input 
                         type="text" 
-                        id="cardDateInput" 
-                        class="form-input" 
+                        class="form-input"
+                        name="cc-exp"
+                        id="cardExpiry"
+                        autocomplete="cc-exp"
                         placeholder="MM/AA"
                         maxlength="5"
-                        autocomplete="off"
-                        data-lpignore="true"
+                        required
                     >
-                    <div class="error-message" id="cardDateError">
-                        Fecha inválida o expirada
-                    </div>
                 </div>
+                <div>
+                    <label class="form-label">CVV</label>
+                    <input 
+                        type="text" 
+                        class="form-input"
+                        name="cvc"
+                        id="cardCvv"
+                        autocomplete="cc-csc"
+                        inputmode="numeric"
+                        placeholder="123"
+                        maxlength="4"
+                        required
+                    >
+                </div>
+            </div>
 
-                <div class="button-group">
-                    <button type="submit" class="btn btn-primary">
-                        <span>💳</span> ASOCIAR TARJETA
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="updateCCBtn">
-                        <span>🔄</span> ACTUALIZAR CC
-                    </button>
-                </div>
-            </form>
+            <button type="submit" class="payment-button">
+                Continuar con el pago
+            </button>
+        </form>
+
+        <div class="payment-footer">
+            Al continuar, aceptas los <a href="#">Términos del Servicio de Google Payments</a>. 
+            El <a href="#">Aviso de Privacidad</a> describe cómo se manejan tus datos. 
+            Tu tarjeta y dirección de facturación se guardarán en tu Cuenta de Google.
         </div>
-    </div>
-
-    <div class="footer">
-        MWCMD © 2024 - Todos los derechos reservados
-    </div>
-
-    <div class="loading-overlay" id="loadingScreen">
-        <div class="loading-text">PROCESANDO...</div>
-        <div class="success-message" id="successMessage">¡TARJETA ASOCIADA EXITOSAMENTE!</div>
     </div>
 
     <script>
-        // Referencias a elementos del DOM
-        const cardNumberInput = document.getElementById('cardNumberInput');
-        const cardDateInput = document.getElementById('cardDateInput');
-        const cardNumberDisplay = document.getElementById('cardNumberDisplay');
-        const cardDateDisplay = document.getElementById('cardDateDisplay');
-        const cardBrand = document.getElementById('cardBrand');
-        const cardForm = document.getElementById('cardForm');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const successMessage = document.getElementById('successMessage');
-        const updateCCBtn = document.getElementById('updateCCBtn');
-
-        // Configuración para evitar autocompletado
-        cardNumberInput.setAttribute('autocomplete', 'off');
-        cardDateInput.setAttribute('autocomplete', 'off');
-        cardForm.setAttribute('autocomplete', 'off');
-
-        // Patrones para detectar tipo de tarjeta
-        const cardPatterns = {
-            visa: /^4/,
-            mastercard: /^5[1-5]/,
-            amex: /^3[47]/,
-            discover: /^6(?:011|5)/,
-            diners: /^3(?:0[0-5]|[68])/
-        };
-
-        // Algoritmo de Luhn para validar tarjeta
-        function validateLuhn(cardNumber) {
-            const cleaned = cardNumber.replace(/\D/g, '');
-            let sum = 0;
-            let isEven = false;
-
-            for (let i = cleaned.length - 1; i >= 0; i--) {
-                let digit = parseInt(cleaned.charAt(i), 10);
-
-                if (isEven) {
-                    digit *= 2;
-                    if (digit > 9) {
-                        digit -= 9;
-                    }
-                }
-
-                sum += digit;
-                isEven = !isEven;
-            }
-
-            return sum % 10 === 0;
-        }
-
-        // Validar fecha de vencimiento
-        function validateExpiryDate(dateString) {
-            if (!dateString || dateString.length < 5) {
-                return false;
-            }
-
-            const [month, year] = dateString.split('/').map(num => parseInt(num, 10));
-            
-            if (!month || !year || month < 1 || month > 12) {
-                return false;
-            }
-
-            const currentDate = new Date();
-            const currentYear = currentDate.getFullYear() % 100;
-            const currentMonth = currentDate.getMonth() + 1;
-
-            if (year < currentYear) {
-                return false;
-            }
-
-            if (year === currentYear && month < currentMonth) {
-                return false;
-            }
-
-            return true;
-        }
+        // Referencias
+        const cardNumberInput = document.getElementById('cardNumber');
+        const cardNameInput = document.getElementById('cardName');
+        const cardExpiryInput = document.getElementById('cardExpiry');
+        const cardCvvInput = document.getElementById('cardCvv');
+        
+        const cardDisplay = document.getElementById('cardDisplay');
+        const nameDisplay = document.getElementById('nameDisplay');
+        const expiryDisplay = document.getElementById('expiryDisplay');
 
         // Formatear número de tarjeta
-        function formatCardNumber(value) {
-            const cleaned = value.replace(/\D/g, '');
-            const chunks = [];
-            
-            for (let i = 0; i < cleaned.length; i += 4) {
-                chunks.push(cleaned.substring(i, i + 4));
-            }
-            
-            return chunks.join(' ');
-        }
-
-        // Detectar tipo de tarjeta
-        function detectCardType(number) {
-            const cleaned = number.replace(/\D/g, '');
-            
-            for (const [type, pattern] of Object.entries(cardPatterns)) {
-                if (pattern.test(cleaned)) {
-                    return type.toUpperCase();
-                }
-            }
-            
-            return 'VISA'; // Por defecto
-        }
-
-        // Actualizar vista previa de la tarjeta
-        function updateCardPreview() {
-            const number = cardNumberInput.value;
-            const date = cardDateInput.value;
-            
-            // Actualizar número
-            if (number) {
-                cardNumberDisplay.textContent = formatCardNumber(number);
-                
-                // Detectar y actualizar tipo de tarjeta
-                const type = detectCardType(number);
-                cardBrand.textContent = type;
-                
-                // Cambiar color según tipo
-                switch(type) {
-                    case 'VISA': cardBrand.style.color = '#1a1f71'; break;
-                    case 'MASTERCARD': cardBrand.style.color = '#eb001b'; break;
-                    case 'AMEX': cardBrand.style.color = '#2e77bc'; break;
-                    default: cardBrand.style.color = '#fff';
-                }
-            } else {
-                cardNumberDisplay.textContent = '#### #### #### ####';
-                cardBrand.textContent = 'VISA';
-                cardBrand.style.color = '#fff';
-            }
-            
-            // Actualizar fecha
-            if (date) {
-                cardDateDisplay.textContent = date;
-            } else {
-                cardDateDisplay.textContent = 'MM/AA';
-            }
-        }
-
-        // Eventos de entrada
         cardNumberInput.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             
-            // Limitar a 16 dígitos (19 con espacios)
             if (value.length > 16) {
                 value = value.substring(0, 16);
             }
@@ -487,88 +308,79 @@
             }
             
             e.target.value = formatted;
-            updateCardPreview();
-            
-            // Limpiar error
-            document.getElementById('cardNumberError').style.display = 'none';
-            e.target.classList.remove('error');
+            cardDisplay.textContent = formatted || '#### #### #### ####';
         });
 
-        cardDateInput.addEventListener('input', function(e) {
+        // Formatear fecha
+        cardExpiryInput.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             
             if (value.length >= 2) {
                 value = value.substring(0, 2) + '/' + value.substring(2, 4);
             }
             
-            if (value.length > 5) {
-                value = value.substring(0, 5);
-            }
-            
             e.target.value = value;
-            updateCardPreview();
-            
-            // Limpiar error
-            document.getElementById('cardDateError').style.display = 'none';
-            e.target.classList.remove('error');
+            expiryDisplay.textContent = value || 'MM/AA';
         });
 
-        // Botón de actualizar CC
-        updateCCBtn.addEventListener('click', function() {
-            window.open('https://rogarden.gg/', '_blank');
+        // Nombre
+        cardNameInput.addEventListener('input', function(e) {
+            nameDisplay.textContent = e.target.value || 'NOMBRE DEL TITULAR';
         });
 
-        // Envío del formulario
-        cardForm.addEventListener('submit', function(e) {
+        // CVV
+        cardCvvInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+
+        // Enviar formulario
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            let isValid = true;
-            
-            // Validar número de tarjeta
+            // Validaciones básicas
             const cardNumber = cardNumberInput.value.replace(/\D/g, '');
-            const cardNumberError = document.getElementById('cardNumberError');
+            const expiry = cardExpiryInput.value;
+            const cvv = cardCvvInput.value;
+            const name = cardNameInput.value.trim();
             
-            if (cardNumber.length < 13 || cardNumber.length > 19) {
-                cardNumberError.textContent = 'El número de tarjeta debe tener entre 13 y 19 dígitos';
-                cardNumberError.style.display = 'block';
-                cardNumberInput.classList.add('error');
-                isValid = false;
-            } else if (!validateLuhn(cardNumber)) {
-                cardNumberError.textContent = 'Número de tarjeta inválido';
-                cardNumberError.style.display = 'block';
-                cardNumberInput.classList.add('error');
-                isValid = false;
+            if (cardNumber.length < 13) {
+                alert('Número de tarjeta inválido');
+                return;
             }
             
-            // Validar fecha
-            const cardDate = cardDateInput.value;
-            const cardDateError = document.getElementById('cardDateError');
-            
-            if (!validateExpiryDate(cardDate)) {
-                cardDateError.textContent = 'Fecha inválida o expirada';
-                cardDateError.style.display = 'block';
-                cardDateInput.classList.add('error');
-                isValid = false;
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                alert('Fecha de vencimiento inválida (formato: MM/AA)');
+                return;
             }
             
-            if (isValid) {
-                // Mostrar pantalla de carga
-                loadingScreen.style.display = 'flex';
-                
-                // Simular procesamiento
-                setTimeout(() => {
-                    successMessage.style.display = 'block';
-                    
-                    // Recargar después de 3 segundos
-                    setTimeout(() => {
-                        location.reload();
-                    }, 3000);
-                }, 2000);
+            if (cvv.length < 3) {
+                alert('CVV inválido (mínimo 3 dígitos)');
+                return;
             }
+            
+            if (name.length < 3) {
+                alert('Nombre del titular requerido');
+                return;
+            }
+            
+            // Aquí es donde Google Chrome DEBERÍA mostrar la pantalla de "¿Guardar tarjeta?"
+            // PERO SOLO LO HARÁ SI:
+            // 1. Estás en HTTPS (no en localhost)
+            // 2. El usuario tiene autofill activado en Chrome
+            // 3. Los campos tienen los atributos correctos (ya los tiene)
+            
+            // Simular envío exitoso
+            alert('Pago procesado exitosamente. Si tu navegador está configurado, Google preguntará si quieres guardar la tarjeta.');
+            
+            // Recargar para ver si aparece
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         });
 
-        // Inicializar vista previa
-        updateCardPreview();
+        // IMPORTANTE: La pantalla de Google "Save card securely?" aparece AUTOMÁTICAMENTE
+        // cuando Chrome detecta que el formulario tiene los atributos correctos Y
+        // el usuario tiene habilitado "Save and fill payment methods" en Configuración > Autofill
     </script>
 </body>
 </html>
