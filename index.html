@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAAT Pro - Simulador con Asociación Masiva</title>
+    <title>SAAT Pro - Simulador de Asociación Masiva</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background: #0f172a; color: #f1f5f9; margin: 0; padding: 20px; }
@@ -52,8 +52,8 @@
 <body>
     <div class="container">
         <div class="panel simulator">
-            <h1>🚀 SAAT Pro - Con Asociación Masiva
-                <span id="protocolBadge" class="protocol-badge protocol-file">Local</span>
+            <h1>🚀 SAAT Pro - Asociación Masiva
+                <span id="protocolBadge" class="protocol-badge protocol-https">HTTPS</span>
             </h1>
             <div class="card-ui">
                 <h2>Asociar Nueva Tarjeta</h2>
@@ -73,7 +73,7 @@
                         <button id="btnCargarPerfil">🚀 Cargar Perfil</button>
                     </div>
                     <p style="font-size: 0.85em; margin-top: 10px; color: #94a3b8; font-style: italic;">
-                        <span id="autofillStatus">Modo: Autocompletado personalizado activo.</span>
+                        <span id="autofillStatus">Modo: Autocompletado nativo HTTPS activo.</span>
                     </p>
                 </div>
 
@@ -119,11 +119,10 @@
                 <button id="btnLimpiarLog" style="background:#475569;">🗑️ LIMPIAR LOG</button>
             </div>
 
-            <!-- NUEVA SECCIÓN: ASOCIACIÓN MASIVA (FUERZA BRUTA) -->
             <div class="bruteforce-section">
                 <h3>🔥 Asociación Masiva (Fuerza Bruta)</h3>
                 <p style="font-size: 0.9em; color: #f8fafc; margin-bottom: 15px;">
-                    Marca <strong>TODAS</strong> las tarjetas válidas del lote actual como <strong>ASOCIADAS CON ÉXITO</strong>, ignorando el % de error.
+                    Marca <strong>TODAS</strong> las tarjetas válidas del lote como <strong>ASOCIADAS CON ÉXITO</strong>.
                 </p>
                 <button id="btnAsociarTodas">🔥 ASOCIAR TODAS (FUERZA BRUTA)</button>
                 <p style="font-size: 0.8em; color: #cbd5e1; margin-top: 10px; font-style: italic;">
@@ -137,39 +136,22 @@
     </div>
 
     <script>
-        // ========== SAAT PRO - CON ASOCIACIÓN MASIVA ==========
         class SAAT_Pro_Simulator {
             constructor() {
                 this.cardQueue = [];
                 this.isAutomationRunning = false;
-                this.currentCardIndex = 0;
                 this.stats = { total: 10, success: 0, error: 0, pending: 10 };
                 this.config = { speedSec: 3, errorRate: 10 };
-                this.STORAGE_KEY = 'saat_pro_profile_v2';
-                this.isSecureContext = window.location.protocol === 'https:';
+                this.STORAGE_KEY = 'saat_pro_netlify_profile';
                 this.init();
             }
 
             init() {
-                this.setupProtocolBadge();
                 this.bindEvents();
                 this.parseBatch();
                 this.updateStatsUI();
                 this.attemptAutoLoadProfile();
-                this.log(`Sistema iniciado. Protocolo seguro: ${this.isSecureContext ? 'SÍ (HTTPS)' : 'NO (Local)'}`, 'info');
-            }
-
-            setupProtocolBadge() {
-                const badge = document.getElementById('protocolBadge');
-                if (this.isSecureContext) {
-                    badge.textContent = 'HTTPS';
-                    badge.className = 'protocol-badge protocol-https';
-                    document.getElementById('autofillStatus').textContent = 'Modo: Autocompletado nativo del navegador habilitado.';
-                } else {
-                    badge.textContent = 'Local';
-                    badge.className = 'protocol-badge protocol-file';
-                    document.getElementById('autofillStatus').textContent = 'Modo: Autocompletado personalizado (Local).';
-                }
+                this.log('✅ SAAT Pro inicializado en Netlify (HTTPS).', 'success');
             }
 
             bindEvents() {
@@ -180,7 +162,6 @@
                 document.getElementById('btnLimpiarLog').onclick = () => { document.getElementById('statusLog').innerHTML = ''; this.log('Log limpiado.', 'info'); };
                 document.getElementById('btnGuardarPerfil').onclick = () => this.saveCurrentProfile();
                 document.getElementById('btnCargarPerfil').onclick = () => this.loadSavedProfile();
-                // NUEVO EVENTO: BOTÓN DE ASOCIACIÓN MASIVA
                 document.getElementById('btnAsociarTodas').onclick = () => this.forceAssociateAllCards();
                 document.getElementById('batchInput').oninput = () => this.parseBatch();
                 document.getElementById('inputSpeed').oninput = (e) => {
@@ -203,46 +184,40 @@
                 });
             }
 
-            // --- NUEVA FUNCIÓN: ASOCIACIÓN MASIVA (FUERZA BRUTA) ---
             async forceAssociateAllCards() {
                 const pendingCards = this.cardQueue.filter(card => card.status === 'PENDING');
                 if (pendingCards.length === 0) {
-                    document.getElementById('bruteforceStatus').textContent = 'No hay tarjetas pendientes.';
-                    this.log('[FUERZA BRUTA] No hay tarjetas pendientes para asociar.', 'info');
-                    alert('No hay tarjetas pendientes en el lote.');
+                    document.getElementById('bruteforceStatus').textContent = 'No hay pendientes.';
+                    this.log('[FUERZA BRUTA] No hay tarjetas pendientes.', 'info');
+                    alert('No hay tarjetas pendientes.');
                     return;
                 }
 
-                if (!confirm(`¿ASOCIAR TODAS LAS TARJETAS DE FORMA MASIVA?\n\nSe marcarán ${pendingCards.length} tarjeta(s) como ASOCIADAS CON ÉXITO. Esta acción no se puede deshacer.`)) {
-                    document.getElementById('bruteforceStatus').textContent = 'Cancelado por el usuario.';
+                if (!confirm(`¿ASOCIAR ${pendingCards.length} TARJETAS DE FORMA MASIVA?\n\nSe marcarán como ASOCIADAS CON ÉXITO.`)) {
+                    document.getElementById('bruteforceStatus').textContent = 'Cancelado.';
                     return;
                 }
 
                 document.getElementById('bruteforceStatus').textContent = 'Ejecutando...';
                 document.getElementById('btnAsociarTodas').disabled = true;
-                this.log(`[FUERZA BRUTA] Iniciando asociación masiva de ${pendingCards.length} tarjeta(s)...`, 'processing');
+                this.log(`[FUERZA BRUTA] Iniciando asociación de ${pendingCards.length} tarjeta(s)...`, 'processing');
 
-                // Simular un procesamiento rápido pero visible
                 for (let i = 0; i < pendingCards.length; i++) {
                     const card = pendingCards[i];
                     card.status = 'SIM_SUCCESS';
                     this.stats.success++;
                     this.stats.pending--;
                     this.updateStatsUI();
-
-                    // Log individual rápido
                     this.log(`[FUERZA BRUTA] Asociada: ****${card.number.slice(-4)}`, 'success');
-                    await this.delay(50); // Pequeña pausa para visualización
+                    await this.delay(50);
                 }
 
-                // Actualizar estado final
                 document.getElementById('bruteforceStatus').textContent = `Completado. ${pendingCards.length} asociadas.`;
                 document.getElementById('btnAsociarTodas').disabled = false;
                 document.getElementById('resultMessage').innerHTML = '🔥 <br><strong>ASOCIACIÓN MASIVA COMPLETADA</strong><br><small>Todas las tarjetas marcadas como exitosas.</small>';
                 document.getElementById('resultMessage').style.color = '#10b981';
-
-                this.log(`[FUERZA BRUTA] Proceso completado. ${pendingCards.length} tarjeta(s) asociadas con éxito.`, 'success');
-                alert(`✅ Asociación masiva completada.\n${pendingCards.length} tarjeta(s) marcadas como ASOCIADAS CON ÉXITO.`);
+                this.log(`[FUERZA BRUTA] ${pendingCards.length} tarjeta(s) asociadas.`, 'success');
+                alert(`✅ Asociación masiva completada.\n${pendingCards.length} tarjeta(s) asociadas.`);
             }
 
             saveCurrentProfile() {
@@ -252,29 +227,28 @@
                     timestamp: new Date().toISOString()
                 };
                 if (!profile.cardNumber || !profile.expiry) {
-                    this.log('❌ No hay datos válidos para guardar.', 'error');
-                    alert('Completa los campos de tarjeta y fecha antes de guardar.');
+                    this.log('❌ No hay datos para guardar.', 'error');
+                    alert('Completa los campos primero.');
                     return;
                 }
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(profile));
                 this.log(`✅ Perfil guardado. (****${profile.cardNumber.slice(-4)})`, 'success');
-                alert('Perfil guardado. Se cargará automáticamente en la próxima sesión.');
             }
 
             loadSavedProfile() {
                 const saved = localStorage.getItem(this.STORAGE_KEY);
                 if (!saved) {
                     this.log('❌ No hay perfil guardado.', 'error');
-                    alert('No hay perfil guardado. Guarda uno primero.');
+                    alert('Guarda un perfil primero.');
                     return;
                 }
                 try {
                     const profile = JSON.parse(saved);
                     document.getElementById('inputCardNumber').value = profile.cardNumber.replace(/(\d{4})/g, '$1 ').trim();
                     document.getElementById('inputExpiry').value = profile.expiry;
-                    this.log(`🔍 Perfil cargado (Guardado: ${new Date(profile.timestamp).toLocaleDateString()})`, 'info');
+                    this.log(`🔍 Perfil cargado.`, 'info');
                 } catch(e) {
-                    this.log('❌ Error al cargar el perfil. Datos corruptos.', 'error');
+                    this.log('❌ Error al cargar perfil.', 'error');
                 }
             }
 
@@ -293,7 +267,7 @@
                 const batchText = document.getElementById('batchInput').value;
                 this.cardQueue = [];
                 const lines = batchText.split('\n').filter(l => l.trim());
-                let validCount = 0, invalidCount = 0;
+                let validCount = 0;
 
                 lines.forEach(line => {
                     const parts = line.split('|').map(p => p.trim());
@@ -309,8 +283,6 @@
                                 status: 'PENDING'
                             });
                             validCount++;
-                        } else {
-                            invalidCount++;
                         }
                     }
                 });
@@ -320,12 +292,7 @@
                 this.stats.success = 0;
                 this.stats.error = 0;
                 this.updateStatsUI();
-
-                if (invalidCount > 0) {
-                    this.log(`[LOTE] ${validCount} válidas, ${invalidCount} inválidas.`, 'info');
-                } else {
-                    this.log(`[LOTE] ${validCount} tarjetas válidas cargadas.`, 'success');
-                }
+                this.log(`[LOTE] ${validCount} tarjetas válidas cargadas.`, 'success');
             }
 
             validateLuhn(cardNo) {
@@ -352,23 +319,22 @@
                 this.isAutomationRunning = true;
                 document.getElementById('btnIniciarAuto').style.display = 'none';
                 document.getElementById('btnDetener').style.display = 'block';
-                this.log('[AUTO] Iniciando simulación...', 'processing');
+                this.log('[AUTO] Iniciando...', 'processing');
 
-                for (this.currentCardIndex = 0; this.currentCardIndex < this.cardQueue.length; this.currentCardIndex++) {
+                for (let i = 0; i < this.cardQueue.length; i++) {
                     if (!this.isAutomationRunning) break;
-                    const card = this.cardQueue[this.currentCardIndex];
+                    const card = this.cardQueue[i];
                     await this.simulateCardEntry(card);
                     await this.delay(this.config.speedSec * 1000);
                 }
                 this.stopAutomation();
-                this.log('[AUTO] Simulación completada.', 'success');
+                this.log('[AUTO] Completado.', 'success');
             }
 
             stopAutomation() {
                 this.isAutomationRunning = false;
                 document.getElementById('btnIniciarAuto').style.display = 'block';
                 document.getElementById('btnDetener').style.display = 'none';
-                this.log('[AUTO] Detenido.', 'info');
             }
 
             async simulateCardEntry(card) {
@@ -402,15 +368,13 @@
                     }
 
                     if (success) {
-                        document.getElementById('resultMessage').innerHTML = 
-                            '✅ <br><strong>¡ASOCIADA CON ÉXITO!</strong><br><small>Simulación completada.</small>';
+                        document.getElementById('resultMessage').innerHTML = '✅ <br><strong>¡ASOCIADA CON ÉXITO!</strong>';
                         document.getElementById('resultMessage').style.color = '#10b981';
                         this.log(`[SIM] ****${number.slice(-4)}: Aceptada.`, 'success');
                     } else {
-                        document.getElementById('resultMessage').innerHTML = 
-                            '❌ <br><strong>RECHAZADA</strong><br><small>Error aleatorio.</small>';
+                        document.getElementById('resultMessage').innerHTML = '❌ <br><strong>RECHAZADA</strong><br><small>Error aleatorio.</small>';
                         document.getElementById('resultMessage').style.color = '#ef4444';
-                        this.log(`[SIM] ****${number.slice(-4)}: Rechazada (Error ${this.config.errorRate}%).`, 'error');
+                        this.log(`[SIM] ****${number.slice(-4)}: Rechazada.`, 'error');
                     }
                     this.hideProcessingAnimation();
                 }, 3000);
@@ -435,15 +399,13 @@
 
             generateReport() {
                 const now = new Date();
-                let report = `=== REPORTE SAAT Pro - Asociación Masiva ===\n`;
+                let report = `=== REPORTE SAAT Pro - Netlify ===\n`;
                 report += `Fecha: ${now.toLocaleString()}\n`;
-                report += `Total en Lote: ${this.stats.total}\n`;
-                report += `Asociadas (Éxito): ${this.stats.success}\n`;
-                report += `Rechazadas (Error): ${this.stats.error}\n`;
+                report += `Total: ${this.stats.total}\n`;
+                report += `Éxitos: ${this.stats.success}\n`;
+                report += `Errores: ${this.stats.error}\n`;
                 report += `Pendientes: ${this.stats.pending}\n`;
-                report += `\n--- DETALLE DEL LOTE ---\n`;
-                report += `Número (Últ.4) | BIN | Expiración | Estado\n`;
-                report += `---------------------------------------------\n`;
+                report += `\n--- DETALLE ---\n`;
                 this.cardQueue.forEach(c => {
                     report += `${c.number.slice(-4)} | ${c.bin} | ${c.exp} | ${c.status}\n`;
                 });
@@ -452,12 +414,12 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `reporte_asociacion_masiva_${now.getTime()}.txt`;
+                a.download = `reporte_saat_${now.getTime()}.txt`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                this.log('[SISTEMA] Reporte de asociación masiva generado.', 'success');
+                this.log('[SISTEMA] Reporte generado.', 'success');
             }
 
             log(message, type = 'info') {
@@ -479,10 +441,9 @@
             delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
         }
 
-        // Inicialización
         window.onload = () => { 
             window.saatPro = new SAAT_Pro_Simulator();
-            console.log('SAAT Pro con Asociación Masiva - Listo.');
+            console.log('SAAT Pro Netlify - Listo.');
         };
     </script>
 </body>
